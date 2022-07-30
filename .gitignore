@@ -1,0 +1,10 @@
+node_modules
+package-lock.json
+*.pyc
+__pycache__
+
+.vscode
+
+migrations
+data
+prod.env

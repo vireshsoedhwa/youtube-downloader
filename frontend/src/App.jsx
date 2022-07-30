@@ -1,27 +1,11 @@
 import React, { Fragment, useEffect, useState, useRef } from 'react';
 
-import Grid from '@mui/material/Grid';
-import Container from '@mui/material/Container';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import styles from './css/app.module.css';
+// import Grid from '@mui/material/Grid';
+// import Container from '@mui/material/Container';
 
-// import List from '@material-ui/core/List';
-// import ListItem from '@material-ui/core/ListItem';
-// import ListItemText from '@material-ui/core/ListItemText';
-
-import CircularProgressWithLabel from './CircularStatic';
-
-// import InputField from './InputField';
-import SubmitButton from './SubmitButton';
-import Chooser from './Chooser';
-import FileSubmit from './FileSubmit';
-import UrlSubmit from './UrlSubmit';
+// import Chooser from './Chooser';
+// import FileSubmit from './FileSubmit';
+// import UrlSubmit from './UrlSubmit';
 
 
 export default function App() {
@@ -181,8 +165,9 @@ export default function App() {
     return (
         <React.Fragment>
             <Container fixed>
+                Playlist web
                 {/* <Stack spacing={2}> */}
-                <Grid item xs container direction="column"
+                {/* <Grid item xs container direction="column"
                     justifyContent="space-around"
                     alignItems="stretch"
                 >
@@ -201,7 +186,7 @@ export default function App() {
                         list of RESULTs
 
                     </Grid>
-                </Grid>
+                </Grid> */}
                 {/* </Stack> */}
                 {/* <InputField seturl={setUrl} connect={Connect} setstatus={setStatus} />
                 {(Status === 'idle' || Status === 'rejected') ?

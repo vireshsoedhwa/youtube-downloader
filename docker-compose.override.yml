@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  # db:
+  #   image: postgres:alpine
+  #   restart: always
+  #   environment:
+  #     - POSTGRES_HOST=db
+  #     - POSTGRES_PASSWORD=postgres
+  #     - POSTGRES_DB=postgres
+  #     - POSTGRES_USER=postgres
+
+  api:
+    build:
+      context: .
+    command: >
+      sh -c "apk add --update npm
+      && (cd /code/frontend && npm install)
+      && (cd /code/frontend && npm run build)
+      && python manage.py runserver 0.0.0.0:9000"
+    volumes:
+      - .:/code
+    environment:
+      - DEBUG=1
+      - POSTGRES_HOST=db
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PORT=5432
+      - DJANGO_SECRET_KEY='(^vaet+jq=h^q&(0v2kb#vity#526cxv6do(gd)hjuidz=d6'
+    depends_on:
+      - db
+    ports:
+      - "9000:9000"
+      - "9001:9001"

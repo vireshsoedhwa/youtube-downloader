@@ -1,0 +1,11 @@
+Django>=3.0,<4.0
+pygments==2.6
+django-cors-headers==3.4.0
+django-filter==2.3.0
+requests>=2.24.0
+channels>=3.0.4
+supervisor>=4.2.2
+daphne>=3.0.2
+Twisted[tls,http2]>=22.1.0
+psycopg2-binary>=2.9.3
+python-dotenv>=0.20.0
