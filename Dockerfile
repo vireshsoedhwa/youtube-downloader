@@ -36,10 +36,6 @@ ENV PYTHONUNBUFFERED 1
 ENV PATH /code:/opt/venv/bin:$PATH
 
 WORKDIR /code
-
-# RUN apk update
-# RUN apk add nginx
-
 RUN mkdir -p /run/daphne
 
 COPY manage.py supervisord.conf ./
@@ -52,6 +48,8 @@ COPY --from=frontend-builder /code/static ./frontend/static
 
 COPY playlistenerweb playlistenerweb/
 COPY frontend frontend/
+
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 

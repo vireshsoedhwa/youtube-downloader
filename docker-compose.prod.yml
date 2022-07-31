@@ -24,6 +24,7 @@ services:
 
 volumes:
   playlistenerwebassets: 
+    external: true  
 
 networks:
   playlistener-network:
