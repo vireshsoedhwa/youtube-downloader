@@ -4,6 +4,8 @@ set -e
 
 echo DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY >> .env
 
+>&2 echo "check vars"
+
 echo $TESTVAR
 
 >&2 echo "Run Database migrations"
