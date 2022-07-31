@@ -9,7 +9,7 @@ services:
       - PRODUCTION=1
       - POSTGRES_HOST=db
       - POSTGRES_PORT=5432
-      # - DJANGO_SECRET_KEY='(^vaet+jq=h^q&(0v2kb#vity#526cxv6do(gd)hjuidz=d6'
+      - DJANGO_SECRET_KEY='(^vaet+jq=h^q&(0v2kblvity#526cxv6do(gd)hjuidz=d6'
     networks:
       playlistener-network:
         aliases:
