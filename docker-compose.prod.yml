@@ -20,8 +20,6 @@ services:
       playlistener-network:
         aliases:
           - playlistenerweb
-    ports:
-      - 9001:9001
 
 volumes:
   playlistenerwebassets: 
