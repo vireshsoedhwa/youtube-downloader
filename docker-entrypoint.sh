@@ -4,6 +4,8 @@ set -e
 
 echo DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY >> .env
 
+echo $TESTVAR
+
 >&2 echo "Run Database migrations"
 python manage.py migrate
 echo "-------------------------------------------------------------------------------------------\n"
