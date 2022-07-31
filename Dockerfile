@@ -37,6 +37,9 @@ ENV PATH /code:/opt/venv/bin:$PATH
 
 WORKDIR /code
 
+# RUN apk update
+# RUN apk add nginx
+
 RUN mkdir -p /run/daphne
 
 COPY manage.py supervisord.conf ./

@@ -2,6 +2,8 @@
 
 set -e
 
+echo DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY >> .env
+
 >&2 echo "Run Database migrations"
 python manage.py migrate
 echo "-------------------------------------------------------------------------------------------\n"
@@ -15,5 +17,5 @@ python manage.py collectstatic --noinput
 
 # echo "-------------------------------------------------------------------------------------------\n"
 
-# >&2 echo "Starting supervisor..."
+>&2 echo "Starting supervisor..."
 exec "$@"

@@ -164,7 +164,6 @@ export default function App() {
 
     return (
         <React.Fragment>
-            <Container fixed>
                 Playlist web
                 {/* <Stack spacing={2}> */}
                 {/* <Grid item xs container direction="column"
@@ -230,8 +229,6 @@ export default function App() {
                     </div>
                 } */}
 
-
-            </Container>
         </React.Fragment>
     );
 }
