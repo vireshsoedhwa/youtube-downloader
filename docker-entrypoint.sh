@@ -4,6 +4,9 @@ set -e
 
 echo DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY >> .env
 
+>&2 echo "test pipeline label"
+echo "$(cat .env)"
+
 >&2 echo "Run Database migrations"
 python manage.py migrate
 echo "-------------------------------------------------------------------------------------------\n"
