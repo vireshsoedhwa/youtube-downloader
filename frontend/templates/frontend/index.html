@@ -12,5 +12,20 @@
 </body>
 {% csrf_token %}
 {% load static %}
-<script src="{% static "/app.bundle.js" %}"></script>
+
+<script>
+    const date = new Date(document.lastModified);
+    let js_src_path = "{% static "/app.bundle.js" %}" + "?id=" + date.getTime()
+
+    const script = document.createElement('script');
+    script.setAttribute(
+        'src',
+        js_src_path,
+    );
+    console.log(js_src_path)
+    document.head.appendChild(script);
+</script>
+
+<!-- <script src="{% static " /app.bundle.js" %}"></script> -->
+
 </html>

@@ -17,7 +17,5 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PORT=5432
       - DJANGO_SECRET_KEY='(^vaet+jq=h^q&(0v2kb#vity#526cxv6do(gd)hjuidz=d6'
-    depends_on:
-      - db
     ports:
       - "9000:9000"
