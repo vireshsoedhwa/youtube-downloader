@@ -3,6 +3,7 @@
 set -e
 
 echo DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY >> .env
+echo GO_PIPELINE_LABEL=$GO_PIPELINE_LABEL >> .env
 
 >&2 echo "test pipeline label"
 echo "$(cat .env)"
