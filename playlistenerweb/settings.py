@@ -18,6 +18,7 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+GO_PIPELINE_LABEL = os.getenv('GO_PIPELINE_LABEL', "dev")
 SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 DEBUG = os.getenv('DEBUG', False) == '1'
 PRODUCTION = os.getenv('PRODUCTION', False) == '1'

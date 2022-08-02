@@ -6,5 +6,5 @@ class FrontendConfig(AppConfig):
     def ready(self):
         print("DEBUG: " + str(settings.DEBUG))
         print("PRODUCTION: " + str(settings.PRODUCTION))
-        # print("DJANGO_SECRET_KEY: " + str(settings.SECRET_KEY))
+        print("GO_PIPELINE_LABEL: " + str(settings.GO_PIPELINE_LABEL))
         print("frontend started")

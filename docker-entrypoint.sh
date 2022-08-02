@@ -3,10 +3,12 @@
 set -e
 
 echo DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY >> .env
-echo GO_PIPELINE_LABEL=$GO_PIPELINE_LABEL >> .env
 
->&2 echo "test pipeline label"
-echo "$(cat .env)"
+if [[ -z "${GO_PIPELINE_LABEL}" ]]; then
+  echo GO_PIPELINE_LABEL=dev >> .env
+else
+  echo GO_PIPELINE_LABEL=$GO_PIPELINE_LABEL >> .env
+fi
 
 >&2 echo "Run Database migrations"
 python manage.py migrate

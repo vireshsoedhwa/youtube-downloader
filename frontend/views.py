@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import ensure_csrf_cookie
 
-# Create your views here.
+from django.conf import settings
 
 @ensure_csrf_cookie
 def index(request):
@@ -12,7 +12,7 @@ def index(request):
     request.session.set_test_cookie()
 
     context = {
-        'version': '',
+        'version':  settings.GO_PIPELINE_LABEL,
     }
 
     return render(request, 'frontend/index.html', context)
