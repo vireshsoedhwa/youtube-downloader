@@ -1,11 +1,12 @@
 import React, { Fragment, useEffect, useState, useRef } from 'react';
 
-// import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid'
 // import Container from '@mui/material/Container';
 
-// import Chooser from './Chooser';
-// import FileSubmit from './FileSubmit';
-// import UrlSubmit from './UrlSubmit';
+import Chooser from './Chooser';
+import FileSubmit from './FileSubmit';
+import UrlSubmit from './UrlSubmit';
 
 
 export default function App() {
@@ -163,10 +164,9 @@ export default function App() {
     // }
 
     return (
-        <React.Fragment>
-                Playlist web
-                {/* <Stack spacing={2}> */}
-                {/* <Grid item xs container direction="column"
+        <Fragment>
+                <Stack spacing={2}>
+                <Grid item xs container direction="column"
                     justifyContent="space-around"
                     alignItems="stretch"
                 >
@@ -185,8 +185,8 @@ export default function App() {
                         list of RESULTs
 
                     </Grid>
-                </Grid> */}
-                {/* </Stack> */}
+                </Grid>
+                </Stack>
                 {/* <InputField seturl={setUrl} connect={Connect} setstatus={setStatus} />
                 {(Status === 'idle' || Status === 'rejected') ?
                     <div>
@@ -229,7 +229,7 @@ export default function App() {
                     </div>
                 } */}
 
-        </React.Fragment>
+        </Fragment>
     );
 }
 

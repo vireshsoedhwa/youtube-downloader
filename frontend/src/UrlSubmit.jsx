@@ -173,7 +173,7 @@ export default function UrlSubmit(props) {
             >
 
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item xs={6}>
+                    <Grid item xs={12}>
 
 
                         <Grid item xs container direction="column"
@@ -241,24 +241,13 @@ export default function UrlSubmit(props) {
                                             </div>
                                         }
                                     </Grid>
-
-
-
-
-
                                 </Grid>
-
-
-
-
                             </Grid>
                         </Grid>
-
-
                     </Grid>
 
 
-                    <Grid item xs={6}>
+                    {/* <Grid item xs={6}>
                         <Box sx={{ p: 2, border: '1px dashed grey', margin: 'auto' }}
                         >
                             <FormGroup>
@@ -266,7 +255,7 @@ export default function UrlSubmit(props) {
                                 <FormControlLabel control={<Checkbox />} label="Convert Audio to 432Hz" />
                             </FormGroup>
                         </Box>
-                    </Grid>
+                    </Grid> */}
 
 
                 </Grid>
