@@ -1,32 +1,23 @@
 import React, { Fragment, useEffect, useState, useRef } from 'react';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
-import { css } from '@emotion/react';
-import Stack from '@mui/material/Stack';
-import { createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-
-import CircularProgressWithLabel from './CircularStatic';
 
 import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import InputLabel from '@mui/material/InputLabel';
 import FormHelperText from '@mui/material/FormHelperText';
-
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-
-
 import ButtonBase from '@mui/material/ButtonBase';
 
-import { styled } from '@mui/material/styles';
-
 import LinearProgressWithLabel from './LinearWithLabel';
+import CircularProgress from '@mui/material/CircularProgress';
+import MediaControlCard from './Mediadetail';
+
+// function RecentList() {
+//     return(<p></p>)
+// }
 
 export default function UrlSubmit(props) {
 
@@ -35,79 +26,38 @@ export default function UrlSubmit(props) {
     const [InputErrorMsg, setInputErrorMsg] = useState('')
     const [Valid, setValid] = useState(false)
     const [Url, setUrl] = useState('')
-    const [Progress, setProgress] = useState(0)
-
-    const [Connect, setConnect] = useState(false);
-    const [Status, setStatus] = useState('idle');
-    const [Received, setReceived] = useState('');
-    const [Submitclicked, setSubmitclicked] = useState(false);
-    const [Mode, setMode] = useState(0)
-
-    const ws = useRef(null);
-
-    const makeConnection = () => {
-        ws.current = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/'
-        );
-
-        ws.current.onopen = () => {
-            console.log("ws opened");
-            setConnect(true)
-        }
-        ws.current.onclose = (e) => {
-            console.log("ws closed");
-            console.error('socket closed unexpectedly ' + e);
-            setConnect(false)
-        }
-
-        ws.current.onmessage = e => {
-            const message = JSON.parse(e.data);
-            setStatus(message.status)
-            setReceived(message)
-        };
-    }
+    const [Progress, setProgress] = useState(100)
+    const [RecentList, setRecentList] = useState(null)
 
     useEffect(() => {
-        if (Received.status === 'finished') {
-            ws.current.close()
-        }
+        console.log("ulrsubmit loaded")
 
-        if (Received.status === 'submitted') {
-            console.log('submitted')
-            console.log(Status)
-        }
-
-        if (Received.status === 'downloading') {
-            console.log('downloading')
-            setProgress((Received.downloaded_bytes / Received.total_bytes) * 100)
-        }
-
-        if (Received.status === 'download_finished') {
-            console.log('downloading finished')
-            ws.current.close();
-            setStatus('download_finished')
-        }
-
-    }, [Received]);
-
-    useEffect(() => {
-        if (Submitclicked && Connect) {
-            console.log("Sending")
-            ws.current.send(JSON.stringify({
-                'request_type': 'submit',
-                'url': Url
-            }));
-            // ws.current.close();
-        }
-    }, [Submitclicked, Connect]);
-
-    const Submit = () => {
-        // console.log(url)
-        setSubmitclicked(true)
-        makeConnection();
-    }
+        fetch('/recent', {
+            method: 'get',
+            mode: 'no-cors',
+            credentials: 'omit',
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow'
+        })
+            .then(response => {
+                console.log("reponse")
+                if (response.ok) {
+                    return response.json()
+                }
+                throw response
+            })
+            .then(data => {
+                console.log("data")
+                console.log(data)
+                setRecentList(data)
+            })
+            .catch(error => {
+                console.error(error)
+            })
+    }, [])
 
     const ChangeURL = (value) => {
         var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -117,53 +67,23 @@ export default function UrlSubmit(props) {
             setTextfieldhelperstate({ error: false })
             setDisableDownload(false)
             setInputErrorMsg("")
-            // props.setstatus('valid')
-            // props.seturl(match[2])
             setUrl(match[2])
             setValid(true)
         } else {
             // setTextfieldhelperstate({ error: true, helperText: "Incorrect URL" })
             setTextfieldhelperstate({ error: true })
             setInputErrorMsg("Incorrect URL")
-            // props.setstatus('rejected')
-            // props.seturl('')
+            setValid(false)
             setDisableDownload(true)
         }
     }
-
-    const imgcontainer = {
-        width: 'auto',
-        height: 'auto',
-        margin: '10px',
-        border: 'solid 1px #CCC',
-        backgroundColor: 'blue',
-    }
-
-    const settingsbox = {
-        position: 'relative',
-        width: 'auto',
-        height: 'auto',
-        margin: '20px',
-        border: 'solid 1px #CCC',
-        backgroundColor: '#090863',
-        alignItems: 'center',
-        justifyContent: 'center',
-        display: 'block'
-    }
-
-    const Img = styled('img')({
-        margin: 'auto',
-        display: 'block',
-        maxWidth: '100%',
-        maxHeight: '100%',
-    });
 
     return (
         <Fragment>
             <CssBaseline />
             <Paper
                 sx={{
-                    p: 2,
+                    p: 1,
                     margin: 'auto',
                     maxWidth: '100%',
                     flexGrow: 1,
@@ -172,17 +92,18 @@ export default function UrlSubmit(props) {
                 }}
             >
 
-                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                <Grid container rowSpacing={3} columnSpacing={{ xs: 3, sm: 2, md: 3 }}>
+
                     <Grid item xs={12}>
-
-
                         <Grid item xs container direction="column"
                             justifyContent="center"
                             alignItems="stretch"
+                            rowSpacing={3}
                         >
+
                             <Grid item xs>
-                                <FormControl fullWidth sx={{ m: 1 }}>
-                                    <InputLabel htmlFor="outlined-adornment-amount">Youtube</InputLabel>
+                                <FormControl fullWidth sx={{ m: 0 }}>
+                                    <InputLabel htmlFor="outlined-adornment-amount">URL</InputLabel>
                                     <OutlinedInput
                                         // id="outlined-adornment-amount"
                                         id="component-error"
@@ -190,72 +111,51 @@ export default function UrlSubmit(props) {
                                         onChange={ChangeURL}
                                         // error
                                         {...Textfieldhelperstate}
-                                        startAdornment={<InputAdornment position="start">url:</InputAdornment>}
+                                        startAdornment={<InputAdornment position="start"></InputAdornment>}
                                         label="Amount"
                                         aria-describedby="component-error-text"
                                     />
                                     <FormHelperText id="component-error-text">{InputErrorMsg}</FormHelperText>
                                 </FormControl>
                             </Grid>
+                            {/* ========================================== media detail ============================================= */}
                             <Grid item xs>
-
-                                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-
-                                    <Grid item xs={6}>
-                                        <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}>
-                                            {Valid ?
-                                                // <div>
-                                                //     <img src={"//img.youtube.com/vi/" + Url + "/sddefault.jpg"} alt="youtube thumbnail" style={imgstyle} />
-                                                // </div>
-                                                <ButtonBase >
-                                                    <Box sx={{ p: 2, border: '1px dashed grey' }}>
-                                                        <Img alt="youtube" src={"//img.youtube.com/vi/" + Url + "/sddefault.jpg"} />
-                                                    </Box>
-                                                </ButtonBase>
-                                                :
-                                                <ButtonBase sx={{ width: 128, height: 128 }}>
-                                                    <Box sx={{ p: 2 }}>
-                                                    </Box>
-                                                </ButtonBase>
-                                            }
-                                        </Box>
-
-                                    </Grid>
-
-                                    <Grid item xs={6}>
-
-                                        {/* <CircularProgressWithLabel value={Progress} /> */}
-                                        {Valid ?
-                                            <>
-                                                Download Progress
-                                                <LinearProgressWithLabel value={Progress} />
-                                                <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}>
-                                                    <Button
-                                                        variant="contained"
-                                                        onClick={Submit}
-                                                    >Submit</Button>
-                                                </Box>
-                                            </>
-                                            :
-                                            <div>
-                                            </div>
-                                        }
-                                    </Grid>
-                                </Grid>
+                                {Valid ?
+                                    <div>
+                                        <MediaControlCard url={Url} progress={Progress} />
+                                    </div>
+                                    :
+                                    // <ButtonBase sx={{ width: '100%', height: 128 }}>
+                                    //     <Box sx={{ p: 2 }}>
+                                    //     </Box>
+                                    // </ButtonBase>
+                                    <div>
+                                        {/* <MediaControlCard url={null} progress={0} /> */}
+                                    </div>
+                                }
                             </Grid>
+
+                            {/* ========================================= last 5 recent ============================================== */}
+
+                            {/* <Grid item xs>
+                                <div>
+                                    <MediaControlCard url={Url} progress={Progress} title={null} />
+                                </div>
+                            </Grid>
+
+                            <Grid item xs>
+                                <div>
+                                    <MediaControlCard url={Url} progress={Progress} title={null} />
+                                </div>
+                            </Grid> */}
+
+                            {/* <RecentList /> */}
+
+
                         </Grid>
                     </Grid>
 
 
-                    {/* <Grid item xs={6}>
-                        <Box sx={{ p: 2, border: '1px dashed grey', margin: 'auto' }}
-                        >
-                            <FormGroup>
-                                <FormControlLabel control={<Checkbox defaultChecked />} label="Keep Video" />
-                                <FormControlLabel control={<Checkbox />} label="Convert Audio to 432Hz" />
-                            </FormGroup>
-                        </Box>
-                    </Grid> */}
 
 
                 </Grid>
@@ -263,3 +163,8 @@ export default function UrlSubmit(props) {
         </Fragment >
     );
 }
+
+
+
+
+

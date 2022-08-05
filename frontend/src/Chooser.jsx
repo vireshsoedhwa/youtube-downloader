@@ -21,13 +21,8 @@ export default function Chooser(props) {
 
     return (
         <Fragment>
-            {/* <Switch {...label} defaultChecked />
-            <Switch {...label} defaultChecked color="secondary" />
-            <Switch {...label} defaultChecked color="warning" />
-            <Switch {...label} defaultChecked color="default" /> */}
-            {/* <MaterialUISwitch {...label} defaultChecked /> */}
             <Tabs value={value} onChange={handleChange} centered>
-                <Tab label="Youtube Url" />
+                <Tab label="Youtube" />
                 <Tab label="File" />
             </Tabs>
         </Fragment >

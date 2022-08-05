@@ -2,20 +2,12 @@ import React, { Fragment, useEffect, useState, useRef } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid'
-// import Container from '@mui/material/Container';
-
 import Chooser from './Chooser';
 import FileSubmit from './FileSubmit';
 import UrlSubmit from './UrlSubmit';
 
 
 export default function App() {
-    const [Connect, setConnect] = useState(false);
-    const [Url, setUrl] = useState('');
-    const [Status, setStatus] = useState('idle');
-    const [Received, setReceived] = useState('');
-    const [Progress, setProgress] = useState(0);
-    const [Submitclicked, setSubmitclicked] = useState(false);
     const [Mode, setMode] = useState(0)
 
     // const [Pollingdelay, setPollingdelay] = useState(null);
@@ -25,17 +17,6 @@ export default function App() {
     */
     // const ws = useRef(null);
 
-    // const getId(url) {
-    //     var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    //     var match = url.match(regExp);
-
-    //     if (match && match[2].length == 11) {
-    //         return match[2];
-    //     } else {
-    //         return 'error';
-    //     }
-    // }
-
     // useInterval(async () => {
     //     console.log("polling")
     //     if (!Connect) {
@@ -44,66 +25,6 @@ export default function App() {
     //     }
     //     // setProgress((prevProgress) => (prevProgress >= 100 ? 0 : prevProgress + 10));
     // }, Pollingdelay);
-
-
-    // useEffect(() => {
-    //     console.log("initial connection")
-    //     if (!Connect) {
-    //         makeConnection();
-    //         console.log("making connection")
-    //         setPollingdelay(3000);
-    //     }
-    // }, [Connect]);
-
-    // const makeConnection = () => {
-    //     ws.current = new WebSocket(
-    //         'ws://'
-    //         + window.location.host
-    //         + '/ws/'
-    //     );
-
-    //     ws.current.onopen = () => {
-    //         console.log("ws opened");
-    //         setConnect(true)
-    //     }
-    //     ws.current.onclose = (e) => {
-    //         console.log("ws closed");
-    //         console.error('socket closed unexpectedly ' + e);
-    //         setConnect(false)
-
-    //     }
-
-    //     ws.current.onmessage = e => {
-    //         const message = JSON.parse(e.data);
-    //         setStatus(message.status)
-    //         setReceived(message)
-    //     };
-    // }
-
-    // useEffect(() => {
-    //     if (Received.status === 'finished') {
-    //         ws.current.close()
-    //     }
-
-    //     if (Received.status === 'submitted') {
-    //         console.log('submitted')
-    //         console.log(Status)
-    //     }
-
-    //     if (Received.status === 'downloading') {
-    //         console.log('downloading')
-    //         setProgress((Received.downloaded_bytes / Received.total_bytes) * 100)
-    //     }
-
-    //     if (Received.status === 'download_finished') {
-    //         console.log('downloading finished')
-    //         ws.current.close();
-    //         setStatus('download_finished')
-    //     }
-
-    // }, [Received]);
-
-
 
     // const PostUrl = () => {
     //     const data = { url: Url };
@@ -139,30 +60,6 @@ export default function App() {
     //         });
     // }
 
-    // useEffect(() => {
-    //     if (Submitclicked && Connect) {
-    //         console.log("Sending")
-    //         ws.current.send(JSON.stringify({
-    //             'request_type': 'submit',
-    //             'url': Url
-    //         }));
-    //         // ws.current.close();
-    //     }
-    // }, [Submitclicked, Connect]);
-
-    // const Submit = () => {
-    //     // console.log(url)
-    //     setSubmitclicked(true)
-    //     makeConnection();
-    // }
-
-    // const QueryStatus = () => {
-    //     ws.current.send(JSON.stringify({
-    //         'request_type': 'polling',
-    //         'url': Url
-    //     }));
-    // }
-
     return (
         <Fragment>
                 <Stack spacing={2}>
@@ -182,53 +79,9 @@ export default function App() {
                     </Grid>
                     <Grid item xs>
 
-                        list of RESULTs
-
                     </Grid>
                 </Grid>
-                </Stack>
-                {/* <InputField seturl={setUrl} connect={Connect} setstatus={setStatus} />
-                {(Status === 'idle' || Status === 'rejected') ?
-                    <div>
-
-                    </div>
-                    :
-                    <div>
-                        <div>
-                            <img src={"//img.youtube.com/vi/" + Url + "/sddefault.jpg"} alt="youtube thumbnail" style={imgstyle} />
-                        </div>
-                    </div>
-                }
-
-                {Status === 'valid' ?
-                    <div>
-                        <SubmitButton submit={Submit} />
-                    </div>
-                    :
-                    <div>
-
-                    </div>
-                }
-
-                {Connect ?
-                    <h2>
-                        Connected
-                    </h2>
-                    :
-                    <h2>
-                        DIsconnecteed
-                    </h2>
-                }
-                {Status}
-
-                {Status === 'downloading' ?
-                    <CircularProgressWithLabel value={Progress} />
-                    :
-                    <div>
-
-                    </div>
-                } */}
-
+                </Stack>                
         </Fragment>
     );
 }
