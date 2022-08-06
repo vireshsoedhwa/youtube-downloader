@@ -5,11 +5,64 @@ import Grid from '@mui/material/Grid'
 import Chooser from './Chooser';
 import FileSubmit from './FileSubmit';
 import UrlSubmit from './UrlSubmit';
+import MediaControlCard from './Mediadetail';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
 
+function MediaList(props) {
+    const listofmedia = props.listofmedia
+    if (listofmedia == null) {
+        return
+    }
+    const listItems = listofmedia.map((media, index) =>
+        // <Grid key={index} item xs>
+        <div key={index}>
+            {media.youtube_data ?
+                <MediaControlCard url={media.youtube_data.youtube_id} progress={media.youtube_data.downloadprogress} title={media.title} filename={media.audiofile} new={false} />
+                :
+                <MediaControlCard url={""} title={media.title} progress={100} filename={media.audiofile} new={false} />
+            }
+        </div>
+        // </Grid>
+    );
+    return (
+        <Stack spacing={0}>{listItems}</Stack>
+    );
+}
 
 export default function App() {
     const [Mode, setMode] = useState(0)
+    const [RecentList, setRecentList] = useState(null)
 
+    useEffect(() => {
+        console.log("ulrsubmit loaded")
+
+        fetch('/recent', {
+            method: 'get',
+            mode: 'no-cors',
+            credentials: 'omit',
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow'
+        })
+            .then(response => {
+                console.log("reponse")
+                if (response.ok) {
+                    return response.json()
+                }
+                throw response
+            })
+            .then(data => {
+                console.log("data")
+                // console.log(data)
+                setRecentList(data)
+            })
+            .catch(error => {
+                console.error(error)
+            })
+    }, [])
     // const [Pollingdelay, setPollingdelay] = useState(null);
     /*
         status list:
@@ -62,26 +115,30 @@ export default function App() {
 
     return (
         <Fragment>
-                <Stack spacing={2}>
-                <Grid item xs container direction="column"
-                    justifyContent="space-around"
-                    alignItems="stretch"
-                >
-                    <Grid item xs>
-                        <Chooser setmode={setMode} />
-                    </Grid>
-                    <Grid item>
-                        {Mode == 1 ?
-                            <FileSubmit></FileSubmit>
-                            :
-                            <UrlSubmit />
-                        }
-                    </Grid>
-                    <Grid item xs>
-
-                    </Grid>
+            {/* <Stack spacing={2}> */}
+            <Grid container direction="column"
+                // justifyContent="space-around"
+                // alignItems="stretch"
+                sx={{ p: 1 }}
+            >
+                <Grid item xs>
+                    <Chooser setmode={setMode} />
                 </Grid>
-                </Stack>                
+                <Grid item xs>
+                    {Mode == 1 ?
+                        <FileSubmit/>
+                        :
+                        <UrlSubmit />
+                    }
+                </Grid>
+                <Grid item sx={{ paddingTop: 5 }}>
+                    <Typography variant="h6" gutterBottom component="div">
+                        Recently added
+                    </Typography>
+                    <MediaList listofmedia={RecentList} />
+                </Grid>
+            </Grid>
+            {/* </Stack> */}
         </Fragment>
     );
 }

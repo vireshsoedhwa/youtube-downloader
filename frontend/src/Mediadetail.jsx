@@ -28,11 +28,11 @@ export default function MediaControlCard(props) {
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <CardContent sx={{ flex: '1 0 auto' }}>
                     <Typography component="div" variant="h6">
-                        __________________
+                        {props.title}
                     </Typography>
-                    {/* <Typography variant="subtitle1" color="text.secondary" component="div">
-                        -
-                    </Typography> */}
+                    <Typography variant="subtitle1" color="text.secondary" component="div">
+                        {props.filename}
+                    </Typography>
                 </CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
                     {/* <IconButton aria-label="previous">
@@ -43,8 +43,25 @@ export default function MediaControlCard(props) {
           </IconButton> */}
 
                     <IconButton>
-                        {/* <CircularProgress variant="determinate" value={props.progress} sx={{ height: 38, width: 38 }} /> */}
-                        <AddToQueueIcon sx={{ height: 38, width: 38 }} />
+                        {
+                            props.new ?
+                                <div>
+                                    <AddToQueueIcon sx={{ height: 38, width: 38 }} />
+                                </div>
+                                :
+
+                                props.progress == "100" ?
+                                    <div>
+                                        <DownloadIcon sx={{ height: 38, width: 38 }} />
+                                    </div>
+                                    :
+                                    <div>
+                                        <CircularProgress variant="determinate" value={parseInt(props.progress)} sx={{ height: 38, width: 38 }} />
+                                    </div>
+
+                        }
+
+
                     </IconButton>
 
                     {/* <CircularProgress variant="determinate" value={props.progress} /> */}
@@ -54,8 +71,7 @@ export default function MediaControlCard(props) {
           </IconButton> */}
                 </Box>
             </Box>
-
             {/* <Img sx={{ width: '100%', height: 128, objectFit: 'contain' }} alt="youtube" src={"//img.youtube.com/vi/" + Url + "/sddefault.jpg"} /> */}
-        </Card>
+        </Card >
     );
 }

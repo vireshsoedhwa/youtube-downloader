@@ -15,49 +15,13 @@ import LinearProgressWithLabel from './LinearWithLabel';
 import CircularProgress from '@mui/material/CircularProgress';
 import MediaControlCard from './Mediadetail';
 
-// function RecentList() {
-//     return(<p></p>)
-// }
-
 export default function UrlSubmit(props) {
 
     const [Textfieldhelperstate, setTextfieldhelperstate] = useState({ error: false, id: "outlined-error-helper-text" })
-    const [DisableDownload, setDisableDownload] = useState(true)
     const [InputErrorMsg, setInputErrorMsg] = useState('')
     const [Valid, setValid] = useState(false)
     const [Url, setUrl] = useState('')
-    const [Progress, setProgress] = useState(100)
-    const [RecentList, setRecentList] = useState(null)
-
-    useEffect(() => {
-        console.log("ulrsubmit loaded")
-
-        fetch('/recent', {
-            method: 'get',
-            mode: 'no-cors',
-            credentials: 'omit',
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Content-Type': 'application/json'
-            },
-            redirect: 'follow'
-        })
-            .then(response => {
-                console.log("reponse")
-                if (response.ok) {
-                    return response.json()
-                }
-                throw response
-            })
-            .then(data => {
-                console.log("data")
-                console.log(data)
-                setRecentList(data)
-            })
-            .catch(error => {
-                console.error(error)
-            })
-    }, [])
+    const [Progress, setProgress] = useState(0)
 
     const ChangeURL = (value) => {
         var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -65,7 +29,7 @@ export default function UrlSubmit(props) {
         if (match && match[2].length == 11) {
             setTextfieldhelperstate({ error: false, helperText: "" })
             setTextfieldhelperstate({ error: false })
-            setDisableDownload(false)
+            // setDisableDownload(false)
             setInputErrorMsg("")
             setUrl(match[2])
             setValid(true)
@@ -74,14 +38,14 @@ export default function UrlSubmit(props) {
             setTextfieldhelperstate({ error: true })
             setInputErrorMsg("Incorrect URL")
             setValid(false)
-            setDisableDownload(true)
+            // setDisableDownload(true)
         }
     }
 
     return (
         <Fragment>
             <CssBaseline />
-            <Paper
+            {/* <Paper
                 sx={{
                     p: 1,
                     margin: 'auto',
@@ -90,19 +54,18 @@ export default function UrlSubmit(props) {
                     backgroundColor: (theme) =>
                         theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
                 }}
-            >
+            > */}
 
-                <Grid container rowSpacing={3} columnSpacing={{ xs: 3, sm: 2, md: 3 }}>
+                {/* <Grid container rowSpacing={3} columnSpacing={{ xs: 3, sm: 2, md: 3 }}> */}
 
-                    <Grid item xs={12}>
-                        <Grid item xs container direction="column"
-                            justifyContent="center"
-                            alignItems="stretch"
-                            rowSpacing={3}
+                    {/* <Grid item xs={12}> */}
+                        <Grid container direction="column"
+                            // justifyContent="center"
+                            // alignItems="stretch"
+                            rowSpacing={1}                         
                         >
-
                             <Grid item xs>
-                                <FormControl fullWidth sx={{ m: 0 }}>
+                                <FormControl fullWidth>
                                     <InputLabel htmlFor="outlined-adornment-amount">URL</InputLabel>
                                     <OutlinedInput
                                         // id="outlined-adornment-amount"
@@ -119,47 +82,21 @@ export default function UrlSubmit(props) {
                                 </FormControl>
                             </Grid>
                             {/* ========================================== media detail ============================================= */}
-                            <Grid item xs>
+                            <Grid item>
                                 {Valid ?
                                     <div>
-                                        <MediaControlCard url={Url} progress={Progress} />
+                                        <MediaControlCard url={Url} progress={Progress} new={true} />
                                     </div>
                                     :
-                                    // <ButtonBase sx={{ width: '100%', height: 128 }}>
-                                    //     <Box sx={{ p: 2 }}>
-                                    //     </Box>
-                                    // </ButtonBase>
                                     <div>
-                                        {/* <MediaControlCard url={null} progress={0} /> */}
                                     </div>
                                 }
                             </Grid>
-
-                            {/* ========================================= last 5 recent ============================================== */}
-
-                            {/* <Grid item xs>
-                                <div>
-                                    <MediaControlCard url={Url} progress={Progress} title={null} />
-                                </div>
-                            </Grid>
-
-                            <Grid item xs>
-                                <div>
-                                    <MediaControlCard url={Url} progress={Progress} title={null} />
-                                </div>
-                            </Grid> */}
-
-                            {/* <RecentList /> */}
-
-
-                        </Grid>
-                    </Grid>
-
-
-
+                        {/* </Grid> */}
+                    {/* </Grid> */}
 
                 </Grid>
-            </Paper>
+            {/* </Paper> */}
         </Fragment >
     );
 }

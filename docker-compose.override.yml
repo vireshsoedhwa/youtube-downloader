@@ -19,3 +19,11 @@ services:
       - DJANGO_SECRET_KEY='(^vaet+jq=h^q&(0v2kb#vity#526cxv6do(gd)hjuidz=d6'
     ports:
       - "9000:9000"
+    networks:
+      playlistener-network:    
+
+networks:
+  playlistener-network:
+    external: true
+    driver: bridge
+    name: playlistener-network
