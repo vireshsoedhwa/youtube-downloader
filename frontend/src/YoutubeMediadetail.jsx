@@ -13,7 +13,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import DownloadIcon from '@mui/icons-material/Download';
 import AddToQueueIcon from '@mui/icons-material/AddToQueue';
 
-export default function MediaDetail(props) {
+export default function YoutubeMediadetail(props) {
 
     const clickqueue = () => {
         if (props.status == "NEW") {
@@ -24,6 +24,13 @@ export default function MediaDetail(props) {
         }
     }
 
+    const MEDIADETAIL_STATES = {
+        // NEW: <AddToQueueIcon sx={{ height: 38, width: 38 }} />,
+        DONE: <DownloadIcon sx={{ height: 38, width: 38 }} />,
+        BUSY: <CircularProgress sx={{ height: 38, width: 38 }} variant="determinate" value={parseInt(props.data.youtube_data.downloadprogress)} />,
+    }
+
+
     return (
         <Card
             sx={{
@@ -32,7 +39,7 @@ export default function MediaDetail(props) {
                     props.status == "NEW" ? '#e3f3fc' : '#FFF',
             }}
         >
-            {/* <CardMedia
+            <CardMedia
                 component="img"
                 sx={{ width: 100 }}
                 image={props.data.youtube_data ?
@@ -41,19 +48,21 @@ export default function MediaDetail(props) {
                     "//img.youtube.com/vi/" + props.data.youtube_id + "/sddefault.jpg"
                 }
                 alt="audio file"
-            /> */}
+            />
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <CardContent sx={{ flex: '1 0 auto' }}>
                     <Typography component="div" variant="h6">
                         {props.data.title}
                     </Typography>
                     <Typography variant="subtitle1" color="text.secondary" component="div">
-                        {props.data.audiofile}
+                        {/* {props.data.audiofile} */}
                     </Typography>
                 </CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
                     <IconButton onClick={clickqueue}>
-                        <DownloadIcon sx={{ height: 38, width: 38 }} />
+                        {
+                            MEDIADETAIL_STATES[props.data.youtube_data.status]
+                        }
                     </IconButton>
                 </Box>
             </Box>

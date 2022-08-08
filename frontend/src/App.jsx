@@ -4,8 +4,9 @@ import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid'
 import Chooser from './Chooser';
 import FileSubmit from './FileSubmit';
-import UrlSubmit from './UrlSubmit';
-import MediaControlCard from './Mediadetail';
+import UrlSubmit from './UrlSubmit/UrlSubmit';
+import YoutubeMediadetail from './YoutubeMediadetail';
+import MediaDetail from './Mediadetail';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 
@@ -15,18 +16,16 @@ function MediaList(props) {
         return
     }
     const listItems = listofmedia.map((media, index) =>
-        // <Grid key={index} item xs>
         <div key={index}>
             {media.youtube_data ?
-                <MediaControlCard url={media.youtube_data.youtube_id} progress={media.youtube_data.downloadprogress} title={media.title} filename={media.audiofile} new={false} />
+                <YoutubeMediadetail data={media} />
                 :
-                <MediaControlCard url={""} title={media.title} progress={100} filename={media.audiofile} new={false} />
+                <MediaDetail data={media} />
             }
         </div>
-        // </Grid>
     );
     return (
-        <Stack spacing={0}>{listItems}</Stack>
+        <Stack spacing={1}>{listItems}</Stack>
     );
 }
 
@@ -35,8 +34,6 @@ export default function App() {
     const [RecentList, setRecentList] = useState(null)
 
     useEffect(() => {
-        console.log("ulrsubmit loaded")
-
         fetch('/recent', {
             method: 'get',
             mode: 'no-cors',
@@ -48,15 +45,12 @@ export default function App() {
             redirect: 'follow'
         })
             .then(response => {
-                console.log("reponse")
                 if (response.ok) {
                     return response.json()
                 }
                 throw response
             })
             .then(data => {
-                console.log("data")
-                // console.log(data)
                 setRecentList(data)
             })
             .catch(error => {
@@ -126,7 +120,7 @@ export default function App() {
                 </Grid>
                 <Grid item xs>
                     {Mode == 1 ?
-                        <FileSubmit/>
+                        <FileSubmit />
                         :
                         <UrlSubmit />
                     }

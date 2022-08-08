@@ -22,6 +22,19 @@ def index(request):
 
     return render(request, 'frontend/index.html', context)
 
+class SubmitUrl(APIView):
+
+    def post(self, request):
+        url = 'http://playlistenerapi:8000/youtube/'
+        if "youtube_id" in request.data:
+            r = requests.post(url, data={"youtube_id": request.data['youtube_id']})
+            if str(r.status_code) == '200':
+                return Response(r.json(), status=200)
+            else:
+                return Response(r.json(), status=r.status_code)
+        return Response("hello youtube")
+
+
 
 class ListMedia(APIView):
     def get(self, format=None):
