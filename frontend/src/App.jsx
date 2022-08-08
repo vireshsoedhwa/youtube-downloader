@@ -7,6 +7,7 @@ import UrlSubmit from './UrlSubmit/UrlSubmit';
 import YoutubeMediadetail from './YoutubeMediadetail';
 import MediaDetail from './MediaDetail';
 import Typography from '@mui/material/Typography';
+import Alert from '@mui/material/Alert';
 
 import { useInterval } from './helper';
 
@@ -32,8 +33,9 @@ function MediaList(props) {
 export default function App() {
     const [Mode, setMode] = useState(0)
     const [RecentList, setRecentList] = useState(null)
-    const [Pollingdelay, setPollingdelay] = useState(null);
-    
+    const [Pollingdelay, setPollingdelay] = useState(null)
+    const [Connected, setConnected] = useState(null)
+
     useEffect(() => {
         listupdate()
     }, [])
@@ -55,20 +57,19 @@ export default function App() {
         })
             .then(response => {
                 if (response.ok) {
+                    setConnected(true)
                     return response.json()
                 }
-                else{
+                else {
                     setPollingdelay(null)
                 }
                 // throw response
             })
             .then(data => {
-                console.log(data)
                 setRecentList(data)
                 setPollingdelay(null)
             })
             .catch(error => {
-                console.log("bla")
                 // console.error(error)
             })
     }
@@ -81,22 +82,32 @@ export default function App() {
                 // alignItems="stretch"
                 sx={{ p: 1 }}
             >
-                <Grid item xs>
-                    <Chooser setmode={setMode} />
-                </Grid>
-                <Grid item xs>
-                    {Mode == 1 ?
-                        <FileSubmit />
-                        :
-                        <UrlSubmit />
-                    }
-                </Grid>
-                <Grid item sx={{ paddingTop: 5 }}>
-                    <Typography variant="h6" gutterBottom component="div">
-                        Recently added
-                    </Typography>
-                    <MediaList listofmedia={RecentList} />
-                </Grid>
+                {Connected ?
+                    <>
+                        <Grid item xs>
+                            <Chooser setmode={setMode} />
+                        </Grid>
+                        <Grid item xs>
+                            {Mode == 1 ?
+                                <FileSubmit />
+                                :
+                                <UrlSubmit />
+                            }
+                        </Grid>
+                        <Grid item sx={{ paddingTop: 5 }}>
+
+                            <Typography variant="h6" gutterBottom component="div">
+                                Recently added
+                            </Typography>
+                            <MediaList listofmedia={RecentList} />
+
+                        </Grid>
+                    </>
+                    :
+                    <Grid item sx={{ paddingTop: 5 }}>
+                        <Alert severity="error">Service Unreachable</Alert>
+                    </Grid>
+                }
             </Grid>
         </Fragment>
     );
