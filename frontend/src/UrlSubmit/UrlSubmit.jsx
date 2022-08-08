@@ -18,6 +18,8 @@ import TempYoutubeMediadetail from './TempYoutubeMediaDetail';
 import ProgressYoutubeMediadetail from './ProgressYoutubeMediaDetail';
 import { getDisplayName } from '@mui/utils';
 
+import { useInterval } from '../helper';
+
 export default function UrlSubmit(props) {
 
     const [Textfieldhelperstate, setTextfieldhelperstate] = useState({ error: false, id: "outlined-error-helper-text" })
@@ -28,9 +30,10 @@ export default function UrlSubmit(props) {
     const [DownloadProgressInfo, setDownloadProgressInfo] = useState(null)
     const [Received, setReceived] = useState(false)
     const [Pollingdelay, setPollingdelay] = useState(null);
+    const [DownloadReady, setDownloadReady] = useState(false)
 
     useInterval(async () => {
-        Submit_link()
+        Fetch_results()
     }, Pollingdelay);
 
     const ChangeURL = (value) => {
@@ -50,11 +53,38 @@ export default function UrlSubmit(props) {
         }
     }
 
-
+    const Fetch_results = () => {
+        const url = '/submit/' + UrlId
+        fetch(url, {
+            method: 'get',
+            mode: 'no-cors',
+            credentials: 'omit',
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow'
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                }
+                throw response
+            })
+            .then(data => {
+                setDownloadProgressInfo(data)
+                setReceived(true)
+                if (data.status == "DONE") {
+                    setPollingdelay(null)
+                }
+            })
+            .catch(error => {
+                console.error(error)
+            })
+    }
 
 
     const Submit_link = () => {
-        // console.log("submitted   nnoow")
         if (Valid) {
             const formData = new FormData();
             formData.append('youtube_id', Url);
@@ -78,10 +108,10 @@ export default function UrlSubmit(props) {
                 .then(data => {
                     setDownloadProgressInfo(data)
                     setReceived(true)
-                    if(data.status == "BUSY"){
-                        setPollingdelay(5000)
+                    if (data.status == "BUSY") {
+                        setPollingdelay(1000)
                     }
-                    else{
+                    else {
                         setPollingdelay(null)
                     }
                 })
@@ -121,9 +151,9 @@ export default function UrlSubmit(props) {
                     {Valid ?
                         <div>
                             {Received ?
-                                <ProgressYoutubeMediadetail data={DownloadProgressInfo}/>
+                                <ProgressYoutubeMediadetail data={DownloadProgressInfo} />
                                 :
-                                <TempYoutubeMediadetail youtube_id={UrlId} submit_link={Submit_link}/>
+                                <TempYoutubeMediadetail youtube_id={UrlId} submit_link={Submit_link} />
                             }
                         </div>
                         :
@@ -134,29 +164,4 @@ export default function UrlSubmit(props) {
             </Grid>
         </Fragment >
     );
-}
-
-
-
-
-
-export function useInterval(callback, delay) {
-    const savedCallback = useRef();
-    //Remember the latest callback.
-    useEffect(() => {
-        savedCallback.current = callback;
-    }, [callback]);
-
-    //Set up the interval.
-    useEffect(() => {
-        function tick() {
-            savedCallback.current();
-        }
-        if (delay != null) {
-            const id = setInterval(tick, delay);
-            return () => {
-                clearInterval(id);
-            };
-        }
-    }, [callback, delay]);
 }

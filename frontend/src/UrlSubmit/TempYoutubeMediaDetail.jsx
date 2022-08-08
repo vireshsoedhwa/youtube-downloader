@@ -13,8 +13,8 @@ export default function TempYoutubeMediadetail(props) {
     const [Submitclicked, setSubmitclicked] = useState(false);
 
     const submitClicked = () => {
-        console.log("clickaaaa")
         props.submit_link()
+        setSubmitclicked(true)
     }
 
     // const MEDIADETAIL_STATES = {

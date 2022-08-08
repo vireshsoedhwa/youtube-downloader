@@ -27,7 +27,7 @@ export default function YoutubeMediadetail(props) {
     const MEDIADETAIL_STATES = {
         // NEW: <AddToQueueIcon sx={{ height: 38, width: 38 }} />,
         DONE: <DownloadIcon sx={{ height: 38, width: 38 }} />,
-        BUSY: <CircularProgress sx={{ height: 38, width: 38 }} variant="determinate" value={parseInt(props.data.youtube_data.downloadprogress)} />,
+        BUSY: <CircularProgress sx={{ height: 38, width: 38 }} variant="determinate" value={parseInt(props.data.youtubedata.downloadprogress)} />,
     }
 
 
@@ -42,8 +42,8 @@ export default function YoutubeMediadetail(props) {
             <CardMedia
                 component="img"
                 sx={{ width: 100 }}
-                image={props.data.youtube_data ?
-                    "//img.youtube.com/vi/" + props.data.youtube_data.youtube_id + "/sddefault.jpg"
+                image={props.data.youtubedata ?
+                    "//img.youtube.com/vi/" + props.data.youtubedata.youtube_id + "/sddefault.jpg"
                     :
                     "//img.youtube.com/vi/" + props.data.youtube_id + "/sddefault.jpg"
                 }
@@ -61,7 +61,7 @@ export default function YoutubeMediadetail(props) {
                 <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
                     <IconButton onClick={clickqueue}>
                         {
-                            MEDIADETAIL_STATES[props.data.youtube_data.status]
+                            MEDIADETAIL_STATES[props.data.youtubedata.status]
                         }
                     </IconButton>
                 </Box>
