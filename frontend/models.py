@@ -40,13 +40,3 @@ class Resource(models.Model):
         return str(self.id)
 
 
-# class TransactionDetail(models.Model):
-#     product = models.ForeignKey(Product)
-
-# # method for updating
-# @receiver(post_save, sender=Video, dispatch_uid="update_urlslug")
-# def update_urlid(sender, instance, **kwargs):
-#     # instance.product.stock -= instance.amount
-#     post_save.disconnect(update_urlid, sender=Video)
-#     instance.save()
-#     post_save.connect(update_urlid, sender=Video)
