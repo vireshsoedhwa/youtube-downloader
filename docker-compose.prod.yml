@@ -4,7 +4,7 @@ services:
   app:
     restart: always
     volumes:
-      - playlistenerwebassets:/var/www/html
+      - webassets:/var/www/html
     environment:
       - DEBUG=1
       - PRODUCTION=0
@@ -20,18 +20,18 @@ services:
     restart: always
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - playlistenerwebassets:/var/www/html:ro
+      - webassets:/var/www/html:ro
     networks:
       playlistener-network:
         aliases:
           - playlistenerweb
     ports:
-      - 9001:9001
+      - 9000:9000
     depends_on:
       - app
 
 volumes:
-  playlistenerwebassets: 
+  webassets: 
 
 networks:
   playlistener-network:
