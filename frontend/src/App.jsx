@@ -34,7 +34,7 @@ export default function App() {
     const [Mode, setMode] = useState(0)
     const [RecentList, setRecentList] = useState(null)
     const [Pollingdelay, setPollingdelay] = useState(null)
-    const [Connected, setConnected] = useState(null)
+    const [Connected, setConnected] = useState(true)
 
     useEffect(() => {
         listupdate()
@@ -45,6 +45,7 @@ export default function App() {
     }, Pollingdelay);
 
     const listupdate = () => {
+
         fetch('/recent', {
             method: 'get',
             mode: 'no-cors',
