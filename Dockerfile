@@ -17,14 +17,13 @@ RUN set -ex; \
         pip install --upgrade pip; \
         pip install -r requirements.txt;
 
-# ============================================ frontend-builder
+# ============================================ webassets-builder
 
-FROM node:lts-alpine as frontend-builder
+FROM node:lts-alpine as webassets-builder
 
-WORKDIR /code
+WORKDIR /code/youtube
 
-COPY frontend ./
-
+COPY youtube ./
 RUN npm install
 RUN npm run build
 
@@ -44,10 +43,11 @@ COPY docker-entrypoint.sh /usr/local/bin
 COPY --from=base /root/.cache /root/.cache
 COPY --from=base /opt/venv /opt/venv
 
-COPY --from=frontend-builder /code/static ./frontend/static
+COPY --from=webassets-builder /code/youtube/static ./youtube/static
 
 COPY playlistenerweb playlistenerweb/
-COPY frontend frontend/
+COPY youtube youtube/
+COPY home home/
 
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 

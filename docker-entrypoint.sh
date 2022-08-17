@@ -2,6 +2,8 @@
 
 set -e
 
+touch .env
+> .env
 echo DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY >> .env
 
 if [[ -z "${GO_PIPELINE_LABEL}" ]]; then

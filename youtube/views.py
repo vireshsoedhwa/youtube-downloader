@@ -20,7 +20,7 @@ def index(request):
         'version':  settings.GO_PIPELINE_LABEL,
     }
 
-    return render(request, 'frontend/index.html', context)
+    return render(request, 'youtube/index.html', context)
 
 
 class SubmitUrl(APIView):

@@ -4,8 +4,8 @@ services:
   app:
     command: >
       sh -c "apk add --update npm
-      && (cd /code/frontend && npm install)
-      && (cd /code/frontend && npm run build)
+      && (cd /code/youtube && npm install)
+      && (cd /code/youtube && npm run build)
       && python manage.py runserver 0.0.0.0:9000"
     volumes:
       - .:/code
