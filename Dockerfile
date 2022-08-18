@@ -29,7 +29,7 @@ RUN npm run build
 
 # ============================================ Release
 
-FROM python:3.10-alpine AS release
+FROM python:3.10-slim-buster AS release
 
 ENV PYTHONUNBUFFERED 1
 ENV PATH /code:/opt/venv/bin:$PATH

@@ -32,17 +32,12 @@ export default function InputField(props) {
 
     return (
         <Fragment>
-            {/* <CssBaseline /> */}
+            <CssBaseline />
             <TextField
                 {...Textfieldhelperstate}
                 onChange={ChangeURL}
                 onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
             />
-            {/* <Button size="small" variant="contained" color="primary" disabled={!props.connect || DisableDownload}
-                onClick={() => { props.url(ValidatedUrl) }}
-            >
-                Submit
-            </Button> */}
         </Fragment >
     );
 }

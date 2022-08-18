@@ -1,8 +1,6 @@
 import React, { Fragment, useEffect, useState, useRef } from 'react';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid'
-import Chooser from './Chooser';
-import FileSubmit from './FileSubmit';
 import UrlSubmit from './UrlSubmit/UrlSubmit';
 import YoutubeMediadetail from './YoutubeMediadetail';
 import MediaDetail from './MediaDetail';
@@ -36,44 +34,44 @@ export default function App() {
     const [Pollingdelay, setPollingdelay] = useState(null)
     const [Connected, setConnected] = useState(true)
 
-    useEffect(() => {
-        listupdate()
-    }, [])
+    // useEffect(() => {
+    //     listupdate()
+    // }, [])
 
-    useInterval(async () => {
-        listupdate()
-    }, Pollingdelay);
+    // useInterval(async () => {
+    //     listupdate()
+    // }, Pollingdelay);
 
-    const listupdate = () => {
+    // const listupdate = () => {
 
-        fetch('/recent', {
-            method: 'get',
-            mode: 'no-cors',
-            credentials: 'omit',
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Content-Type': 'application/json'
-            },
-            redirect: 'follow'
-        })
-            .then(response => {
-                if (response.ok) {
-                    setConnected(true)
-                    return response.json()
-                }
-                else {
-                    setPollingdelay(null)
-                }
-                // throw response
-            })
-            .then(data => {
-                setRecentList(data)
-                setPollingdelay(null)
-            })
-            .catch(error => {
-                // console.error(error)
-            })
-    }
+    //     fetch('/recent', {
+    //         method: 'get',
+    //         mode: 'no-cors',
+    //         credentials: 'omit',
+    //         headers: {
+    //             'Access-Control-Allow-Origin': '*',
+    //             'Content-Type': 'application/json'
+    //         },
+    //         redirect: 'follow'
+    //     })
+    //         .then(response => {
+    //             if (response.ok) {
+    //                 setConnected(true)
+    //                 return response.json()
+    //             }
+    //             else {
+    //                 setPollingdelay(null)
+    //             }
+    //             // throw response
+    //         })
+    //         .then(data => {
+    //             setRecentList(data)
+    //             setPollingdelay(null)
+    //         })
+    //         .catch(error => {
+    //             // console.error(error)
+    //         })
+    // }
 
 
     return (
@@ -81,19 +79,15 @@ export default function App() {
             <Grid container direction="column"
                 // justifyContent="space-around"
                 // alignItems="stretch"
-                sx={{ p: 1 }}
+                sx={{ p: 10 }}
             >
                 {Connected ?
                     <>
-                        <Grid item xs>
+                        {/* <Grid item xs>
                             <Chooser setmode={setMode} />
-                        </Grid>
+                        </Grid> */}
                         <Grid item xs>
-                            {Mode == 1 ?
-                                <FileSubmit />
-                                :
-                                <UrlSubmit />
-                            }
+                            <UrlSubmit />
                         </Grid>
                         <Grid item sx={{ paddingTop: 5 }}>
 
@@ -101,7 +95,6 @@ export default function App() {
                                 Recently added
                             </Typography>
                             <MediaList listofmedia={RecentList} />
-
                         </Grid>
                     </>
                     :

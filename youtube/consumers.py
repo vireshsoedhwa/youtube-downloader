@@ -1,16 +1,16 @@
-# chat/consumers.py
-from cgitb import text
-import json
-from channels.generic.websocket import WebsocketConsumer
-import re
-from channels.db import database_sync_to_async
-from .models import Resource
-from django_q.tasks import async_task, result, fetch
-# from .yt import YT
+# # chat/consumers.py
+# from cgitb import text
+# import json
+# from channels.generic.websocket import WebsocketConsumer
+# import re
+# from channels.db import database_sync_to_async
+# from .models import Resource
+# from django_q.tasks import async_task, result, fetch
+# # from .yt import YT
 
-import time
+# import time
 
-from django.core.files.base import ContentFile
+# from django.core.files.base import ContentFile
 
 
 # class DownloadConsumer(WebsocketConsumer):

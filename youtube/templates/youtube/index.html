@@ -16,6 +16,7 @@
 {% csrf_token %}
 {% load static %}
 
-<script src="static/youtube/app.bundle.js?id={{version}}"></script>
+<!-- <script src="static/youtube/app.bundle.js?id={{version}}"></script> -->
 
+<script src="{% static 'youtube/app.bundle.js' %}?={{ version }}"></script>
 </html>

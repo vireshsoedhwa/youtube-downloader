@@ -16,7 +16,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import YoutubeMediadetail from '../YoutubeMediadetail';
 import TempYoutubeMediadetail from './TempYoutubeMediaDetail';
 import ProgressYoutubeMediadetail from './ProgressYoutubeMediaDetail';
-import { getDisplayName } from '@mui/utils';
 
 import { useInterval } from '../helper';
 
@@ -41,7 +40,6 @@ export default function UrlSubmit(props) {
         var match = value.target.value.match(regExp);
         if (match && match[2].length == 11) {
             setTextfieldhelperstate({ error: false, helperText: "" })
-            setTextfieldhelperstate({ error: false })
             setInputErrorMsg("")
             setUrlId(match[2])
             setUrl(value.target.value)

@@ -2,11 +2,11 @@ from django.shortcuts import render
 from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from .serializers import YoutubeResourceSerializer
 import json
 import requests
 
 from django.conf import settings
-
 
 @ensure_csrf_cookie
 def index(request):
@@ -24,42 +24,36 @@ def index(request):
 
 
 class SubmitUrl(APIView):
-
-    def post(self, request):
-        url = 'http://playlistenerapi:8000/youtube/'
-        if "youtube_id" in request.data:
-            r = requests.post(
-                url, data={"youtube_id": request.data['youtube_id']})
-            if str(r.status_code) == '200':
-                return Response(r.json(), status=200)
-            else:
-                return Response(r.json(), status=r.status_code)        
-        return Response("missing id", status=400)
-    
     def get(self, request, id):
-        url = 'http://playlistenerapi:8000/youtube/' + id
-        r = requests.get(url)
-        if str(r.status_code) == '200':
-            return Response(r.json(), status=200)
-        else:
-            return Response(r.json(), status=r.status_code)
+        print(id)
+        return Response("dhdhdh")
 
+class Download(APIView):
+    def get(self, request, id):
+        print(id)
+
+        return Response("download")
 
 class GetRecent(APIView):
     def get(self, format=None):
-        url = 'http://playlistenerapi:8000/mediaresources?show=10'
-        # headers = {'Authorization': 'Bearer ' + settings.API_KEY}
-        r = None
-        try:
-            r = requests.get(url, timeout=3.05)
-        except:
-            return Response("request failed", status=503)
+
+        return Response("getrecent")
+
+# class GetRecent(APIView):
+#     def get(self, format=None):
+#         url = 'http://playlistenerapi:8000/mediaresources?show=10'
+#         # headers = {'Authorization': 'Bearer ' + settings.API_KEY}
+#         r = None
+#         try:
+#             r = requests.get(url, timeout=3.05)
+#         except:
+#             return Response("request failed", status=503)
         
-        if str(r.status_code) == '200':
-            print(Response(r.json()))
-            return Response(r.json(), status=200)
-        else:
-            return Response(r.json(), status=r.status_code)
+#         if str(r.status_code) == '200':
+#             print(Response(r.json()))
+#             return Response(r.json(), status=200)
+#         else:
+#             return Response(r.json(), status=r.status_code)
 
 
 class GetDetail(APIView):
