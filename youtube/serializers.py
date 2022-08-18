@@ -8,8 +8,23 @@ import os
 
 import logging
 logger = logging.getLogger(__name__)
+from .logging.YoutubeIdFilter import YoutubeIdFilter
+
 
 class YoutubeResourceSerializer(serializers.ModelSerializer):
+
+    youtube_id = serializers.CharField(max_length=20, min_length=None, allow_blank=False, trim_whitespace=True)
+
     class Meta:
         model = YoutubeResource
-        fields = ['id']   
+        fields = ['youtube_id']   
+
+    def create(self, validated_data):      
+        newrecord, created = YoutubeResource.objects.get_or_create(**validated_data)
+        loggingfilter = YoutubeIdFilter(youtuberesource=newrecord)
+        logger.addFilter(loggingfilter)        
+        if created:
+            logger.info("New Record Created")
+        else:
+            logger.info("Existing Record Found")
+        return newrecord
