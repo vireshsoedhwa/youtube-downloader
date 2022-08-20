@@ -11,111 +11,25 @@ import InputLabel from '@mui/material/InputLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import ButtonBase from '@mui/material/ButtonBase';
 
-import LinearProgressWithLabel from '../LinearWithLabel';
-import CircularProgress from '@mui/material/CircularProgress';
 import YoutubeMediadetail from '../YoutubeMediadetail';
 import TempYoutubeMediadetail from './TempYoutubeMediaDetail';
-import ProgressYoutubeMediadetail from './ProgressYoutubeMediaDetail';
-
-import { useInterval } from '../helper';
 
 export default function UrlSubmit(props) {
 
     const [Textfieldhelperstate, setTextfieldhelperstate] = useState({ error: false, id: "outlined-error-helper-text" })
     const [InputErrorMsg, setInputErrorMsg] = useState('')
-    const [Valid, setValid] = useState(false)
-    const [Url, setUrl] = useState('')
-    const [UrlId, setUrlId] = useState('')
-    const [DownloadProgressInfo, setDownloadProgressInfo] = useState(null)
-    const [Received, setReceived] = useState(false)
-    const [Pollingdelay, setPollingdelay] = useState(null);
-    const [DownloadReady, setDownloadReady] = useState(false)
-
-    useInterval(async () => {
-        Fetch_results()
-    }, Pollingdelay);
 
     const ChangeURL = (value) => {
         var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
         var match = value.target.value.match(regExp);
         if (match && match[2].length == 11) {
-            setTextfieldhelperstate({ error: false, helperText: "" })
+            setTextfieldhelperstate({ error: false })
             setInputErrorMsg("")
-            setUrlId(match[2])
-            setUrl(value.target.value)
-            setValid(true)
+            props.setUrlId(match[2])
         } else {
             setTextfieldhelperstate({ error: true })
             setInputErrorMsg("Incorrect URL")
-            setValid(false)
-        }
-    }
-
-    const Fetch_results = () => {
-        const url = '/submit/' + UrlId
-        fetch(url, {
-            method: 'get',
-            mode: 'no-cors',
-            credentials: 'omit',
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Content-Type': 'application/json'
-            },
-            redirect: 'follow'
-        })
-            .then(response => {
-                if (response.ok) {
-                    return response.json()
-                }
-                throw response
-            })
-            .then(data => {
-                setDownloadProgressInfo(data)
-                setReceived(true)
-                if (data.status == "DONE") {
-                    setPollingdelay(null)
-                }
-            })
-            .catch(error => {
-                console.error(error)
-            })
-    }
-
-
-    const Submit_link = () => {
-        if (Valid) {
-            const formData = new FormData();
-            formData.append('youtube_id', Url);
-            fetch('/submit', {
-                method: 'post',
-                body: formData,
-                mode: 'no-cors',
-                credentials: 'omit',
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Content-Type': 'application/json'
-                },
-                redirect: 'follow'
-            })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json()
-                    }
-                    throw response
-                })
-                .then(data => {
-                    setDownloadProgressInfo(data)
-                    setReceived(true)
-                    if (data.status == "BUSY") {
-                        setPollingdelay(1000)
-                    }
-                    else {
-                        setPollingdelay(null)
-                    }
-                })
-                .catch(error => {
-                    console.error(error)
-                })
+            props.setUrlId(null)
         }
     }
 
@@ -146,16 +60,17 @@ export default function UrlSubmit(props) {
                 </Grid>
                 {/* ========================================== media detail ============================================= */}
                 <Grid item>
-                    {Valid ?
+                    {props.UrlId ?
                         <div>
-                            {Received ?
-                                <ProgressYoutubeMediadetail data={DownloadProgressInfo} />
+                            {props.SubmittedItembyUser ?
+                                <YoutubeMediadetail data={props.SubmittedItembyUser} />
                                 :
-                                <TempYoutubeMediadetail youtube_id={UrlId} submit_link={Submit_link} />
+                                <TempYoutubeMediadetail youtube_id={props.UrlId} submit_link={props.submit_link} />
                             }
                         </div>
                         :
                         <div>
+                            
                         </div>
                     }
                 </Grid>

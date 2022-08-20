@@ -9,27 +9,73 @@ import Typography from '@mui/material/Typography';
 import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
-import CircularProgress from '@mui/material/CircularProgress';
+// import CircularProgress from '@mui/material/CircularProgress';
+import CircularProgressWithLabel from './CircularStatic';
 import DownloadIcon from '@mui/icons-material/Download';
 import AddToQueueIcon from '@mui/icons-material/AddToQueue';
+import ErrorIcon from '@mui/icons-material/Error';
 
 export default function YoutubeMediadetail(props) {
 
     const clickqueue = () => {
-        if (props.status == "NEW") {
+        if (props.data.status == "NEW") {
             console.log("NEW clicked")
         }
-        if (props.status == "DONE") {
+        if (props.data.status == "DONE") {
             console.log("DONE CLICKED")
+            Download(props.data.youtube_id)
         }
+        if (props.data.status == "FAILED") {
+            console.log("FAILED CLICKED")
+        }
+    }
+
+    const Download = (youtube_id) => {
+        let url = '/youtube/download/' + youtube_id
+        let filename = ''
+        fetch(url, {
+            method: 'get',
+            mode: 'no-cors',
+            credentials: 'omit',
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow'
+        })
+            .then(response => {
+                if (response.ok) {
+                    filename = response.headers.get('content-disposition')
+                        .split(';')
+                        .find(n => n.includes('filename='))
+                        .replace('filename=', '')
+                        .trim();
+
+                    return response.blob();
+                }
+                else {
+                    console.log("download failed")
+                }
+                throw response
+            })
+            .then(data => {
+                var a = document.createElement("a");
+                a.href = window.URL.createObjectURL(data);
+                a.download = filename;
+                a.click();
+                a.remove();
+            })
+            .catch(error => {
+                console.error(error)
+            })
     }
 
     const MEDIADETAIL_STATES = {
         // NEW: <AddToQueueIcon sx={{ height: 38, width: 38 }} />,
-        DONE: <DownloadIcon sx={{ height: 38, width: 38 }} />,
-        BUSY: <CircularProgress sx={{ height: 38, width: 38 }} variant="determinate" value={parseInt(props.data.youtubedata.downloadprogress)} />,
+        DONE: <DownloadIcon color="success" sx={{ height: 38, width: 38 }} />,
+        BUSY: <CircularProgressWithLabel sx={{ height: 38, width: 38 }} variant="determinate" value={parseInt(props.data.downloadprogress)} />,
+        FAILED: <ErrorIcon color="error" sx={{ height: 38, width: 38 }} />,
     }
-
 
     return (
         <Card
@@ -42,11 +88,7 @@ export default function YoutubeMediadetail(props) {
             <CardMedia
                 component="img"
                 sx={{ width: 100 }}
-                image={props.data.youtubedata ?
-                    "//img.youtube.com/vi/" + props.data.youtubedata.youtube_id + "/sddefault.jpg"
-                    :
-                    "//img.youtube.com/vi/" + props.data.youtube_id + "/sddefault.jpg"
-                }
+                image={"//img.youtube.com/vi/" + props.data.youtube_id + "/sddefault.jpg"}
                 alt="audio file"
             />
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -61,7 +103,7 @@ export default function YoutubeMediadetail(props) {
                 <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
                     <IconButton onClick={clickqueue}>
                         {
-                            MEDIADETAIL_STATES[props.data.youtubedata.status]
+                            MEDIADETAIL_STATES[props.data.status]
                         }
                     </IconButton>
                 </Box>

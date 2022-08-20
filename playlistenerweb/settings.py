@@ -129,7 +129,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = '/var/www/html/static/'
 
-# MEDIA_ROOT = '/code/data/'
+MEDIA_ROOT = '/code/data/'
 # MEDIA_URL = 
 
 # Default primary key field type

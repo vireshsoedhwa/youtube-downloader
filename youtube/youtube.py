@@ -1,12 +1,11 @@
+from .logging.YoutubeIdFilter import YoutubeIdFilter
 import youtube_dl
-from .models import MediaResource
 from django.core.files.base import ContentFile
 from pathlib import Path
 from django.core.files import File
 from django.conf import settings
 from youtube_dl.utils import ExtractorError, YoutubeDLError
 
-import re
 import logging
 logger = logging.getLogger(__name__)
 
@@ -15,7 +14,7 @@ class YT:
     def __init__(self, mediaobject):
         self.mediaobject = mediaobject
         self.filename_mp3 = ""
-
+        self.filepath_mp3 = ""
         self.ydl_opts = {
             'writethumbnail': True,
             'format':
@@ -30,7 +29,7 @@ class YT:
             MyLogger(),
             'progress_hooks': [self.my_hook],
             'download_archive':
-            settings.MEDIA_ROOT + str(mediaobject.id) + '/archive',
+            settings.MEDIA_ROOT + '/archive',
             'keepvideo': False,
             'cachedir': False,
             # 'forcetitle':
@@ -38,30 +37,33 @@ class YT:
             # 'writeinfojson':
             # '/code/dl/' + str(mediaobject.id),
             'restrictfilenames': True,
-            'outtmpl': settings.MEDIA_ROOT + str(mediaobject.id) + '/temp/%(title)s.%(ext)s',
+            'outtmpl': settings.MEDIA_ROOT + str(mediaobject.youtube_id) + '/%(title)s.%(ext)s',
         }
+        loggingfilter = YoutubeIdFilter(youtuberesource=mediaobject)
+        logger.addFilter(loggingfilter)
 
     def my_hook(self, d):
         if d['status'] == 'downloading':
             progress = (d['downloaded_bytes']/d['total_bytes'])*100
-            self.mediaobject.youtubedata.eta = d['eta']
-            self.mediaobject.youtubedata.elapsed = d['elapsed']
-            self.mediaobject.youtubedata.speed = d['speed']
-            self.mediaobject.youtubedata.downloadprogress = progress
-            self.mediaobject.youtubedata.save()
+            self.mediaobject.eta = d['eta']
+            self.mediaobject.elapsed = d['elapsed']
+            self.mediaobject.speed = d['speed']
+            self.mediaobject.downloadprogress = progress
+            self.mediaobject.save()
         if d['status'] == 'error':
-            self.mediaobject.youtubedata.status = "FAILED"
-            self.mediaobject.youtubedata.save()
+            self.mediaobject.status = self.mediaobject.Status.FAILED
+            self.mediaobject.save()
         if d['status'] == 'finished':
             path = Path(d['filename'])
             if path.is_file():
                 # print(path.name)
                 # print(path.stem)
-                self.filename_mp3 = '/temp/' + path.stem + '.mp3'
+                self.filename_mp3 = path.stem + '.mp3'
+                self.filepath_mp3 = str(self.mediaobject.youtube_id) + '/' + path.stem + '.mp3'
 
     def run(self):
         youtube_target_url = "https://youtube.com/watch?v=" + \
-            str(self.mediaobject.youtubedata.youtube_id)
+            str(self.mediaobject.youtube_id)
 
         with youtube_dl.YoutubeDL(self.ydl_opts) as ydl:
             extracted_info = None
@@ -83,22 +85,22 @@ class YT:
             self.mediaobject.save()
 
             ydl.download([youtube_target_url])
-            path = Path(settings.MEDIA_ROOT +
-                        str(self.mediaobject.id) + self.filename_mp3)
+
+            path = Path(settings.MEDIA_ROOT + self.filepath_mp3)
             if path.is_file():
-                # print(f'The file {self.filename_mp3} exists')
+                # print(f'The file at {self.filepath_mp3} exists')
                 with path.open(mode='rb') as f:
-                    self.mediaobject.audiofile = File(f, path.name)
-                    self.mediaobject.audiofile.name = path.name
-                    self.mediaobject.youtubedata.status = 'DONE'
-                    self.mediaobject.youtubedata.save()
+                    # self.mediaobject.audiofile = File(f, path.name)
+                    # self.mediaobject.audiofile.name = path.name
+                    self.mediaobject.status = self.mediaobject.Status.DONE
+                    self.mediaobject.filename = self.filename_mp3
                     self.mediaobject.save()
                     return True
             else:
-                self.mediaobject.youtubedata.status = 'FAILED'
-                self.mediaobject.youtubedata.save()
-                self.mediaobject.youtubedata.error = "Failed to download file"
+                self.mediaobject.status = self.mediaobject.Status.FAILED
+                self.mediaobject.error = "Failed to download file"
                 self.mediaobject.save()
+
 
 class MyLogger(object):
 
@@ -112,7 +114,8 @@ class MyLogger(object):
         pass
 
     def error(self, msg):
-        logger.error(msg)
+        # logger.error(msg)
+        pass
 
 
 # for reference

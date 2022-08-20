@@ -52,7 +52,7 @@ export default function TempYoutubeMediadetail(props) {
                             </>
                             :
                             <IconButton onClick={submitClicked}>
-                                <AddToQueueIcon sx={{ height: 38, width: 38 }} />
+                                <AddToQueueIcon color="primary" sx={{ height: 38, width: 38 }} />
                             </IconButton>
                     }
                 </Box>

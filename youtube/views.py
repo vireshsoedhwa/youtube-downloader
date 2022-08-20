@@ -1,13 +1,18 @@
+from urllib import response
 from django.shortcuts import render
 from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import YoutubeResourceSerializer
+from django.http import HttpResponse, JsonResponse, FileResponse
+from django.core.files import File
 import json
 import requests
 from .models import YoutubeResource
 
 from django.conf import settings
+from pathlib import Path
+import os
 
 
 @ensure_csrf_cookie
@@ -33,15 +38,30 @@ class SubmitUrl(APIView):
             return Response(serializer.data, status=200)
         return Response(serializer.errors, status=400)
 
+
 class Download(APIView):
-    def get(self, request, id):
-        print(id)
-        return Response("download")
+    def get(self, request, youtube_id):
+        youtube = None
+        try:
+            youtube = YoutubeResource.objects.get(youtube_id=youtube_id)
+        except:
+            return Response(status=404)
+        file_path = settings.MEDIA_ROOT + \
+            str(youtube.youtube_id) + '/' + youtube.filename
+        if os.path.isfile(file_path):
+            file_response = FileResponse(
+                open(file_path, 'rb'), as_attachment=True, filename=youtube.filename)
+            return file_response
+        else:
+            return Response(status=404)
 
 
 class GetRecent(APIView):
     def get(self, format=None):
-        return Response("getrecent")
+        recent = YoutubeResource.objects.all().order_by('-created_at')[:100]
+        serializer = YoutubeResourceSerializer(recent, many=True)
+        return Response(serializer.data, status=200)
+
 
 # class GetRecent(APIView):
 #     def get(self, format=None):

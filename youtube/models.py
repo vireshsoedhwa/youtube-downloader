@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models import Deferrable, UniqueConstraint
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django_q.tasks import async_task
 
 import re
 
@@ -22,9 +23,11 @@ class YoutubeResource(models.Model):
     youtube_id = models.TextField(unique=True, max_length=200)
     title = models.TextField(max_length=200, null=True, blank=True)
     description = models.TextField(max_length=5000, null=True, blank=True)
-    audiofile = models.FileField(upload_to=file_directory_path,
-                                 null=True,
-                                 blank=True)
+    genre = models.TextField(max_length=100, null=True, blank=True)
+    filename = models.TextField(max_length=100, null=True, blank=True)
+    # audiofile = models.FileField(upload_to=file_directory_path,
+    #                              null=True,
+    #                              blank=True)
     status = models.CharField(
         max_length=7, choices=Status.choices, default=Status.NEW)
     downloadprogress = models.DecimalField(
@@ -35,8 +38,21 @@ class YoutubeResource(models.Model):
         max_digits=5, decimal_places=0, blank=True, default=0)
     speed = models.DecimalField(
         max_digits=10, decimal_places=0, blank=True, default=0)
-    error = models.TextField(max_length=500, null=True, default=0)
+    error = models.TextField(max_length=500, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.id)
+
+
+@receiver(post_save, sender=YoutubeResource, dispatch_uid="add_record")
+def checkdownload(sender, instance, created, raw, using, update_fields, **kwargs):
+    if created:
+        if instance.status == instance.Status.NEW:
+            instance.status = instance.Status.BUSY
+            instance.save()
+            print(type(instance))
+            async_task('youtube.tasks.get_video', instance, sync=False)
+    else:
+        pass
+        # TODO retry download here on user request
