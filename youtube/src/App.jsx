@@ -119,7 +119,7 @@ export default function App() {
             <Grid container direction="column"
                 // justifyContent="space-around"
                 // alignItems="stretch"
-                sx={{ p: 10 }}
+                sx={{ p: 2 }}
             >
                 {Connected ?
                     <>

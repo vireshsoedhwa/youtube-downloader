@@ -99,6 +99,20 @@ export default function YoutubeMediadetail(props) {
                         :
                         <div>
                         </div>}
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', pl: 5, pb: 0 }}>
+                        {props.data.status == 'DONE' ?
+                            <div>
+                                <audio controls>
+                                    <source src={'/youtube/download/' + props.data.youtube_id} type="audio/mpeg" />
+                                    Your browser does not support the audio element.
+                                </audio>
+                            </div>
+                            :
+                            <div>
+                            </div>
+                        }
+                    </Box>
                 </Box>
             </Box>
         </Card >
