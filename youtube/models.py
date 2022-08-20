@@ -1,3 +1,4 @@
+from .logging.YoutubeIdFilter import YoutubeIdFilter
 from django.db import models
 from django.core.files.storage import FileSystemStorage
 from django.utils.translation import gettext_lazy as _
@@ -9,7 +10,6 @@ from django_q.tasks import async_task
 import re
 import logging
 logger = logging.getLogger(__name__)
-from .logging.YoutubeIdFilter import YoutubeIdFilter
 
 
 def file_directory_path(instance, filename):
@@ -31,6 +31,7 @@ class YoutubeResource(models.Model):
     # audiofile = models.FileField(upload_to=file_directory_path,
     #                              null=True,
     #                              blank=True)
+    archive = models.BooleanField(default=False)
     status = models.CharField(
         max_length=7, choices=Status.choices, default=Status.NEW)
     downloadprogress = models.DecimalField(
@@ -51,7 +52,7 @@ class YoutubeResource(models.Model):
 @receiver(post_save, sender=YoutubeResource, dispatch_uid="add_record")
 def checkdownload(sender, instance, created, raw, using, update_fields, **kwargs):
     loggingfilter = YoutubeIdFilter(youtuberesource=instance)
-    logger.addFilter(loggingfilter)    
+    logger.addFilter(loggingfilter)
 
     if instance.status == YoutubeResource.Status.NEW:
         instance.status = YoutubeResource.Status.BUSY
@@ -59,4 +60,4 @@ def checkdownload(sender, instance, created, raw, using, update_fields, **kwargs
         instance.save()
         async_task('youtube.tasks.get_video', instance, sync=False)
     else:
-       pass
+        pass

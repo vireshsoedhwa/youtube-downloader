@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from .serializers import YoutubeResourceSerializer
 from django.http import HttpResponse, JsonResponse, FileResponse
 from django.core.files import File
@@ -17,16 +18,12 @@ import os
 
 @ensure_csrf_cookie
 def index(request):
-
     if request.session.test_cookie_worked():
         print(str(request.headers['Cookie']))
-
     request.session.set_test_cookie()
-
     context = {
         'version':  settings.GO_PIPELINE_LABEL,
     }
-
     return render(request, 'youtube/index.html', context)
 
 
@@ -38,11 +35,13 @@ class SubmitUrl(APIView):
             return Response(serializer.data, status=200)
         return Response(serializer.errors, status=400)
 
+
 class Download(APIView):
     def get(self, request, youtube_id):
         youtuberesource = None
         try:
-            youtuberesource = YoutubeResource.objects.get(youtube_id=youtube_id)
+            youtuberesource = YoutubeResource.objects.get(
+                youtube_id=youtube_id)
         except:
             return Response(status=404)
         file_path = settings.MEDIA_ROOT + \
@@ -64,18 +63,29 @@ class GetRecent(APIView):
         return Response(serializer.data, status=200)
 
 
-# class GetRecent(APIView):
-#     def get(self, format=None):
-#         url = 'http://playlistenerapi:8000/mediaresources?show=10'
-#         # headers = {'Authorization': 'Bearer ' + settings.API_KEY}
-#         r = None
-#         try:
-#             r = requests.get(url, timeout=3.05)
-#         except:
-#             return Response("request failed", status=503)
+@api_view()
+def archive_add(request, youtube_id):
+    youtuberesource = None
+    try:
+        youtuberesource = YoutubeResource.objects.get(
+            youtube_id=youtube_id)
+        youtuberesource.archive = True
+        youtuberesource.save()
+        serializer = YoutubeResourceSerializer(youtuberesource)
+        return Response(serializer.data, status=200)
+    except:
+        return Response(status=404)
 
-#         if str(r.status_code) == '200':
-#             print(Response(r.json()))
-#             return Response(r.json(), status=200)
-#         else:
-#             return Response(r.json(), status=r.status_code)
+@api_view()
+def archive_remove(request, youtube_id):
+    youtuberesource = None
+    try:
+        youtuberesource = YoutubeResource.objects.get(
+            youtube_id=youtube_id)
+        youtuberesource.archive = False
+        youtuberesource.save()
+        serializer = YoutubeResourceSerializer(youtuberesource)
+        return Response(serializer.data, status=200)
+    except:
+        return Response(status=404)
+

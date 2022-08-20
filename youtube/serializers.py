@@ -19,7 +19,7 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = YoutubeResource
         fields = ['id', 'youtube_id', 'title', 'description', 'status', 'filename',
-                  'downloadprogress', 'eta', 'elapsed', 'speed', 'error', 'created_at']
+                  'downloadprogress', 'eta', 'elapsed', 'speed', 'error', 'archive', 'created_at']
 
     def create(self, validated_data):
         newrecord, created = YoutubeResource.objects.get_or_create(

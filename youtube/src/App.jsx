@@ -16,7 +16,7 @@ function MediaList(props) {
     const listItems = listofmedia.map((media, index) =>
         <div key={media.id}>
             {props.filter != media.youtube_id ?
-                <YoutubeMediadetail data={media} />
+                <YoutubeMediadetail data={media} listupdate={props.listupdate}/>
                 :
                 <div></div>
             }
@@ -38,7 +38,6 @@ export default function App() {
         setSubmittedItembyUser(null)
     }, [UrlId])
 
-
     useEffect(() => {
         listupdate()
     }, [])
@@ -48,7 +47,6 @@ export default function App() {
     }, Pollingdelay);
 
     const listupdate = () => {
-
         fetch('/youtube/recent', {
             method: 'get',
             mode: 'no-cors',
@@ -68,7 +66,7 @@ export default function App() {
                 else {
                     setPollingdelay(null)
                 }
-                // throw response
+                throw response
             })
             .then(data => {
                 setRecentList(data)
@@ -134,7 +132,7 @@ export default function App() {
                             <Typography variant="h6" gutterBottom component="div">
                                 Recently added
                             </Typography>
-                            <MediaList listofmedia={RecentList} filter={UrlId} />
+                            <MediaList listofmedia={RecentList} filter={UrlId} listupdate={listupdate}/>
                         </Grid>
                     </>
                     :
