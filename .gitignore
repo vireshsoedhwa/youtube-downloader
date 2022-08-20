@@ -5,7 +5,6 @@ __pycache__
 
 .vscode
 
-migrations
 data
 *.env
 db.sqlite3
