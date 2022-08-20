@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('youtube', '0002_youtuberesource_filename'),
+        ('youtube', '0001_initial'),
     ]
 
     operations = [
