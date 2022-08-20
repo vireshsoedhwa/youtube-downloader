@@ -9,6 +9,13 @@
 <body>
     <div id="root">
     </div>
+    <footer id="footer" style="position: fixed; bottom: 0;">
+        v-{{ version }}
+    </footer>
 </body>
+{% csrf_token %}
+{% load static %}
+
+<script src="static/home/app.bundle.js?id={{version}}"></script>
 
 </html>

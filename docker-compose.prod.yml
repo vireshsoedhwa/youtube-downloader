@@ -1,19 +1,32 @@
 version: '3.8'
 
 services:
+  webdb:
+    image: postgres:alpine
+    restart: always
+    volumes:
+      - dataweb:/var/lib/postgresql/data
+    env_file:
+      - .env
+    networks:
+      playlistener-network:   
+
   app:
     restart: always
     volumes:
+      - dataweb:/data
       - webassets:/var/www/html
     environment:
       - DEBUG=0
       - PRODUCTION=1
-      - POSTGRES_HOST=db
-      - POSTGRES_PORT=5432
+    depends_on:
+      - webdb
     env_file:
       - .env
     networks:
       playlistener-network:
+        aliases:
+          - playlistenerwebapp
 
   proxy:
     image: nginx:alpine
@@ -31,6 +44,8 @@ services:
       - app
 
 volumes:
+  dataweb:
+    external: true
   webassets: 
 
 networks:

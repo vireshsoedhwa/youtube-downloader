@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-import frontend
+import youtube
+import home
 
 urlpatterns = [
-    path('', include('frontend.urls')),
-    # path('admin/', frontend),
+    # path('', include('home.urls')),
+    path('youtube/', include('youtube.urls')),
+    path('admin/', admin.site.urls),
 ]
