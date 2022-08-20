@@ -23,55 +23,20 @@ export default function YoutubeMediadetail(props) {
         }
         if (props.data.status == "DONE") {
             console.log("DONE CLICKED")
-            Download(props.data.youtube_id)
+            onDownload(props.data.youtube_id)
         }
         if (props.data.status == "FAILED") {
             console.log("FAILED CLICKED")
         }
     }
 
-    const Download = (youtube_id) => {
-        let url = '/youtube/download/' + youtube_id
-        let filename = ''
-        fetch(url, {
-            method: 'get',
-            mode: 'no-cors',
-            credentials: 'omit',
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Content-Type': 'application/json'
-            },
-            redirect: 'follow'
-        })
-            .then(response => {
-                if (response.ok) {
-                    filename = response.headers.get('content-disposition')
-                        .split(';')
-                        .find(n => n.includes('filename='))
-                        .replace('filename=', '')
-                        .trim();
-
-                    return response.blob();
-                }
-                else {
-                    console.log("download failed")
-                }
-                throw response
-            })
-            .then(data => {
-                var a = document.createElement("a");
-                a.href = window.URL.createObjectURL(data);
-                a.download = filename;
-                a.click();
-                a.remove();
-            })
-            .catch(error => {
-                console.error(error)
-            })
-    }
+    const onDownload = (youtube_id) => {
+        const link = document.createElement("a");
+        link.href = '/youtube/download/' + youtube_id;
+        link.click();
+      };
 
     const MEDIADETAIL_STATES = {
-        // NEW: <AddToQueueIcon sx={{ height: 38, width: 38 }} />,
         DONE: <DownloadIcon color="success" sx={{ height: 38, width: 38 }} />,
         BUSY: <CircularProgressWithLabel sx={{ height: 38, width: 38 }} variant="determinate" value={parseInt(props.data.downloadprogress)} />,
         FAILED: <ErrorIcon color="error" sx={{ height: 38, width: 38 }} />,
