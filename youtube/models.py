@@ -7,6 +7,9 @@ from django.dispatch import receiver
 from django_q.tasks import async_task
 
 import re
+import logging
+logger = logging.getLogger(__name__)
+from .logging.YoutubeIdFilter import YoutubeIdFilter
 
 
 def file_directory_path(instance, filename):
@@ -47,12 +50,13 @@ class YoutubeResource(models.Model):
 
 @receiver(post_save, sender=YoutubeResource, dispatch_uid="add_record")
 def checkdownload(sender, instance, created, raw, using, update_fields, **kwargs):
-    if created:
-        if instance.status == instance.Status.NEW:
-            instance.status = instance.Status.BUSY
-            instance.save()
-            print(type(instance))
-            async_task('youtube.tasks.get_video', instance, sync=False)
+    loggingfilter = YoutubeIdFilter(youtuberesource=instance)
+    logger.addFilter(loggingfilter)    
+
+    if instance.status == YoutubeResource.Status.NEW:
+        instance.status = YoutubeResource.Status.BUSY
+        logger.info("New instance created")
+        instance.save()
+        async_task('youtube.tasks.get_video', instance, sync=False)
     else:
-        pass
-        # TODO retry download here on user request
+       pass

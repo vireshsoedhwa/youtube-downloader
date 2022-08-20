@@ -38,21 +38,22 @@ class SubmitUrl(APIView):
             return Response(serializer.data, status=200)
         return Response(serializer.errors, status=400)
 
-
 class Download(APIView):
     def get(self, request, youtube_id):
-        youtube = None
+        youtuberesource = None
         try:
-            youtube = YoutubeResource.objects.get(youtube_id=youtube_id)
+            youtuberesource = YoutubeResource.objects.get(youtube_id=youtube_id)
         except:
             return Response(status=404)
         file_path = settings.MEDIA_ROOT + \
-            str(youtube.youtube_id) + '/' + youtube.filename
+            str(youtuberesource.youtube_id) + '/' + youtuberesource.filename
         if os.path.isfile(file_path):
             file_response = FileResponse(
-                open(file_path, 'rb'), as_attachment=True, filename=youtube.filename)
+                open(file_path, 'rb'), as_attachment=True, filename=youtuberesource.filename)
             return file_response
         else:
+            youtuberesource.status = youtuberesource.Status.FAILED
+            youtuberesource.save()
             return Response(status=404)
 
 

@@ -10,6 +10,8 @@ import os
 from pathlib import Path
 from youtube_dl.utils import ExtractorError, YoutubeDLError
 
+from .models import YoutubeResource
+
 import logging
 logger = logging.getLogger(__name__)
 from .logging.YoutubeIdFilter import YoutubeIdFilter
@@ -24,10 +26,10 @@ def get_video(instance):
     except YoutubeDLError as ex:
         logger.error("YoutubeDL error")
         instance.error = ex.args
-        instance.status = instance.Status.FAILED
+        instance.status = YoutubeResource.Status.FAILED
         instance.save()
     except:
         logger.error("YoutubeDL general error")
         instance.error = "YoutubeDL general error"
-        instance.status = instance.Status.FAILED
+        instance.status = YoutubeResource.Status.FAILED
         instance.save()

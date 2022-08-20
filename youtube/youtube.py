@@ -9,7 +9,6 @@ from youtube_dl.utils import ExtractorError, YoutubeDLError
 import logging
 logger = logging.getLogger(__name__)
 
-
 class YT:
     def __init__(self, mediaobject):
         self.mediaobject = mediaobject
@@ -100,7 +99,6 @@ class YT:
                 self.mediaobject.status = self.mediaobject.Status.FAILED
                 self.mediaobject.error = "Failed to download file"
                 self.mediaobject.save()
-
 
 class MyLogger(object):
 

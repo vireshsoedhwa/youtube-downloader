@@ -14,7 +14,7 @@ services:
   app:
     restart: always
     volumes:
-      - dataweb:/data
+      - dataweb:/code/data
       - webassets:/var/www/html
     environment:
       - DEBUG=0

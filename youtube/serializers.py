@@ -18,7 +18,7 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = YoutubeResource
-        fields = ['id', 'youtube_id', 'title', 'description', 'status',
+        fields = ['id', 'youtube_id', 'title', 'description', 'status', 'filename',
                   'downloadprogress', 'eta', 'elapsed', 'speed', 'error', 'created_at']
 
     def create(self, validated_data):
@@ -30,4 +30,7 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
             logger.info("New Record Created")
         else:
             logger.info("Existing Record Found")
+            if newrecord.status == YoutubeResource.Status.FAILED:
+                newrecord.status = YoutubeResource.Status.NEW
+                newrecord.save()
         return newrecord
