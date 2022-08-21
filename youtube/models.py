@@ -31,7 +31,7 @@ class YoutubeResource(models.Model):
     # audiofile = models.FileField(upload_to=file_directory_path,
     #                              null=True,
     #                              blank=True)
-    archive = models.BooleanField(default=False)
+    music = models.BooleanField(default=False)
     status = models.CharField(
         max_length=7, choices=Status.choices, default=Status.NEW)
     downloadprogress = models.DecimalField(

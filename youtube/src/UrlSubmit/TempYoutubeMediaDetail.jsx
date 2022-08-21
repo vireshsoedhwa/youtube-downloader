@@ -17,12 +17,6 @@ export default function TempYoutubeMediadetail(props) {
         setSubmitclicked(true)
     }
 
-    // const MEDIADETAIL_STATES = {
-    //     NEW: <AddToQueueIcon sx={{ height: 38, width: 38 }} />,
-    //     DONE: <DownloadIcon sx={{ height: 38, width: 38 }} />,
-    //     // BUSY: <CircularProgress sx={{ height: 38, width: 38 }} variant="determinate" value={parseInt(props.data.youtube_data.downloadprogress)} />,
-    // }
-
     return (
         <Card
             sx={{

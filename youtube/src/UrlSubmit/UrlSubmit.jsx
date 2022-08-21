@@ -63,7 +63,7 @@ export default function UrlSubmit(props) {
                     {props.UrlId ?
                         <div>
                             {props.SubmittedItembyUser ?
-                                <YoutubeMediadetail data={props.SubmittedItembyUser} submit_link={props.submit_link} />
+                                <YoutubeMediadetail data={props.SubmittedItembyUser} submit_link={props.submit_link} listupdate={props.listupdate}/>
                                 :
                                 <TempYoutubeMediadetail youtube_id={props.UrlId} submit_link={props.submit_link} />
                             }

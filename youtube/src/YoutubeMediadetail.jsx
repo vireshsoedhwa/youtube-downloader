@@ -11,14 +11,9 @@ import DownloadIcon from '@mui/icons-material/Download';
 import ErrorIcon from '@mui/icons-material/Error';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import Tooltip from '@mui/material/Tooltip';
-import Switch from '@mui/material/Switch';
+import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 
 export default function YoutubeMediadetail(props) {
-    const [Archive, setArchive] = React.useState(props.data.archive);
-
-    useEffect(() => {
-        setArchive(props.data.archive);
-    }, [props.data.archive])
 
     const clickqueue = () => {
         if (props.data.status == "NEW") {
@@ -62,33 +57,6 @@ export default function YoutubeMediadetail(props) {
             })
     }
 
-    const archive_add = (youtube_id) => {
-        archive_send('/youtube/archive/' + youtube_id)
-    }
-
-    const archive_remove = (youtube_id) => {
-        archive_send('/youtube/unarchive/' + youtube_id)
-    }
-
-    const archive_send = (url) => {
-        fetch(url, {
-            method: 'get'
-        }).then(response => {
-            if (response.ok) {
-                props.listupdate()
-            }
-        })
-    }
-
-    const handleArchive = (event) => {
-        if (Archive) {
-            archive_remove(props.data.youtube_id)
-        }
-        else {
-            archive_add(props.data.youtube_id);
-        }
-    }
-
     return (
         <Card
             sx={{
@@ -105,10 +73,10 @@ export default function YoutubeMediadetail(props) {
             />
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <CardContent sx={{ flex: '1 0 auto' }}>
-                    <Typography component="div" variant="h6">
+                    <Typography component="div" variant="subtitle1">
                         {props.data.title}
                     </Typography>
-                    <Typography variant="subtitle1" color="text.secondary" component="div">
+                    <Typography variant="subtitle2" color="text.secondary" component="div">
                         {props.data.filename}
                     </Typography>
                 </CardContent>
@@ -141,12 +109,8 @@ export default function YoutubeMediadetail(props) {
                             </div>
                         }
                     </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', pl: 5, pb: 0 }}>
-                        <Switch
-                            checked={Archive}
-                            onChange={handleArchive}
-                            inputProps={{ 'aria-label': 'controlled' }}
-                        />
+                    <Box sx={{ display: 'flex', alignItems: 'center', pl: 3, pb: 0 }}>
+                        <AudiotrackIcon />
                     </Box>
                 </Box>
             </Box>

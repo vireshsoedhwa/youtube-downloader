@@ -125,7 +125,7 @@ export default function App() {
                             <Chooser setmode={setMode} />
                         </Grid> */}
                         <Grid item xs>
-                            <UrlSubmit SubmittedItembyUser={SubmittedItembyUser} submit_link={Submit_link} setUrlId={setUrlId} UrlId={UrlId} />
+                            <UrlSubmit SubmittedItembyUser={SubmittedItembyUser} submit_link={Submit_link} setUrlId={setUrlId} UrlId={UrlId} listupdate={listupdate}/>
                         </Grid>
                         <Grid item sx={{ paddingTop: 5 }}>
 
