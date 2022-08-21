@@ -62,30 +62,3 @@ class GetRecent(APIView):
         serializer = YoutubeResourceSerializer(recent, many=True)
         return Response(serializer.data, status=200)
 
-
-# @api_view()
-# def archive_add(request, youtube_id):
-#     youtuberesource = None
-#     try:
-#         youtuberesource = YoutubeResource.objects.get(
-#             youtube_id=youtube_id)
-#         youtuberesource.archive = True
-#         youtuberesource.save()
-#         serializer = YoutubeResourceSerializer(youtuberesource)
-#         return Response(serializer.data, status=200)
-#     except:
-#         return Response(status=404)
-
-# @api_view()
-# def archive_remove(request, youtube_id):
-#     youtuberesource = None
-#     try:
-#         youtuberesource = YoutubeResource.objects.get(
-#             youtube_id=youtube_id)
-#         youtuberesource.archive = False
-#         youtuberesource.save()
-#         serializer = YoutubeResourceSerializer(youtuberesource)
-#         return Response(serializer.data, status=200)
-#     except:
-#         return Response(status=404)
-

@@ -24,6 +24,7 @@ class YoutubeResource(models.Model):
         DONE = 'DONE', _('Done')
     id = models.AutoField(primary_key=True)
     youtube_id = models.TextField(unique=True, max_length=200)
+    youtube_url = models.TextField(max_length=500, null=True, blank=True)
     title = models.TextField(max_length=200, null=True, blank=True)
     description = models.TextField(max_length=5000, null=True, blank=True)
     genre = models.TextField(max_length=100, null=True, blank=True)
