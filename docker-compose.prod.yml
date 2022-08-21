@@ -2,14 +2,7 @@ version: '3.8'
 
 services:
   webdb:
-    image: postgres:alpine
     restart: always
-    volumes:
-      - dataweb:/var/lib/postgresql/data
-    env_file:
-      - .env
-    networks:
-      playlistener-network:   
 
   app:
     restart: always
@@ -19,10 +12,6 @@ services:
     environment:
       - DEBUG=0
       - PRODUCTION=1
-    depends_on:
-      - webdb
-    env_file:
-      - .env
     networks:
       playlistener-network:
         aliases:
@@ -42,14 +31,3 @@ services:
       - 9000:9000
     depends_on:
       - app
-
-volumes:
-  dataweb:
-    external: true
-  webassets: 
-
-networks:
-  playlistener-network:
-    external: true
-    driver: bridge
-    name: playlistener-network

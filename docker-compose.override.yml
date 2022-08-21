@@ -1,40 +1,14 @@
 version: '3.8'
 
 services:
-  webdb:
-    image: postgres:alpine
-    restart: always
-    environment:
-      - POSTGRES_HOST=webdb
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-    networks:
-      playlistener-network:    
-
   app:
     command: python manage.py runserver 0.0.0.0:9000
     volumes:
       - .:/code
     environment:
       - DEBUG=1
-      - POSTGRES_HOST=webdb
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PORT=5432
-      - ADMIN_USERNAME=admin
-      - ADMIN_PASSWORD=admin
-      - DJANGO_SECRET_KEY='(^vaet+jq=h^q&(0v2kb#vity#526cxv6do(gd)hjuidz=d6'
-    depends_on:
-      - webdb
+      - PRODUCTION=0
     ports:
       - "9000:9000"
     networks:
-      playlistener-network:    
-
-networks:
-  playlistener-network:
-    external: true
-    driver: bridge
-    name: playlistener-network
+      playlistener-network:

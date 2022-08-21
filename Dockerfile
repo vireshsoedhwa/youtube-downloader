@@ -1,22 +1,3 @@
-# ============================================ base
-# FROM python:3.10-slim-buster as base
-
-# ENV PATH="/opt/venv/bin:/base:$PATH"
-
-# COPY requirements.txt ./
-
-# RUN set -ex; \
-#         apt-get update; \
-#         apt-get install -y --no-install-recommends \
-#             build-essential \
-#             ffmpeg \
-#         ; \
-#         python -m venv /opt/venv; \
-#         pip install --upgrade pip; \
-#         pip install -r requirements.txt;
-
-# ============================================ webassets-builder
-
 FROM node:lts-alpine as webassets-builder
 
 WORKDIR /code/youtube

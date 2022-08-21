@@ -1,7 +1,33 @@
 version: '3.8'
 
 services:
+  webdb:
+    image: postgres:alpine
+    volumes:
+      - dataweb:/var/lib/postgresql/data
+    env_file:
+      - .env
+    networks:
+      playlistener-network:   
+
+
   app:
     image: playlistenerweb
     build:
       context: .
+    env_file:
+      - .env
+    depends_on:
+      - webdb
+
+volumes:
+  dataweb:
+    external: true
+  webassets:
+
+
+networks:
+  playlistener-network:
+    external: true
+    driver: bridge
+    name: playlistener-network
