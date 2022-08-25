@@ -50,15 +50,15 @@ class YoutubeResource(models.Model):
         return str(self.id)
 
 
-@receiver(post_save, sender=YoutubeResource, dispatch_uid="add_record")
-def checkdownload(sender, instance, created, raw, using, update_fields, **kwargs):
-    loggingfilter = YoutubeIdFilter(youtuberesource=instance)
-    logger.addFilter(loggingfilter)
+# @receiver(post_save, sender=YoutubeResource, dispatch_uid="add_record")
+# def checkdownload(sender, instance, created, raw, using, update_fields, **kwargs):
+#     loggingfilter = YoutubeIdFilter(youtuberesource=instance)
+#     logger.addFilter(loggingfilter)
 
-    if instance.status == YoutubeResource.Status.NEW:
-        instance.status = YoutubeResource.Status.BUSY
-        logger.info("New instance created")
-        instance.save()
-        async_task('youtube.tasks.get_video', instance, sync=False)
-    else:
-        pass
+#     if instance.status == YoutubeResource.Status.NEW:
+#         instance.status = YoutubeResource.Status.BUSY
+#         logger.info("New instance created")
+#         instance.save()
+#         async_task('youtube.tasks.get_video', instance, sync=False)
+#     else:
+#         pass

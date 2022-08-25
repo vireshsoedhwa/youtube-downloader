@@ -1,11 +1,14 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
+from .views import YoutubeResourceViewset
+from rest_framework.routers import SimpleRouter
 
+router = SimpleRouter()
+
+router.register(r'resource', YoutubeResourceViewset,
+                basename="resource")
 
 urlpatterns = [
-    path('', views.index ),
-    path('submit/<youtube_id>', views.SubmitUrl.as_view() ),
-    path('retry/<youtube_id>', views.SubmitUrl.as_view() ),
-    path('download/<youtube_id>', views.Download.as_view() ),
-    path('recent', views.GetRecent.as_view() ),
+    path('', views.index),
+    path('', include(router.urls)),
 ]
