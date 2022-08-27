@@ -28,33 +28,6 @@ def index(request):
     }
     return render(request, 'youtube/index.html', context)
 
-
-# class Download(APIView):
-#     def get(self, request, youtube_id):
-#         youtuberesource = None
-#         try:
-#             youtuberesource = YoutubeResource.objects.get(
-#                 youtube_id=youtube_id)
-#         except:
-#             return Response(status=404)
-#         file_path = settings.MEDIA_ROOT + \
-#             str(youtuberesource.youtube_id) + '/' + youtuberesource.filename
-#         if os.path.isfile(file_path):
-#             file_response = FileResponse(
-#                 open(file_path, 'rb'), as_attachment=True, filename=youtuberesource.filename)
-#             return file_response
-#         else:
-#             youtuberesource.status = youtuberesource.Status.FAILED
-#             youtuberesource.save()
-#             return Response(status=404)
-
-
-# class GetRecent(APIView):
-#     def get(self, format=None):
-#         recent = YoutubeResource.objects.all().order_by('-created_at')[:100]
-#         serializer = YoutubeResourceSerializer(recent, many=True)
-#         return Response(serializer.data, status=200)
-
 class YoutubeResourceViewset(viewsets.ModelViewSet):
     queryset = YoutubeResource.objects.all()
     serializer_class = YoutubeResourceSerializer
@@ -69,6 +42,8 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
-            serializer.save()
+            instance = serializer.save()
+            instance.status = instance.Status.QUEUED
+            instance.save()
             return Response(serializer.data)
         return Response(serializer.errors)

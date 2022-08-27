@@ -19,6 +19,7 @@ def file_directory_path(instance, filename):
 class YoutubeResource(models.Model):
     class Status(models.TextChoices):
         NEW = 'NEW', _('New')
+        QUEUED = 'QUEUED', _('Queued')
         BUSY = 'BUSY', _('Busy')
         FAILED = 'FAILED', _('Failed')
         DONE = 'DONE', _('Done')
@@ -56,7 +57,7 @@ def checkdownload(sender, instance, created, raw, using, update_fields, **kwargs
     loggingfilter = YoutubeIdFilter(youtuberesource=instance)
     logger.addFilter(loggingfilter)
 
-    if instance.status == YoutubeResource.Status.NEW:
+    if instance.status == YoutubeResource.Status.QUEUED:
         instance.status = YoutubeResource.Status.BUSY
         logger.info("New instance created")
         instance.save()

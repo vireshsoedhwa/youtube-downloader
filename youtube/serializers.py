@@ -83,7 +83,6 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
 
         print(validated_data["youtube_id"])
-        record = None
         try:
             record = YoutubeResource.objects.get(
                 youtube_id=validated_data["youtube_id"]
@@ -94,6 +93,7 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
             if record.status == YoutubeResource.Status.FAILED:
                 record.status = YoutubeResource.Status.NEW
                 record.save()
+            return record
         except YoutubeResource.DoesNotExist:
             record = YoutubeResource.objects.create(**validated_data)
             loggingfilter = YoutubeIdFilter(youtuberesource=record)
@@ -112,7 +112,7 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
                 record.is_music = False
                 logger.info("New Record Created")
             record.save()
-        return record
+            return record
 
     def update(self, instance, validated_data):
 
