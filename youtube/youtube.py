@@ -11,12 +11,10 @@ logger = logging.getLogger(__name__)
 
 
 class YT:
-    def __init__(self, youtube_url, youtube_id=None, youtubeobject=None):
+    def __init__(self, youtubeobject):
         self.youtubeobject = youtubeobject
         self.filename_mp3 = ""
         self.filepath_mp3 = ""
-        self.youtube_id = youtube_id
-        self.youtube_url = youtube_url
 
         self.ydl_opts = {
             'writethumbnail': True,
@@ -40,10 +38,10 @@ class YT:
             # 'writeinfojson':
             # '/code/dl/' + str(mediaobject.id),
             'restrictfilenames': True,
-            'outtmpl': settings.MEDIA_ROOT + str(youtube_id) + '/%(title)s.%(ext)s',
+            'outtmpl': settings.MEDIA_ROOT + str(self.youtubeobject.youtube_id) + '/%(title)s.%(ext)s',
         }
-        # loggingfilter = YoutubeIdFilter(youtuberesource=youtubeobject)
-        # logger.addFilter(loggingfilter)
+        loggingfilter = YoutubeIdFilter(youtuberesource=youtubeobject)
+        logger.addFilter(loggingfilter)
 
     def my_hook(self, d):
         if d['status'] == 'downloading':
@@ -65,71 +63,40 @@ class YT:
                 self.filepath_mp3 = str(
                     self.youtubeobject.youtube_id) + '/' + path.stem + '.mp3'
 
-    # def run(self):
-    #     youtube_target_url = "https://youtube.com/watch?v=" + \
-    #         str(self.youtubeobject.youtube_id)
+    def run(self):
+        youtube_target_url = "https://youtube.com/watch?v=" + \
+            str(self.youtubeobject.youtube_id)
 
-    #     with youtube_dl.YoutubeDL(self.ydl_opts) as ydl:
-    #         extracted_info = None
-    #         extracted_info = ydl.extract_info(youtube_target_url,
-    #                                           download=False,
-    #                                           ie_key=None,
-    #                                           extra_info={},
-    #                                           process=True,
-    #                                           force_generic_extractor=False)
-    #         # check if genre is there
-    #         try:
-    #             self.youtubeobject.genre = extracted_info["genre"]
-    #             logger.info("genre found")
-    #         except:
-    #             logger.info("genre not available")
-
-    #         self.youtubeobject.title = extracted_info["title"]
-    #         self.youtubeobject.description = extracted_info["description"]
-    #         self.youtubeobject.save()
-
-    #         ydl.download([youtube_target_url])
-
-    #         path = Path(settings.MEDIA_ROOT + self.filepath_mp3)
-    #         if path.is_file():
-    #             # print(f'The file at {self.filepath_mp3} exists')
-    #             with path.open(mode='rb') as f:
-    #                 # self.mediaobject.audiofile = File(f, path.name)
-    #                 # self.mediaobject.audiofile.name = path.name
-    #                 self.youtubeobject.status = self.youtubeobject.Status.DONE
-    #                 self.youtubeobject.filename = self.filename_mp3
-    #                 self.youtubeobject.save()
-    #                 return True
-    #         else:
-    #             self.youtubeobject.status = self.youtubeobject.Status.FAILED
-    #             self.youtubeobject.error = "Failed to download file"
-    #             self.youtubeobject.save()
-
-    def extract_info(self):
         with youtube_dl.YoutubeDL(self.ydl_opts) as ydl:
-            # extracted_info = None
-            extracted_info = ydl.extract_info(self.youtube_url,
-                                              download=False,
-                                              ie_key=None,
-                                              extra_info={},
-                                              process=True,
-                                              force_generic_extractor=False)
-            return extracted_info
+            ydl.download([youtube_target_url])
+            path = Path(settings.MEDIA_ROOT + self.filepath_mp3)
+            if path.is_file():
+                # print(f'The file at {self.filepath_mp3} exists')
+                with path.open(mode='rb') as f:
+                    # self.mediaobject.audiofile = File(f, path.name)
+                    # self.mediaobject.audiofile.name = path.name
+                    self.youtubeobject.status = self.youtubeobject.Status.DONE
+                    self.youtubeobject.filename = self.filename_mp3
+                    self.youtubeobject.save()
+            else:
+                self.youtubeobject.status = self.youtubeobject.Status.FAILED
+                self.youtubeobject.error = "Failed to download file"
+                self.youtubeobject.save()
 
 
 class MyLogger(object):
 
     def debug(self, msg):
         if settings.DEBUG:
-            # logger.info(msg)
+            logger.info(msg)
             pass
 
     def warning(self, msg):
-        # logger.warn(msg)
+        logger.warn(msg)
         pass
 
     def error(self, msg):
-        # logger.error(msg)
+        logger.error(msg)
         pass
 
 

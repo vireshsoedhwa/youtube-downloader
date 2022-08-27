@@ -29,15 +29,6 @@ def index(request):
     return render(request, 'youtube/index.html', context)
 
 
-# class SubmitUrl(APIView):
-#     def get(self, request, youtube_id):
-#         serializer = YoutubeResourceSerializer(data={'youtube_id': youtube_id})
-#         if serializer.is_valid():
-#             instance = serializer.save()
-#             return Response(serializer.data, status=200)
-#         return Response(serializer.errors, status=400)
-
-
 # class Download(APIView):
 #     def get(self, request, youtube_id):
 #         youtuberesource = None
@@ -78,13 +69,6 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
-            #             mediaresource_serializer.save()
-            #             validlist.append(str(audiofile))
-            #         else:
-            # print("HEHEHEHEHE")
-            # print(request.data)
             serializer.save()
-            print("test")
             return Response(serializer.data)
-
         return Response(serializer.errors)

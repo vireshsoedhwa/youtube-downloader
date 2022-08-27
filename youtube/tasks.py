@@ -19,7 +19,7 @@ from .logging.YoutubeIdFilter import YoutubeIdFilter
 def get_video(instance):
     loggingfilter = YoutubeIdFilter(youtuberesource=instance)
     logger.addFilter(loggingfilter)
-
+    
     try:
         youtube_process = YT(instance)
         youtube_process.run()
@@ -28,8 +28,8 @@ def get_video(instance):
         instance.error = ex.args
         instance.status = YoutubeResource.Status.FAILED
         instance.save()
-    except:
+    except Exception as e:
         logger.error("YoutubeDL general error")
-        instance.error = "YoutubeDL general error"
+        instance.error = str(e)
         instance.status = YoutubeResource.Status.FAILED
         instance.save()
