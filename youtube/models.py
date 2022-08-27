@@ -49,7 +49,7 @@ class YoutubeResource(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return str(self.id)
+        return f'{str(self.id)} : {self.youtube_id} : {self.title}' 
 
 
 @receiver(post_save, sender=YoutubeResource, dispatch_uid="add_record")
@@ -59,7 +59,7 @@ def checkdownload(sender, instance, created, raw, using, update_fields, **kwargs
 
     if instance.status == YoutubeResource.Status.QUEUED:
         instance.status = YoutubeResource.Status.BUSY
-        logger.info("New instance created")
+        logger.info("Download Task starting")
         instance.save()
         async_task('youtube.tasks.get_video', instance, sync=False)
     else:

@@ -29,11 +29,6 @@ def extract_info(youtube_url):
         )
         return extracted_info
 
-
-def check_music(youtube_id):
-    youtube_target_url = "https://youtube.com/watch?v=" + youtube_id
-
-
 def get_youtube_id(value):
     regExp = ".*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*"
     x = re.search(regExp, value)
@@ -84,6 +79,7 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
 
         print(validated_data["youtube_id"])
         try:
+            print("WHHWHHAHAH")
             record = YoutubeResource.objects.get(
                 youtube_id=validated_data["youtube_id"]
             )
@@ -95,6 +91,7 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
                 record.save()
             return record
         except YoutubeResource.DoesNotExist:
+            logger.info("Creating new record")
             record = YoutubeResource.objects.create(**validated_data)
             loggingfilter = YoutubeIdFilter(youtuberesource=record)
             logger.addFilter(loggingfilter)
@@ -103,14 +100,16 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
             extracted_info = extract_info(youtube_url)
             # print(extracted_info.keys())
             record.description = extracted_info.get("description")
+            record.title = extracted_info.get("title")
             try:
                 extracted_info.get("categories").index("Music")
                 record.is_music = True
-                logger.info("Music Category")
+                logger.info("Music Category assigned")
             except Exception as e:
-                logger.info("Other Category")
+                logger.info("Other Category assigned")
                 record.is_music = False
                 logger.info("New Record Created")
+            record.status = YoutubeResource.Status.QUEUED
             record.save()
             return record
 

@@ -23,6 +23,8 @@ def get_video(instance):
     try:
         youtube_process = YT(instance)
         youtube_process.run()
+        # instance.status = YoutubeResource.Status.DONE
+        # instance.save()
     except YoutubeDLError as ex:
         logger.error("YoutubeDL error")
         instance.error = ex.args

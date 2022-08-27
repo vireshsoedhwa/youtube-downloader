@@ -59,28 +59,29 @@ class YT:
             if path.is_file():
                 # print(path.name)
                 # print(path.stem)
+                logger.info(f"file found:{path.name} {path.stem}.mp3")
                 self.filename_mp3 = path.stem + '.mp3'
                 self.filepath_mp3 = str(
                     self.youtubeobject.youtube_id) + '/' + path.stem + '.mp3'
-
+            else:
+                logger.error("file not found")
     def run(self):
         youtube_target_url = "https://youtube.com/watch?v=" + \
             str(self.youtubeobject.youtube_id)
 
         with youtube_dl.YoutubeDL(self.ydl_opts) as ydl:
             ydl.download([youtube_target_url])
+            logger.info("download finished")
             path = Path(settings.MEDIA_ROOT + self.filepath_mp3)
-            if path.is_file():
-                # print(f'The file at {self.filepath_mp3} exists')
-                with path.open(mode='rb') as f:
-                    # self.mediaobject.audiofile = File(f, path.name)
-                    # self.mediaobject.audiofile.name = path.name
-                    self.youtubeobject.status = self.youtubeobject.Status.DONE
-                    self.youtubeobject.filename = self.filename_mp3
-                    self.youtubeobject.save()
+            if path.is_file():  
+                logger.info(f'The file at {self.filepath_mp3} exists')            
+                self.youtubeobject.status = self.youtubeobject.Status.DONE
+                self.youtubeobject.filename = self.filename_mp3
+                self.youtubeobject.save()
             else:
+                logger.error("file not found")
                 self.youtubeobject.status = self.youtubeobject.Status.FAILED
-                self.youtubeobject.error = "Failed to download file"
+                self.youtubeobject.error = "file not found"
                 self.youtubeobject.save()
 
 
