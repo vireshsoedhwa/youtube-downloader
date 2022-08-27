@@ -42,6 +42,7 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
-            instance = serializer.save()      
+            instance = serializer.save()    
+            instance.save()  
             return Response(serializer.data)
         return Response(serializer.errors)

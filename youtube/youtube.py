@@ -65,11 +65,36 @@ class YT:
                     self.youtubeobject.youtube_id) + '/' + path.stem + '.mp3'
             else:
                 logger.error("file not found")
+
+    def extract_info(self):
+        with youtube_dl.YoutubeDL(self.ydl_opts) as ydl:
+            logger.info("Starting metadata extraction ...")
+            extracted_info = ydl.extract_info(
+                self.youtubeobject.youtube_url,
+                download=False,
+                ie_key=None,
+                extra_info={},
+                process=True,
+                force_generic_extractor=False,
+            )
+            # print(extracted_info.keys())
+            self.youtubeobject.description = extracted_info.get("description")
+            self.youtubeobject.title = extracted_info.get("title")
+            try:
+                self.youtubeobject.is_music = True
+                logger.info("Music Category assigned")
+            except Exception as e:
+                self.youtubeobject.is_music = False
+                logger.info("Other Category assigned")
+            self.youtubeobject.save()
+
+
     def run(self):
         youtube_target_url = "https://youtube.com/watch?v=" + \
             str(self.youtubeobject.youtube_id)
 
         with youtube_dl.YoutubeDL(self.ydl_opts) as ydl:
+            logger.info("download starting...")
             ydl.download([youtube_target_url])
             logger.info("download finished")
             path = Path(settings.MEDIA_ROOT + self.filepath_mp3)

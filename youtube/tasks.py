@@ -22,6 +22,9 @@ def get_video(instance):
     
     try:
         youtube_process = YT(instance)
+        logger.info("Extracting Metadata ...")
+        youtube_process.extract_info()
+        logger.info("Running download process ...")
         youtube_process.run()
         # instance.status = YoutubeResource.Status.DONE
         # instance.save()

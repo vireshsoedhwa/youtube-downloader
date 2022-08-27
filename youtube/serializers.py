@@ -7,27 +7,8 @@ from django.db import IntegrityError
 import re
 import os
 
-# from .youtube import YT
-import youtube_dl
-
 import logging
-
 logger = logging.getLogger(__name__)
-
-YDL_OPTIONS = {"noplaylist": "False"}
-
-
-def extract_info(youtube_url):
-    with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
-        extracted_info = ydl.extract_info(
-            youtube_url,
-            download=False,
-            ie_key=None,
-            extra_info={},
-            process=True,
-            force_generic_extractor=False,
-        )
-        return extracted_info
 
 def get_youtube_id(value):
     regExp = ".*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*"
@@ -35,7 +16,6 @@ def get_youtube_id(value):
     if x == None:
         raise serializers.ValidationError(f"[{value}] is not a valid youtube URL")
     return x.group(2)
-
 
 class YoutubeResourceSerializer(serializers.ModelSerializer):
 
@@ -67,19 +47,13 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         youtube_url = attrs.get("youtube_url")
-
         attrs["youtube_id"] = get_youtube_id(youtube_url)
-
         # raise serializers.ValidationError(
         #     " fault")
-
         return attrs
 
     def create(self, validated_data):
-
-        print(validated_data["youtube_id"])
         try:
-            print("WHHWHHAHAH")
             record = YoutubeResource.objects.get(
                 youtube_id=validated_data["youtube_id"]
             )
@@ -91,26 +65,11 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
                 record.save()
             return record
         except YoutubeResource.DoesNotExist:
-            logger.info("Creating new record")
             record = YoutubeResource.objects.create(**validated_data)
             loggingfilter = YoutubeIdFilter(youtuberesource=record)
-            logger.addFilter(loggingfilter)
-
-            youtube_url = validated_data["youtube_url"]
-            extracted_info = extract_info(youtube_url)
-            # print(extracted_info.keys())
-            record.description = extracted_info.get("description")
-            record.title = extracted_info.get("title")
-            try:
-                extracted_info.get("categories").index("Music")
-                record.is_music = True
-                logger.info("Music Category assigned")
-            except Exception as e:
-                logger.info("Other Category assigned")
-                record.is_music = False
-                logger.info("New Record Created")
+            logger.addFilter(loggingfilter)          
+            logger.info("Creating new record")
             record.status = YoutubeResource.Status.QUEUED
-            record.save()
             return record
 
     def update(self, instance, validated_data):
