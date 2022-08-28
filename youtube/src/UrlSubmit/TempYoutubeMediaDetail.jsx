@@ -9,12 +9,18 @@ import AddToQueueIcon from '@mui/icons-material/AddToQueue';
 import CircularProgress from '@mui/material/CircularProgress';
 
 export default function TempYoutubeMediadetail(props) {
-
     const [Submitclicked, setSubmitclicked] = useState(false);
-
     const submitClicked = () => {
-        props.submit_link()
+        props.Submit_link(props.Youtube_url)
         setSubmitclicked(true)
+    }
+    const SUBMISSION_STATES = {
+        READY: <Typography variant="overline" sx={{ alignItems: 'center', pl: 2 }}>
+            Add to Queue
+        </Typography>,
+        FAILED: <Typography variant="overline" display="block" gutterBottom sx={{ alignItems: 'center', pl: 2 }}>
+            Submission Failed
+        </Typography>,
     }
 
     return (
@@ -33,7 +39,6 @@ export default function TempYoutubeMediadetail(props) {
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <CardContent sx={{ flex: '1 0 auto' }}>
                     <Typography component="div" variant="h6">
-                        Add to Queue
                     </Typography>
                     <Typography variant="subtitle1" color="text.secondary" component="div">
                     </Typography>
@@ -48,6 +53,9 @@ export default function TempYoutubeMediadetail(props) {
                             <IconButton onClick={submitClicked}>
                                 <AddToQueueIcon color="primary" sx={{ height: 38, width: 38 }} />
                             </IconButton>
+                    }
+                    {
+                        SUBMISSION_STATES[props.Submission_state]
                     }
                 </Box>
             </Box>

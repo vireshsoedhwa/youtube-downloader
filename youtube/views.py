@@ -48,12 +48,11 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
 
     def create(self, request):
         serializer = self.get_serializer(data=request.data)
-
         if serializer.is_valid():
             instance = serializer.save()
             instance.save()
             return Response(serializer.data)
-        return Response(serializer.errors)
+        return Response(serializer.errors, status=400)
 
     @action(detail=True)
     def download(self, request, pk=None):

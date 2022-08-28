@@ -16,7 +16,7 @@ function MediaList(props) {
     const listItems = listofmedia.map((media, index) =>
         <div key={media.id}>
             {props.filter != media.youtube_id ?
-                <YoutubeMediadetail data={media} listupdate={props.listupdate}/>
+                <YoutubeMediadetail data={media} listupdate={props.listupdate} />
                 :
                 <div></div>
             }
@@ -30,7 +30,9 @@ function MediaList(props) {
 export default function App() {
     const [RecentList, setRecentList] = useState(null)
     const [SubmittedItembyUser, setSubmittedItembyUser] = useState(null)
+    const [Submission_state, setSubmission_state] = useState('READY')
     const [UrlId, setUrlId] = useState('')
+    const [Youtube_url, setYoutube_url] = useState('')
     const [Pollingdelay, setPollingdelay] = useState(null)
     const [Connected, setConnected] = useState(true)
 
@@ -47,7 +49,7 @@ export default function App() {
     }, Pollingdelay);
 
     const listupdate = () => {
-        fetch('/youtube/recent', {
+        fetch('/resource/', {
             method: 'get',
             mode: 'no-cors',
             credentials: 'omit',
@@ -70,41 +72,50 @@ export default function App() {
             })
             .then(data => {
                 setRecentList(data)
-
-                data.forEach((element, index) => {
-                    if (element.youtube_id == UrlId) {
-                        setSubmittedItembyUser(element)
-                    }
-                })
+                const found = data.find(element => element.youtube_id == UrlId);
+                if (typeof found !== 'undefined') {
+                    setSubmittedItembyUser(found)
+                } else {
+                    setSubmittedItembyUser(null)
+                    setSubmission_state("READY")
+                }
             })
             .catch(error => {
-                // console.error(error)
+                console.error(error)
                 setPollingdelay(null)
             })
     }
 
-    const Submit_link = () => {
-        let url = '/youtube/submit/' + UrlId
+    const Submit_link = (youtube_url) => {
+        let url = '/resource/'
+        var formcontent = {
+            'youtube_url': youtube_url,
+        };
+
+        const formBody = Object.keys(formcontent).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(formcontent[key])).join('&');
+
         fetch(url, {
-            method: 'get',
+            method: 'POST',
             mode: 'no-cors',
             credentials: 'omit',
             headers: {
                 'Access-Control-Allow-Origin': '*',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
-            redirect: 'follow'
+            body: formBody
         })
             .then(response => {
                 if (response.ok) {
                     return response.json()
                 }
                 else {
+                    setSubmission_state("FAILED")
                     console.log("submit failed")
                 }
                 throw response
             })
             .then(data => {
+                setSubmission_state("SUCCES")
                 setSubmittedItembyUser(data)
             })
             .catch(error => {
@@ -125,14 +136,23 @@ export default function App() {
                             <Chooser setmode={setMode} />
                         </Grid> */}
                         <Grid item xs>
-                            <UrlSubmit SubmittedItembyUser={SubmittedItembyUser} submit_link={Submit_link} setUrlId={setUrlId} UrlId={UrlId} listupdate={listupdate}/>
+                            <UrlSubmit Submission_state={Submission_state}
+                                SubmittedItembyUser={SubmittedItembyUser}
+                                Submit_link={Submit_link}
+                                setUrlId={setUrlId}
+                                setYoutube_url={setYoutube_url}
+                                UrlId={UrlId}
+                                Youtube_url={Youtube_url}
+                                listupdate={listupdate} />
                         </Grid>
                         <Grid item sx={{ paddingTop: 5 }}>
 
                             <Typography variant="h6" gutterBottom component="div">
                                 Recently added
                             </Typography>
-                            <MediaList listofmedia={RecentList} filter={UrlId} listupdate={listupdate}/>
+                            <MediaList listofmedia={RecentList}
+                                filter={UrlId}
+                                listupdate={listupdate} />
                         </Grid>
                     </>
                     :
