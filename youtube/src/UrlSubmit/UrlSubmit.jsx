@@ -1,15 +1,12 @@
 import React, { Fragment, useEffect, useState, useRef } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
-import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
 
 import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import InputLabel from '@mui/material/InputLabel';
 import FormHelperText from '@mui/material/FormHelperText';
-import ButtonBase from '@mui/material/ButtonBase';
 
 import YoutubeMediadetail from '../YoutubeMediadetail';
 import TempYoutubeMediadetail from './TempYoutubeMediaDetail';
@@ -26,6 +23,7 @@ export default function UrlSubmit(props) {
             setTextfieldhelperstate({ error: false })
             setInputErrorMsg("")
             props.setUrlId(match[2])
+            props.setYoutube_url(value.target.value)
         } else {
             setTextfieldhelperstate({ error: true })
             setInputErrorMsg("Incorrect URL")
@@ -62,10 +60,10 @@ export default function UrlSubmit(props) {
                 <Grid item>
                     {props.UrlId ?
                         <div>
-                            {props.SubmittedItembyUser ?
-                                <YoutubeMediadetail data={props.SubmittedItembyUser} submit_link={props.submit_link} listupdate={props.listupdate}/>
+                            {props.Submission_state == "SUCCES" ?
+                                <YoutubeMediadetail data={props.SubmittedItembyUser} Submit_link={props.Submit_link} listupdate={props.listupdate} />
                                 :
-                                <TempYoutubeMediadetail youtube_id={props.UrlId} submit_link={props.submit_link} />
+                                <TempYoutubeMediadetail Submission_state={props.Submission_state} youtube_id={props.UrlId} Youtube_url={props.Youtube_url} Submit_link={props.Submit_link} />
                             }
                         </div>
                         :
