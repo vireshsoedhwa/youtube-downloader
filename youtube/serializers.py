@@ -68,7 +68,7 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
             record = YoutubeResource.objects.create(**validated_data)
             loggingfilter = YoutubeIdFilter(youtuberesource=record)
             logger.addFilter(loggingfilter)          
-            logger.info("Creating new record")
+            logger.info("Creating New Record")
             record.status = YoutubeResource.Status.QUEUED
             return record
 

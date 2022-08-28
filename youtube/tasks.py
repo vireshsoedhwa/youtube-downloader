@@ -24,10 +24,10 @@ def get_video(instance):
         youtube_process = YT(instance)
         logger.info("Extracting Metadata ...")
         youtube_process.extract_info()
-        logger.info("Running download process ...")
-        youtube_process.run()
-        # instance.status = YoutubeResource.Status.DONE
-        # instance.save()
+        logger.info("Finished extracting metadata ...")
+        # logger.info("Running download process ...")
+        # youtube_process.run()
+        # logger.info("Finished download process ...")
     except YoutubeDLError as ex:
         logger.error("YoutubeDL error")
         instance.error = ex.args

@@ -80,13 +80,24 @@ class YT:
             # print(extracted_info.keys())
             self.youtubeobject.description = extracted_info.get("description")
             self.youtubeobject.title = extracted_info.get("title")
+            # CHECK IF PLAYLIST
+            if 'entries' in extracted_info:
+                self.youtubeobject.is_playlist = True
+                logger.info('Playlist detected')
+            else:
+                self.youtubeobject.is_playlist = False
+                logger.info('Not a playlist')
+
+            # CHECK IF MUSIC CATEGORY
             try:
+                extracted_info.get("categories").index("Music")
                 self.youtubeobject.is_music = True
                 logger.info("Music Category assigned")
             except Exception as e:
                 self.youtubeobject.is_music = False
                 logger.info("Other Category assigned")
             self.youtubeobject.save()
+
 
 
     def run(self):
@@ -98,8 +109,8 @@ class YT:
             ydl.download([youtube_target_url])
             logger.info("download finished")
             path = Path(settings.MEDIA_ROOT + self.filepath_mp3)
-            if path.is_file():  
-                logger.info(f'The file at {self.filepath_mp3} exists')            
+            if path.is_file():
+                logger.info(f'The file at {self.filepath_mp3} exists')
                 self.youtubeobject.status = self.youtubeobject.Status.DONE
                 self.youtubeobject.filename = self.filename_mp3
                 self.youtubeobject.save()
