@@ -20,6 +20,6 @@ import home
 
 urlpatterns = [
     # path('', include('home.urls')),
-    path('youtube/', include('youtube.urls')),
+    path('', include('youtube.urls')),
     path('admin/', admin.site.urls),
 ]

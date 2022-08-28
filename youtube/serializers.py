@@ -10,27 +10,68 @@ import os
 import logging
 logger = logging.getLogger(__name__)
 
+def get_youtube_id(value):
+    regExp = ".*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*"
+    x = re.search(regExp, value)
+    if x == None:
+        raise serializers.ValidationError(f"[{value}] is not a valid youtube URL")
+    return x.group(2)
 
 class YoutubeResourceSerializer(serializers.ModelSerializer):
 
-    youtube_id = serializers.CharField(
-        max_length=20, min_length=None, allow_blank=False, trim_whitespace=True)
+    id = serializers.IntegerField(max_value=None, min_value=None, read_only=True)
+    youtube_id = serializers.CharField(max_length=20, min_length=None, read_only=True)
+    youtube_url = serializers.CharField(
+        max_length=100, min_length=None, allow_blank=False, trim_whitespace=True
+    )
 
     class Meta:
         model = YoutubeResource
-        fields = ['id', 'youtube_id', 'title', 'description', 'status', 'filename',
-                  'downloadprogress', 'eta', 'elapsed', 'speed', 'error', 'created_at']
+        fields = [
+            "id",
+            "youtube_id",
+            "youtube_url",
+            "title",
+            "description",
+            "is_playlist",
+            "is_music",
+            "status",
+            "filename",
+            "downloadprogress",
+            "eta",
+            "elapsed",
+            "speed",
+            "error",
+            "created_at",
+        ]
+
+    def validate(self, attrs):
+        youtube_url = attrs.get("youtube_url")
+        attrs["youtube_id"] = get_youtube_id(youtube_url)
+        # raise serializers.ValidationError(
+        #     " fault")
+        return attrs
 
     def create(self, validated_data):
-        newrecord, created = YoutubeResource.objects.get_or_create(
-            **validated_data)
-        loggingfilter = YoutubeIdFilter(youtuberesource=newrecord)
-        logger.addFilter(loggingfilter)
-        if created:
-            logger.info("New Record Created")
-        else:
+        try:
+            record = YoutubeResource.objects.get(
+                youtube_id=validated_data["youtube_id"]
+            )
+            loggingfilter = YoutubeIdFilter(youtuberesource=record)
+            logger.addFilter(loggingfilter)
             logger.info("Existing Record Found")
-            if newrecord.status == YoutubeResource.Status.FAILED:
-                newrecord.status = YoutubeResource.Status.NEW
-                newrecord.save()
-        return newrecord
+            if record.status == YoutubeResource.Status.FAILED:
+                record.status = YoutubeResource.Status.NEW
+                record.save()
+            return record
+        except YoutubeResource.DoesNotExist:
+            record = YoutubeResource.objects.create(**validated_data)
+            loggingfilter = YoutubeIdFilter(youtuberesource=record)
+            logger.addFilter(loggingfilter)          
+            logger.info("Creating New Record")
+            record.status = YoutubeResource.Status.QUEUED
+            return record
+
+    def update(self, instance, validated_data):
+
+        return instance

@@ -5,11 +5,11 @@ set -e
 # touch .env
 # > .env
 
-if [[ -z "${DJANGO_SECRET_KEY}" ]]; then
+if [ -z "${DJANGO_SECRET_KEY}" ]; then
   echo DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY >> .env
 fi
 
-if [[ -z "${GO_PIPELINE_LABEL}" ]]; then
+if [ -z "${GO_PIPELINE_LABEL}" ]; then
   echo GO_PIPELINE_LABEL=$GO_PIPELINE_LABEL >> .env
 fi
 

@@ -19,17 +19,22 @@ from .logging.YoutubeIdFilter import YoutubeIdFilter
 def get_video(instance):
     loggingfilter = YoutubeIdFilter(youtuberesource=instance)
     logger.addFilter(loggingfilter)
-
+    
     try:
         youtube_process = YT(instance)
+        logger.info("Extracting Metadata ...")
+        youtube_process.extract_info()
+        logger.info("Finished extracting metadata ...")
+        logger.info("Running download process ...")
         youtube_process.run()
+        logger.info("Finished download process ...")
     except YoutubeDLError as ex:
         logger.error("YoutubeDL error")
         instance.error = ex.args
         instance.status = YoutubeResource.Status.FAILED
         instance.save()
-    except:
+    except Exception as e:
         logger.error("YoutubeDL general error")
-        instance.error = "YoutubeDL general error"
+        instance.error = str(e)
         instance.status = YoutubeResource.Status.FAILED
         instance.save()
