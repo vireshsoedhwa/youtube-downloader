@@ -71,6 +71,27 @@ class YT:
             else:
                 logger.error("file not found")
 
+    def run(self):
+        youtube_target_url = "https://youtube.com/watch?v=" + str(
+            self.youtubeobject.youtube_id
+        )
+
+        with youtube_dl.YoutubeDL(self.ydl_opts) as ydl:
+            logger.info("download starting...")
+            ydl.download([youtube_target_url])
+            logger.info("download finished")
+            path = Path(settings.MEDIA_ROOT + self.filepath_mp3)
+            if path.is_file():
+                logger.info(f"The file at {self.filepath_mp3} exists")
+                self.youtubeobject.status = self.youtubeobject.Status.DONE
+                self.youtubeobject.filename = self.filename_mp3
+                self.youtubeobject.save()
+            else:
+                logger.error("file not found")
+                self.youtubeobject.status = self.youtubeobject.Status.FAILED
+                self.youtubeobject.error = "file not found"
+                self.youtubeobject.save()
+
     def extract_info(self):
         with youtube_dl.YoutubeDL(self.ydl_opts) as ydl:
             logger.info("Starting metadata extraction ...")
@@ -105,28 +126,6 @@ class YT:
                 logger.info("Other Category assigned")
             self.youtubeobject.save()
 
-    def run(self):
-        youtube_target_url = "https://youtube.com/watch?v=" + str(
-            self.youtubeobject.youtube_id
-        )
-
-        with youtube_dl.YoutubeDL(self.ydl_opts) as ydl:
-            logger.info("download starting...")
-            ydl.download([youtube_target_url])
-            logger.info("download finished")
-            path = Path(settings.MEDIA_ROOT + self.filepath_mp3)
-            if path.is_file():
-                logger.info(f"The file at {self.filepath_mp3} exists")
-                self.youtubeobject.status = self.youtubeobject.Status.DONE
-                self.youtubeobject.filename = self.filename_mp3
-                self.youtubeobject.save()
-            else:
-                logger.error("file not found")
-                self.youtubeobject.status = self.youtubeobject.Status.FAILED
-                self.youtubeobject.error = "file not found"
-                self.youtubeobject.save()
-
-
     def _extract_single_item(self):
         youtube_target_url = "https://youtube.com/watch?v=" + str(
             self.youtubeobject.youtube_id
@@ -142,6 +141,7 @@ class YT:
                 force_generic_extractor=False,
             )
         return extracted_info
+
 
 class MyLogger(object):
     def debug(self, msg):

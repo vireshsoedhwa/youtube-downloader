@@ -25,9 +25,9 @@ def get_video(instance):
         logger.info("Extracting Metadata ...")
         youtube_process.extract_info()
         logger.info("Finished extracting metadata ...")
-        # logger.info("Running download process ...")
-        # youtube_process.run()
-        # logger.info("Finished download process ...")
+        logger.info("Running download process ...")
+        youtube_process.run()
+        logger.info("Finished download process ...")
     except YoutubeDLError as ex:
         logger.error("YoutubeDL error")
         instance.error = ex.args
