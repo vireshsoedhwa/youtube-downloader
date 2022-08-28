@@ -7,6 +7,7 @@ from django.conf import settings
 from youtube_dl.utils import ExtractorError, YoutubeDLError
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -17,52 +18,56 @@ class YT:
         self.filepath_mp3 = ""
 
         self.ydl_opts = {
-            'writethumbnail': True,
-            'format':
-            'bestaudio/best',
-            'postprocessors': [{
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'mp3',
-                'preferredquality': '320',
-            },
-                {'key': 'EmbedThumbnail', }],
-            'logger':
-            MyLogger(),
-            'progress_hooks': [self.my_hook],
-            'download_archive':
-            settings.MEDIA_ROOT + '/archive',
-            'keepvideo': False,
-            'cachedir': False,
+            "writethumbnail": True,
+            "format": "bestaudio/best",
+            "postprocessors": [
+                {
+                    "key": "FFmpegExtractAudio",
+                    "preferredcodec": "mp3",
+                    "preferredquality": "320",
+                },
+                {
+                    "key": "EmbedThumbnail",
+                },
+            ],
+            "logger": MyLogger(),
+            "progress_hooks": [self.my_hook],
+            "download_archive": settings.MEDIA_ROOT + "/archive",
+            "keepvideo": False,
+            "cachedir": False,
             # 'forcetitle':
             # True,
             # 'writeinfojson':
             # '/code/dl/' + str(mediaobject.id),
-            'restrictfilenames': True,
-            'outtmpl': settings.MEDIA_ROOT + str(self.youtubeobject.youtube_id) + '/%(title)s.%(ext)s',
+            "restrictfilenames": True,
+            "outtmpl": settings.MEDIA_ROOT
+            + str(self.youtubeobject.youtube_id)
+            + "/%(title)s.%(ext)s",
         }
         loggingfilter = YoutubeIdFilter(youtuberesource=youtubeobject)
         logger.addFilter(loggingfilter)
 
     def my_hook(self, d):
-        if d['status'] == 'downloading':
-            progress = (d['downloaded_bytes']/d['total_bytes'])*100
-            self.youtubeobject.eta = d['eta']
-            self.youtubeobject.elapsed = d['elapsed']
-            self.youtubeobject.speed = d['speed']
+        if d["status"] == "downloading":
+            progress = (d["downloaded_bytes"] / d["total_bytes"]) * 100
+            self.youtubeobject.eta = d["eta"]
+            self.youtubeobject.elapsed = d["elapsed"]
+            self.youtubeobject.speed = d["speed"]
             self.youtubeobject.downloadprogress = progress
             self.youtubeobject.save()
-        if d['status'] == 'error':
+        if d["status"] == "error":
             self.youtubeobject.status = self.youtubeobject.Status.FAILED
             self.youtubeobject.save()
-        if d['status'] == 'finished':
-            path = Path(d['filename'])
+        if d["status"] == "finished":
+            path = Path(d["filename"])
             if path.is_file():
                 # print(path.name)
                 # print(path.stem)
                 logger.info(f"file found:{path.name} {path.stem}.mp3")
-                self.filename_mp3 = path.stem + '.mp3'
-                self.filepath_mp3 = str(
-                    self.youtubeobject.youtube_id) + '/' + path.stem + '.mp3'
+                self.filename_mp3 = path.stem + ".mp3"
+                self.filepath_mp3 = (
+                    str(self.youtubeobject.youtube_id) + "/" + path.stem + ".mp3"
+                )
             else:
                 logger.error("file not found")
 
@@ -81,15 +86,16 @@ class YT:
             self.youtubeobject.description = extracted_info.get("description")
             self.youtubeobject.title = extracted_info.get("title")
             # CHECK IF PLAYLIST
-            if 'entries' in extracted_info:
+            if "entries" in extracted_info:
                 self.youtubeobject.is_playlist = True
-                logger.info('Playlist detected')
+                logger.info("Playlist detected")
+                # IF PLAYLIST REPLACE EXTRACTED INFO WITH ONE ENTRY
+                extracted_info = self._extract_single_item()
             else:
                 self.youtubeobject.is_playlist = False
-                logger.info('Not a playlist')
+                logger.info("Not a playlist")
 
             # CHECK IF MUSIC CATEGORY
-            
             try:
                 extracted_info.get("categories").index("Music")
                 self.youtubeobject.is_music = True
@@ -99,9 +105,32 @@ class YT:
                 logger.info("Other Category assigned")
             self.youtubeobject.save()
 
+    def run(self):
+        youtube_target_url = "https://youtube.com/watch?v=" + str(
+            self.youtubeobject.youtube_id
+        )
+
+        with youtube_dl.YoutubeDL(self.ydl_opts) as ydl:
+            logger.info("download starting...")
+            ydl.download([youtube_target_url])
+            logger.info("download finished")
+            path = Path(settings.MEDIA_ROOT + self.filepath_mp3)
+            if path.is_file():
+                logger.info(f"The file at {self.filepath_mp3} exists")
+                self.youtubeobject.status = self.youtubeobject.Status.DONE
+                self.youtubeobject.filename = self.filename_mp3
+                self.youtubeobject.save()
+            else:
+                logger.error("file not found")
+                self.youtubeobject.status = self.youtubeobject.Status.FAILED
+                self.youtubeobject.error = "file not found"
+                self.youtubeobject.save()
+
+
     def _extract_single_item(self):
-        youtube_target_url = "https://youtube.com/watch?v=" + \
-            str(self.youtubeobject.youtube_id)
+        youtube_target_url = "https://youtube.com/watch?v=" + str(
+            self.youtubeobject.youtube_id
+        )
         with youtube_dl.YoutubeDL(self.ydl_opts) as ydl:
             logger.info("Check single item of playlist ...")
             extracted_info = ydl.extract_info(
@@ -114,31 +143,7 @@ class YT:
             )
         return extracted_info
 
-
-
-    def run(self):
-        youtube_target_url = "https://youtube.com/watch?v=" + \
-            str(self.youtubeobject.youtube_id)
-
-        with youtube_dl.YoutubeDL(self.ydl_opts) as ydl:
-            logger.info("download starting...")
-            ydl.download([youtube_target_url])
-            logger.info("download finished")
-            path = Path(settings.MEDIA_ROOT + self.filepath_mp3)
-            if path.is_file():
-                logger.info(f'The file at {self.filepath_mp3} exists')
-                self.youtubeobject.status = self.youtubeobject.Status.DONE
-                self.youtubeobject.filename = self.filename_mp3
-                self.youtubeobject.save()
-            else:
-                logger.error("file not found")
-                self.youtubeobject.status = self.youtubeobject.Status.FAILED
-                self.youtubeobject.error = "file not found"
-                self.youtubeobject.save()
-
-
 class MyLogger(object):
-
     def debug(self, msg):
         if settings.DEBUG:
             logger.info(msg)
