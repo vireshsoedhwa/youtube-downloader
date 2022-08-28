@@ -13,6 +13,7 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import Tooltip from '@mui/material/Tooltip';
 import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 import QueueMusicIcon from '@mui/icons-material/QueueMusic';
+import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 
 export default function YoutubeMediadetail(props) {
 
@@ -38,6 +39,7 @@ export default function YoutubeMediadetail(props) {
 
     const MEDIADETAIL_STATES = {
         DONE: <DownloadIcon color="success" sx={{ height: 38, width: 38 }} />,
+        QUEUED: <Tooltip title="In Queue"><HourglassTopIcon sx={{ height: 38, width: 38 }} /></Tooltip>,
         BUSY: <CircularProgressWithLabel sx={{ height: 38, width: 38 }} variant="determinate" value={parseInt(props.data.downloadprogress)} />,
         FAILED: <ErrorIcon color="error" sx={{ height: 38, width: 38 }} />,
     }

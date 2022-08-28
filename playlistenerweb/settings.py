@@ -141,7 +141,7 @@ Q_CLUSTER = {
     "name": "playlistener",
     "max_attempts": 1,
     "retry": 1000,
-    "workers": 8,
+    "workers": 1,
     "recycle": 500,
     "timeout": 900,
     "compress": True,

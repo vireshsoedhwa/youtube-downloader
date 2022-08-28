@@ -77,10 +77,7 @@ def checkdownload(sender, instance, created, raw, using, update_fields, **kwargs
     loggingfilter = YoutubeIdFilter(youtuberesource=instance)
     logger.addFilter(loggingfilter)
 
-    if instance.status == YoutubeResource.Status.QUEUED:
-        instance.status = YoutubeResource.Status.BUSY
-        logger.info("Download Task starting")
-        instance.save()
+    if instance.status == YoutubeResource.Status.QUEUED:        
         async_task("youtube.tasks.get_video", instance, sync=False)
     else:
         pass

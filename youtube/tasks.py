@@ -18,9 +18,11 @@ from .logging.YoutubeIdFilter import YoutubeIdFilter
 
 def get_video(instance):
     loggingfilter = YoutubeIdFilter(youtuberesource=instance)
-    logger.addFilter(loggingfilter)
-    
+    logger.addFilter(loggingfilter)    
     try:
+        logger.info("Download Task starting")
+        instance.status = YoutubeResource.Status.BUSY
+        instance.save()
         youtube_process = YT(instance)
         logger.info("Extracting Metadata ...")
         youtube_process.extract_info()
