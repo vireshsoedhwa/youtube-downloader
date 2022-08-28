@@ -13,6 +13,9 @@ module.exports = {
         //     template: "./public/index.html",
         //     filename: "./index.html"
         // }),
+        new HtmlWebpackPlugin({
+            favicon: "./src/favicon.ico"
+        }),
     ],
     output: {
         filename: '[name].bundle.js',
