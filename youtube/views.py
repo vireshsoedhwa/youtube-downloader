@@ -64,4 +64,4 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
                 open(file_path, "rb"), as_attachment=True, filename=resource.filename
             )
             return file_response
-        return Response("File missing", status=400)
+        return Response("File missing", status=404)

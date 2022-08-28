@@ -60,14 +60,17 @@ class YoutubeResource(models.Model):
         return f"{str(self.id)} : {self.youtube_id} >>> {self.title[0:40]}..."
 
     def get_file_path(self):
-        path = Path(settings.MEDIA_ROOT + self.youtube_id + "/" + self.filename)
-        if path.is_file():
-            self.logger.info("File found for download")
-            return path
-        else:
-            self.logger.info("File missing")
+        try:
+            path = Path(settings.MEDIA_ROOT + self.youtube_id + "/" + self.filename)
+            if path.is_file():
+                self.logger.info("File found for download")
+                return path
+            else:
+                self.logger.info("File missing")
+                return None
+        except:
             return None
-
+        
 
 @receiver(post_save, sender=YoutubeResource, dispatch_uid="add_record")
 def checkdownload(sender, instance, created, raw, using, update_fields, **kwargs):
