@@ -49,7 +49,7 @@ class YoutubeResource(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{str(self.id)} : {self.youtube_id} : {self.title[0:40]}...' 
+        return f'{str(self.id)} : {self.youtube_id} >>> {self.title[0:40]}...' 
 
 
 @receiver(post_save, sender=YoutubeResource, dispatch_uid="add_record")

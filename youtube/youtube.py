@@ -89,6 +89,7 @@ class YT:
                 logger.info('Not a playlist')
 
             # CHECK IF MUSIC CATEGORY
+            
             try:
                 extracted_info.get("categories").index("Music")
                 self.youtubeobject.is_music = True
@@ -97,6 +98,21 @@ class YT:
                 self.youtubeobject.is_music = False
                 logger.info("Other Category assigned")
             self.youtubeobject.save()
+
+    def _extract_single_item(self):
+        youtube_target_url = "https://youtube.com/watch?v=" + \
+            str(self.youtubeobject.youtube_id)
+        with youtube_dl.YoutubeDL(self.ydl_opts) as ydl:
+            logger.info("Check single item of playlist ...")
+            extracted_info = ydl.extract_info(
+                youtube_target_url,
+                download=False,
+                ie_key=None,
+                extra_info={},
+                process=True,
+                force_generic_extractor=False,
+            )
+        return extracted_info
 
 
 
