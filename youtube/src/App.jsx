@@ -38,6 +38,7 @@ export default function App() {
 
     useEffect(() => {
         setSubmittedItembyUser(null)
+        setSubmission_state("READY")
     }, [UrlId])
 
     useEffect(() => {
