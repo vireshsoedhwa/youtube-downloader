@@ -1,5 +1,4 @@
 import React, { Fragment, useEffect, useState, useRef } from 'react';
-import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -15,7 +14,73 @@ import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+
+import CardActions from '@mui/material/CardActions';
+
+import { styled } from '@mui/material/styles';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
+import Collapse from '@mui/material/Collapse';
+
+
+const ExpandMore = styled((props) => {
+    const { expand, ...other } = props;
+    return <IconButton {...other} />;
+})(({ theme, expand }) => ({
+    transform: !expand ? 'rotate(90deg)' : 'rotate(270deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+        duration: theme.transitions.duration.shortest,
+    }),
+}));
+
+function TagsList(props) {
+    const listoftags = props.tags
+    if (listoftags == null) {
+        return
+    }
+    const listItems = listoftags.map((tag, index) =>
+        <div key={index}>
+            <Chip label={tag} color="primary" variant="outlined" />
+        </div>
+    );
+
+    return (
+        <Stack spacing={0}>
+            <Typography paragraph>Tags:</Typography>
+            {listItems}
+        </Stack>
+    );
+}
+
+function CategoryList(props) {
+    const listofcategories = props.tags
+    if (listofcategories == null) {
+        return
+    }
+    const listItems = listofcategories.map((tag, index) =>
+        <div key={index}>
+            <Chip label={tag} color="secondary" variant="outlined" />
+        </div>
+    );
+
+    return (
+        <Stack spacing={1}>
+            <Typography paragraph>Categories:</Typography>
+            {listItems}
+        </Stack>
+    );
+}
+
+
 export default function YoutubeMediadetail(props) {
+    const [expanded, setExpanded] = React.useState(false);
+
+    const handleExpandClick = () => {
+        setExpanded(!expanded);
+    };
 
     const clickqueue = () => {
         if (props.data.status == "NEW") {
@@ -58,15 +123,15 @@ export default function YoutubeMediadetail(props) {
                 image={"//img.youtube.com/vi/" + props.data.youtube_id + "/sddefault.jpg"}
                 alt="audio file"
             />
-            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                <CardContent sx={{ flex: '1 0 auto' }}>
-                    <Typography component="div" variant="subtitle1">
-                        {props.data.title}
-                    </Typography>
-                    <Typography variant="subtitle2" color="text.secondary" component="div">
-                        {props.data.filename}
-                    </Typography>
-                </CardContent>
+            {/* <Box sx={{ display: 'flex', flexDirection: 'column' }}> */}
+            <CardContent sx={{ flex: '1 0 auto' }}>
+                <Typography component="div" variant="subtitle1">
+                    {props.data.title}
+                </Typography>
+                <Typography variant="subtitle2" color="text.secondary" component="div">
+                    {props.data.filename}
+                </Typography>
+
                 <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
                     <IconButton onClick={clickqueue}>
                         {
@@ -98,9 +163,11 @@ export default function YoutubeMediadetail(props) {
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', pl: 3, pb: 0 }}>
                         {props.data.is_music == true ?
-                            <Tooltip title="Music Track">
-                                <AudiotrackIcon />
-                            </Tooltip>
+                            <Stack direction="row" spacing={1}>
+                                <Tooltip title="Music Track">
+                                    <Chip icon={<AudiotrackIcon />} label={props.data.artist} variant="outlined" size="small" />
+                                </Tooltip>
+                            </Stack>
                             :
                             <>
                             </>
@@ -117,7 +184,26 @@ export default function YoutubeMediadetail(props) {
                         }
                     </Box>
                 </Box>
-            </Box>
+                {/* </Box> */}
+            </CardContent>
+            <CardActions disableSpacing>
+                <ExpandMore
+                    expand={expanded}
+                    onClick={handleExpandClick}
+                    aria-expanded={expanded}
+                    aria-label="show more"
+                >
+                    <ExpandMoreIcon />
+                </ExpandMore>
+            </CardActions>
+            <Collapse in={expanded} timeout="auto" unmountOnExit>
+                <CardContent>
+                    <Box sx={{ display: 'flex', alignItems: 'center', pl: 0, pb: 0 }}>
+                        <CategoryList tags={props.data.categories} />
+                        <TagsList tags={props.data.tags} />
+                    </Box>
+                </CardContent>
+            </Collapse>
         </Card >
     );
 }
