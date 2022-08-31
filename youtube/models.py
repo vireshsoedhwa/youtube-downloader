@@ -12,9 +12,11 @@ from django.conf import settings
 
 import re
 import logging
+
 logger = logging.getLogger(__name__)
 loggingfilter = YoutubeIdFilter()
 logger.addFilter(loggingfilter)
+
 
 def file_directory_path(instance, filename):
     return "/code/dl/{0}/{1}".format(instance.id, filename)
@@ -47,6 +49,8 @@ class YoutubeResource(models.Model):
     #                              blank=True)
     is_playlist = models.BooleanField(default=False)
     is_music = models.BooleanField(default=False)
+    artist = models.TextField(max_length=100, null=True, blank=True)
+    tags = models.JSONField(encoder=None, decoder=None, null=True, blank=True)
     status = models.CharField(max_length=15, choices=Status.choices, default=Status.NEW)
     downloadprogress = models.DecimalField(
         max_digits=3, decimal_places=0, blank=True, default=0
@@ -71,14 +75,14 @@ class YoutubeResource(models.Model):
                 return None
         except:
             return None
-        
+
 
 @receiver(post_save, sender=YoutubeResource, dispatch_uid="add_record")
 def checkdownload(sender, instance, created, raw, using, update_fields, **kwargs):
     loggingfilter = YoutubeIdFilter(youtuberesource=instance)
     logger.addFilter(loggingfilter)
 
-    if instance.status == YoutubeResource.Status.QUEUED:        
+    if instance.status == YoutubeResource.Status.QUEUED:
         async_task("youtube.tasks.get_video", instance, sync=False)
     else:
         pass
