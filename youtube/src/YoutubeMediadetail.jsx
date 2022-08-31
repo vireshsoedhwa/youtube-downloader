@@ -15,6 +15,9 @@ import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+
 export default function YoutubeMediadetail(props) {
 
     const clickqueue = () => {
@@ -98,9 +101,11 @@ export default function YoutubeMediadetail(props) {
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', pl: 3, pb: 0 }}>
                         {props.data.is_music == true ?
-                            <Tooltip title="Music Track">
-                                <AudiotrackIcon />
-                            </Tooltip>
+                            <Stack direction="row" spacing={1}>
+                                <Tooltip title="Music Track">
+                                    <Chip icon={<AudiotrackIcon />} label={props.data.artist} variant="outlined" size="small" />
+                                </Tooltip>
+                            </Stack>
                             :
                             <>
                             </>
