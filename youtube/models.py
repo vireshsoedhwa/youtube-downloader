@@ -47,7 +47,7 @@ class YoutubeResource(models.Model):
     #                              blank=True)
     is_playlist = models.BooleanField(default=False)
     is_music = models.BooleanField(default=False)
-    status = models.CharField(max_length=7, choices=Status.choices, default=Status.NEW)
+    status = models.CharField(max_length=15, choices=Status.choices, default=Status.NEW)
     downloadprogress = models.DecimalField(
         max_digits=3, decimal_places=0, blank=True, default=0
     )
