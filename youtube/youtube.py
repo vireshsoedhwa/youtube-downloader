@@ -104,8 +104,14 @@ class YT:
                 force_generic_extractor=False,
             )
             # print(extracted_info.keys())
-            self.youtubeobject.description = extracted_info.get("description")
-            self.youtubeobject.title = extracted_info.get("title")
+            try:
+                self.youtubeobject.description = extracted_info.get("description")
+                self.youtubeobject.title = extracted_info.get("title")
+                self.youtubeobject.categories = extracted_info.get("categories")
+                self.youtubeobject.tags = extracted_info.get("tags")
+            except Exception as e:
+                logger.warning(f"Some metadata could not be extracted: {e}")
+
             # CHECK IF PLAYLIST
             if "entries" in extracted_info:
                 self.youtubeobject.is_playlist = True
@@ -117,11 +123,17 @@ class YT:
                 logger.info("Not a playlist")
 
             # CHECK IF MUSIC CATEGORY
-            try:
-                extracted_info.get("categories").index("Music")
+            if "Music" in extracted_info.get("categories"):
                 self.youtubeobject.is_music = True
                 logger.info("Music Category assigned")
-            except Exception as e:
+                # CHECK IF artist field is present
+                if "artist" in extracted_info:
+                    artist = extracted_info.get("artist")
+                    self.youtubeobject.artist = artist
+                    logger.info(f"Artist field found: {artist}")
+                else:
+                    logger.info("Artist field not present")
+            else:
                 self.youtubeobject.is_music = False
                 logger.info("Other Category assigned")
             self.youtubeobject.save()
