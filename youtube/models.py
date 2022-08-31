@@ -33,6 +33,7 @@ class YoutubeResource(models.Model):
         BUSY = "BUSY", _("Busy")
         FAILED = "FAILED", _("Failed")
         DONE = "DONE", _("Done")
+        ARCHIVED = "ARCHIVED", _("Archived")
 
     id = models.AutoField(primary_key=True)
     youtube_id = models.TextField(unique=True, max_length=200)
