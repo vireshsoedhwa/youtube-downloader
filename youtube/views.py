@@ -14,6 +14,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.decorators import action
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from django.conf import settings
 from pathlib import Path
@@ -40,6 +42,7 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
     queryset = YoutubeResource.objects.all()
     serializer_class = YoutubeResourceSerializer
     parser_classes = (MultiPartParser, FormParser, JSONParser)
+    # authentication_classes = (TokenAuthentication)
 
     def list(self, request):
         recent = self.queryset.order_by("-created_at")[:100]
@@ -63,4 +66,10 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
                 open(file_path, "rb"), as_attachment=True, filename=resource.filename
             )
             return file_response
+        return Response("File missing", status=404)
+
+    @action(detail=True, methods=['put'], permission_classes=[])
+    def archive(self, request, pk=None):
+        resource = self.get_object()
+
         return Response("File missing", status=404)
