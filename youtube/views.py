@@ -26,8 +26,7 @@ import os
 import logging
 
 logger = logging.getLogger(__name__)
-loggingfilter = YoutubeIdFilter()
-logger.addFilter(loggingfilter)
+logger.addFilter(YoutubeIdFilter())
 
 # class SafelistPermission(BasePermission):
 #     def has_permission(self, request, view):
@@ -82,7 +81,14 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
     @action(detail=True, methods=['put'], permission_classes=[IsAuthenticated])
     def archive(self, request, pk=None):
         resource = self.get_object()
-
+        file_path = resource.get_file_path()
+        if file_path is not None:
+            file_response = FileResponse(
+                open(file_path, "rb"), as_attachment=True, filename=resource.filename
+            )
+            resource.status = YoutubeResource.Status.ARCHIVED
+            resource.save()
+            return file_response
         return Response("File missing", status=404)
 
 

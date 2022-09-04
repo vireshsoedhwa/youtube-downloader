@@ -74,11 +74,22 @@ class YoutubeResource(models.Model):
         
 
 @receiver(post_save, sender=YoutubeResource, dispatch_uid="add_record")
-def checkdownload(sender, instance, created, raw, using, update_fields, **kwargs):
+def postsave(sender, instance, created, raw, using, update_fields, **kwargs):
     loggingfilter = YoutubeIdFilter(youtuberesource=instance)
     logger.addFilter(loggingfilter)
 
     if instance.status == YoutubeResource.Status.QUEUED:        
         async_task("youtube.tasks.get_video", instance, sync=False)
-    else:
-        pass
+        logger.info("task scheduled")
+
+    if instance.status == YoutubeResource.Status.ARCHIVED:        
+        logger.info("ARCHIVED")
+
+    if instance.status == YoutubeResource.Status.DONE:        
+        logger.info("DONE")
+
+    if instance.status == YoutubeResource.Status.FAILED:        
+        logger.info("FAILED")
+    
+    if instance.status == YoutubeResource.Status.BUSY:        
+        logger.info("Instance Busy")
