@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "rest_framework",
+    "rest_framework.authtoken",
     "django_q",
     "channels",
     "django_filters",
@@ -153,8 +154,20 @@ Q_CLUSTER = {
 }
 
 REST_FRAMEWORK = {
-    "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",)
+    "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
+    # "DEFAULT_PERMISSION_CLASSES": [
+    #     "rest_framework.permissions.AllowAny",
+    # ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+       'rest_framework.authentication.TokenAuthentication',
+   ),
 }
+
+# REST_SAFE_LIST_IPS = [
+#     "127.0.0.1",
+#     "172.18.0.",
+#     "192.168.1.",
+# ]
 
 LOGGING = {
     "version": 1,
