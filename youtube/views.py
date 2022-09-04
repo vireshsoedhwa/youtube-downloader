@@ -15,7 +15,10 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.decorators import action
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, BasePermission, AllowAny
+
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
 
 from django.conf import settings
 from pathlib import Path
@@ -25,6 +28,14 @@ import logging
 logger = logging.getLogger(__name__)
 loggingfilter = YoutubeIdFilter()
 logger.addFilter(loggingfilter)
+
+# class SafelistPermission(BasePermission):
+#     def has_permission(self, request, view):
+#         remote_addr = request.META['REMOTE_ADDR']
+#         for valid_ip in settings.REST_SAFE_LIST_IPS:
+#             if remote_addr == valid_ip or remote_addr.startswith(valid_ip):
+#                 return True
+#         return False
 
 
 @ensure_csrf_cookie
@@ -68,8 +79,20 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
             return file_response
         return Response("File missing", status=404)
 
-    @action(detail=True, methods=['put'], permission_classes=[])
+    @action(detail=True, methods=['put'], permission_classes=[IsAuthenticated])
     def archive(self, request, pk=None):
         resource = self.get_object()
 
         return Response("File missing", status=404)
+
+
+class CustomAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key
+        })
