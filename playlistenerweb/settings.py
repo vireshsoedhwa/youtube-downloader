@@ -22,9 +22,9 @@ GO_PIPELINE_LABEL = os.getenv("GO_PIPELINE_LABEL", "dev")
 SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 ADMIN_USERNAME = os.environ["ADMIN_USERNAME"]
 ADMIN_PASSWORD = os.environ["ADMIN_PASSWORD"]
+PLAAPI_PATH = os.environ["PLAAPI_PATH"]
 DEBUG = os.getenv("DEBUG", False) == "1"
 PRODUCTION = os.getenv("PRODUCTION", False) == "1"
-
 
 ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = ["*"]
@@ -41,13 +41,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
     "corsheaders",
     "rest_framework",
     "rest_framework.authtoken",
     "django_q",
     "channels",
     "django_filters",
-    "home",
+    
     "youtube",
 ]
 
