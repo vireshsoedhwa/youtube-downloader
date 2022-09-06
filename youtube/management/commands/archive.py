@@ -20,6 +20,13 @@ class Command(BaseCommand):
             except YoutubeResource.DoesNotExist:
                 raise CommandError(f"YoutubeResource {yt_id} does not exist")
 
+            # check if Archived
+            if not youtuberesource.status == YoutubeResource.Status.ARCHIVED:
+                raise CommandError(
+                    f"YoutubeResource {yt_id} is already archived"
+                )
+
+            # check if audiofile is there
             audiofile = None
             path = Path(
                 settings.MEDIA_ROOT
