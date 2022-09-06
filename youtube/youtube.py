@@ -7,9 +7,7 @@ from django.conf import settings
 from youtube_dl.utils import ExtractorError, YoutubeDLError
 
 import logging
-
 logger = logging.getLogger(__name__)
-
 
 class YT:
     def __init__(self, youtubeobject):

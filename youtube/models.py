@@ -1,4 +1,3 @@
-from .logging.YoutubeIdFilter import YoutubeIdFilter
 from django.db import models
 from django.core.files.storage import FileSystemStorage
 from django.utils.translation import gettext_lazy as _
@@ -14,6 +13,7 @@ import re
 import logging
 
 logger = logging.getLogger(__name__)
+from .logging.YoutubeIdFilter import YoutubeIdFilter
 loggingfilter = YoutubeIdFilter()
 logger.addFilter(loggingfilter)
 
@@ -49,6 +49,7 @@ class YoutubeResource(models.Model):
     #                              blank=True)
     is_playlist = models.BooleanField(default=False)
     is_music = models.BooleanField(default=False)
+    needs_review = models.BooleanField(default=False)
     artist = models.TextField(max_length=100, null=True, blank=True)
     tags = models.JSONField(encoder=None, decoder=None, null=True, blank=True)
     categories = models.JSONField(encoder=None, decoder=None, null=True, blank=True)
