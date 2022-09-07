@@ -5,6 +5,7 @@ from django.db.models import Deferrable, UniqueConstraint
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django_q.tasks import async_task
+from .tasks import archive
 from pathlib import Path
 
 from django.conf import settings
@@ -36,6 +37,7 @@ class YoutubeResource(models.Model):
         FAILED = "FAILED", _("Failed")
         DONE = "DONE", _("Done")
         REVIEW = "REVIEW", _("Review")
+        ARCHIVE = "ARCHIVE", _("Archive")
         ARCHIVED = "ARCHIVED", _("Archived")
 
     id = models.AutoField(primary_key=True)
@@ -97,6 +99,13 @@ def postsave(sender, instance, created, raw, using, update_fields, **kwargs):
     
     if instance.status == YoutubeResource.Status.BUSY:        
         logger.info("Instance Busy")
+
+    if instance.status == YoutubeResource.Status.REVIEW:        
+        logger.info("REVIEW")
+    
+    if instance.status == YoutubeResource.Status.ARCHIVE:        
+        logger.info("ARCHIVE")
+        archive(instance)
 
     if instance.status == YoutubeResource.Status.ARCHIVED:        
         logger.info("ARCHIVED")

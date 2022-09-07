@@ -7,7 +7,7 @@ import time
 from pathlib import Path
 from youtube_dl.utils import ExtractorError, YoutubeDLError
 
-from .models import YoutubeResource
+# from .models import YoutubeResource
 
 import requests
 import re
@@ -25,7 +25,7 @@ def get_video(instance):
     logger.addFilter(loggingfilter)
     try:
         logger.info("Download Task starting")
-        instance.status = YoutubeResource.Status.BUSY
+        instance.status = instance.Status.BUSY
         instance.save()
         youtube_process = YT(instance)
         logger.info("Extracting Metadata ...")
@@ -37,18 +37,28 @@ def get_video(instance):
     except YoutubeDLError as ex:
         logger.error("YoutubeDL error")
         instance.error = ex.args
-        instance.status = YoutubeResource.Status.FAILED
+        instance.status = instance.Status.FAILED
         instance.save()
     except Exception as e:
         logger.error("YoutubeDL general error")
         instance.error = str(e)
-        instance.status = YoutubeResource.Status.FAILED
+        instance.status = instance.Status.FAILED
         instance.save()
 
 
 def archive(instance):
     loggingfilter = YoutubeIdFilter(youtuberesource=instance)
     logger.addFilter(loggingfilter)
+
+    # check if Needs review
+    if instance.status == instance.Status.REVIEW:
+        raise ArchiveError(instance, "Needs review before archiving")
+
+    # check if Done. Review done or download done
+    if not instance.status == instance.Status.ARCHIVE:
+        raise ArchiveError(instance, "not ready for archive")
+
+
     # check if audiofile is there
     path = Path(
         settings.MEDIA_ROOT + str(instance.youtube_id) + "/" + instance.filename
@@ -56,16 +66,13 @@ def archive(instance):
     if not path.is_file():
         raise ArchiveError(instance, "file is missing")
 
-    # check if Done
-    if not instance.status == YoutubeResource.Status.DONE:
-        raise ArchiveError(instance, "not finished processing")
 
     # check if music
     if not instance.is_music:
         raise ArchiveError(instance, "not Music category")
 
     # check if artist exists
-    if instance.artist == None:
+    if instance.artist == None or instance.artist == '':
         # check if title exists
         if instance.title == None:
             raise ArchiveError(instance, "title is missing")
@@ -78,39 +85,56 @@ def archive(instance):
             else:
                 possible_artist = x.group(1).strip()
                 if not instance.tags == None:
-                    if possible_artist in instance.tags:
-                        instance.needs_review = False
-                        instance.artist = possible_artist
-                    else:
-                        instance.needs_review = True
+                    for tag in instance.tags:
+                        if possible_artist.lower() in tag.lower():
+                            instance.status = instance.Status.DONE
+                            instance.artist = possible_artist
+                            break
+                        else:
+                            instance.status = instance.Status.REVIEW
+
                 else:
-                    instance.needs_review = True
+                    instance.status = instance.Status.REVIEW
     else:
         # artist already recorded. no analysis needed
-        instance.needs_review = False
+        instance.status = instance.Status.DONE
 
-    values = {}
-    if not instance.needs_review:
-        values = {"artists": instance.artist}
+    if instance.status == instance.Status.DONE:
+        values = {}
+        values["title"] = instance.title
+        artists = []
+        artists.append(instance.artist)
         tags = []
         if not instance.tags == None:
             for tag in instance.tags:
                 tags.append(tag)
         values["tags"] = tags
+        values["artists"] = artists
+        values["description"] = instance.description
 
+        print(values)
         url_create = settings.PLAAPI_PATH + "/mediaresources/"
-        r1 = requests.post(
-            url_create, files={"audiofile": path.open(mode="rb")}, data=values
-        )
+        try:
+            r1 = requests.post(
+                url_create, files={"audiofile": path.open(mode="rb")}, data=values
+            )
+        except:
+            raise ArchiveError(
+                instance, "request to api failed"
+            )
+
         if r1.status_code == requests.codes.created:
             logger.info("mediaresource created on Archive backend")
-            instance.status = YoutubeResource.Status.ARCHIVED
+            instance.status = instance.Status.ARCHIVED
             instance.save()
         else:
+            instance.status = instance.Status.REVIEW
+            instance.save()
             raise ArchiveError(
                 instance, f"request to api failed with code: {r1.status_code}"
             )
     else:
+        instance.status = instance.Status.REVIEW
         instance.save()
         raise ArchiveError(instance, "needs review")
 

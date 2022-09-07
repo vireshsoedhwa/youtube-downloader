@@ -9,6 +9,7 @@ class YoutubeConfig(AppConfig):
         print("DEBUG: " + str(settings.DEBUG))
         print("PRODUCTION: " + str(settings.PRODUCTION))
         print("GO_PIPELINE_LABEL: " + str(settings.GO_PIPELINE_LABEL))
+        print("PLAAPI_PATH: " + str(settings.PLAAPI_PATH))
         print("youtube started")
 
         from django.contrib.auth.models import User
