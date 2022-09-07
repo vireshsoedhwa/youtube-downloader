@@ -7,8 +7,6 @@ import time
 from pathlib import Path
 from youtube_dl.utils import ExtractorError, YoutubeDLError
 
-# from .models import YoutubeResource
-
 import requests
 import re
 
@@ -112,7 +110,6 @@ def archive(instance):
         values["artists"] = artists
         values["description"] = instance.description
 
-        print(values)
         url_create = settings.PLAAPI_PATH + "/mediaresources/"
         try:
             r1 = requests.post(
