@@ -8,6 +8,7 @@ services:
     environment:
       - DEBUG=1
       - PRODUCTION=0
+      - PLAAPI_PATH=http://playlistenerapidev:8000
     ports:
       - "9000:9000"
     networks:
