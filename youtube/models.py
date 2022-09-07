@@ -88,8 +88,6 @@ def postsave(sender, instance, created, raw, using, update_fields, **kwargs):
         async_task("youtube.tasks.get_video", instance, sync=False)
         logger.info("task scheduled")
 
-    if instance.status == YoutubeResource.Status.ARCHIVED:        
-        logger.info("ARCHIVED")
 
     if instance.status == YoutubeResource.Status.DONE:        
         logger.info("DONE")
@@ -99,3 +97,7 @@ def postsave(sender, instance, created, raw, using, update_fields, **kwargs):
     
     if instance.status == YoutubeResource.Status.BUSY:        
         logger.info("Instance Busy")
+
+    if instance.status == YoutubeResource.Status.ARCHIVED:        
+        logger.info("ARCHIVED")
+
