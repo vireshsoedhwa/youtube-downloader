@@ -133,7 +133,7 @@ def archive(instance):
     else:
         instance.status = instance.Status.REVIEW
         instance.save()
-        raise ArchiveError(instance, "needs review")
+        return
 
     logger.info("Archive finished succesfully")
 

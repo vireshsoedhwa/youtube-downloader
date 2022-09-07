@@ -104,8 +104,11 @@ def postsave(sender, instance, created, raw, using, update_fields, **kwargs):
         logger.info("REVIEW")
     
     if instance.status == YoutubeResource.Status.ARCHIVE:        
-        logger.info("ARCHIVE")
-        archive(instance)
+        logger.info("ARCHIVE triggered")
+        try:
+            archive(instance)
+        except Exception as e:
+            logger.error(f"Archive failed: {e}")
 
     if instance.status == YoutubeResource.Status.ARCHIVED:        
         logger.info("ARCHIVED")
