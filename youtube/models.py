@@ -35,6 +35,7 @@ class YoutubeResource(models.Model):
         BUSY = "BUSY", _("Busy")
         FAILED = "FAILED", _("Failed")
         DONE = "DONE", _("Done")
+        REVIEW = "REVIEW", _("Review")
         ARCHIVED = "ARCHIVED", _("Archived")
 
     id = models.AutoField(primary_key=True)
@@ -49,7 +50,6 @@ class YoutubeResource(models.Model):
     #                              blank=True)
     is_playlist = models.BooleanField(default=False)
     is_music = models.BooleanField(default=False)
-    needs_review = models.BooleanField(default=False)
     artist = models.TextField(max_length=100, null=True, blank=True)
     tags = models.JSONField(encoder=None, decoder=None, null=True, blank=True)
     categories = models.JSONField(encoder=None, decoder=None, null=True, blank=True)
