@@ -13,6 +13,8 @@ import Tooltip from '@mui/material/Tooltip';
 import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
+import FolderSpecialIcon from '@mui/icons-material/FolderSpecial';
+import FindReplaceIcon from '@mui/icons-material/FindReplace';
 
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
@@ -83,9 +85,7 @@ export default function YoutubeMediadetail(props) {
     };
 
     const clickqueue = () => {
-        if (props.data.status == "NEW") {
-        }
-        if (props.data.status == "DONE") {
+        if (props.data.status == "DONE" || props.data.status == "ARCHIVED" || props.data.status == "REVIEW") {
             onDownload(props.data.id)
         }
     }
@@ -104,6 +104,8 @@ export default function YoutubeMediadetail(props) {
 
     const MEDIADETAIL_STATES = {
         DONE: <DownloadIcon color="success" sx={{ height: 38, width: 38 }} />,
+        REVIEW: <DownloadIcon color="success" sx={{ height: 38, width: 38 }} />,
+        ARCHIVED: <DownloadIcon color="success" sx={{ height: 38, width: 38 }} />,
         QUEUED: <Tooltip title="In Queue"><HourglassTopIcon sx={{ height: 38, width: 38 }} /></Tooltip>,
         BUSY: <CircularProgressWithLabel sx={{ height: 38, width: 38 }} variant="determinate" value={parseInt(props.data.downloadprogress)} />,
         FAILED: <ErrorIcon color="error" sx={{ height: 38, width: 38 }} />,
@@ -147,42 +149,46 @@ export default function YoutubeMediadetail(props) {
                         :
                         <div>
                         </div>}
-
-                    <Box sx={{ display: 'flex', alignItems: 'center', pl: 3, pb: 0 }}>
-                        {props.data.status == 'DONE' ?
+                    {(props.data.status == 'DONE' || props.data.status == 'ARCHIVED' || props.data.status == 'REVIEW') &&
+                        <Box sx={{ display: 'flex', alignItems: 'center', pl: 3, pb: 0 }}>
                             <div>
                                 <audio controls preload="none">
                                     <source src={'/resource/' + props.data.id + '/download'} type="audio/mpeg" />
                                     Your browser does not support the audio element.
                                 </audio>
                             </div>
-                            :
-                            <div>
-                            </div>
-                        }
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', pl: 3, pb: 0 }}>
-                        {props.data.is_music == true ?
+                        </Box>
+                    }
+                    {props.data.is_music == true &&
+                        <Box sx={{ display: 'flex', alignItems: 'center', pl: 3, pb: 0 }}>
                             <Stack direction="row" spacing={1}>
                                 <Tooltip title="Music Track">
                                     <Chip icon={<AudiotrackIcon />} label={props.data.artist} variant="outlined" size="small" />
                                 </Tooltip>
                             </Stack>
-                            :
-                            <>
-                            </>
-                        }
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', pl: 2, pb: 0 }}>
-                        {props.data.is_playlist == true ?
+                        </Box>
+                    }
+                    {props.data.is_playlist == true &&
+                        <Box sx={{ display: 'flex', alignItems: 'center', pl: 2, pb: 0 }}>
                             <Tooltip title="Playlist Detected">
                                 <QueueMusicIcon />
                             </Tooltip>
-                            :
-                            <>
-                            </>
-                        }
-                    </Box>
+                        </Box>
+                    }
+                    {props.data.status == 'ARCHIVED' &&
+                        <Box sx={{ display: 'flex', alignItems: 'center', pl: 2, pb: 0 }}>
+                            <Tooltip title="Archived">
+                                <FolderSpecialIcon />
+                            </Tooltip>
+                        </Box>
+                    }
+                    {props.data.status == 'REVIEW' &&
+                        <Box sx={{ display: 'flex', alignItems: 'center', pl: 2, pb: 0 }}>
+                            <Tooltip title="needs review">
+                                <FindReplaceIcon color="error" />
+                            </Tooltip>
+                        </Box>
+                    }
                 </Box>
                 {/* </Box> */}
             </CardContent>

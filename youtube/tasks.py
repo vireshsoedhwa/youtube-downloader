@@ -19,8 +19,7 @@ logger.addFilter(YoutubeIdFilter())
 
 
 def get_video(instance):
-    loggingfilter = YoutubeIdFilter(youtuberesource=instance)
-    logger.addFilter(loggingfilter)
+    logger.addFilter(YoutubeIdFilter(youtuberesource=instance))
     try:
         logger.info("Download Task starting")
         instance.status = instance.Status.BUSY
@@ -44,6 +43,22 @@ def get_video(instance):
         instance.save()
 
 
+def archive_oldest():
+    from .models import YoutubeResource
+
+    grab_only_music = YoutubeResource.objects.filter(is_music=True).filter(
+        is_playlist=False
+    )
+    grab_only_done = grab_only_music.filter(status=YoutubeResource.Status.DONE)
+    if len(grab_only_done) == 0:
+        logger.info(f"Nothing to archive")
+    else:
+        oldest = grab_only_done.order_by("created_at")[0]
+        oldest.status = oldest.Status.ARCHIVE
+        oldest.save()
+        logger.info(f"Archiving : {oldest.id}")
+
+
 def archive(instance):
     loggingfilter = YoutubeIdFilter(youtuberesource=instance)
     logger.addFilter(loggingfilter)
@@ -56,7 +71,6 @@ def archive(instance):
     if not instance.status == instance.Status.ARCHIVE:
         raise ArchiveError(instance, "not ready for archive")
 
-
     # check if audiofile is there
     path = Path(
         settings.MEDIA_ROOT + str(instance.youtube_id) + "/" + instance.filename
@@ -64,13 +78,12 @@ def archive(instance):
     if not path.is_file():
         raise ArchiveError(instance, "file is missing")
 
-
     # check if music
     if not instance.is_music:
         raise ArchiveError(instance, "not Music category")
 
     # check if artist exists
-    if instance.artist == None or instance.artist == '':
+    if instance.artist == None or instance.artist == "":
         # check if title exists
         if instance.title == None:
             raise ArchiveError(instance, "title is missing")
@@ -116,9 +129,7 @@ def archive(instance):
                 url_create, files={"audiofile": path.open(mode="rb")}, data=values
             )
         except:
-            raise ArchiveError(
-                instance, "request to api failed"
-            )
+            raise ArchiveError(instance, "request to api failed")
 
         if r1.status_code == requests.codes.created:
             logger.info("mediaresource created on Archive backend")
