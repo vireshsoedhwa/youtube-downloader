@@ -5,24 +5,42 @@ services:
     image: postgres:alpine
     volumes:
       - dataweb:/var/lib/postgresql/data
-    env_file:
-      - .env
+    environment:
+      - POSTGRES_HOST=webdb
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
     networks:
       playlistener-network:   
 
-
   app:
+    command: python manage.py runserver 0.0.0.0:9000
     image: playlistenerweb
     build:
       context: .
-    env_file:
-      - .env
+    volumes:
+      - .:/code
+    environment:
+      - DEBUG=1
+      - PRODUCTION=0
+      - PLAAPI_PATH=http://playlistenerapidev:8000
+      - DJANGO_SECRET_KEY=WOOOOOOOOWOOOOOOOOWWW
+      - POSTGRES_HOST=webdb
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - ADMIN_USERNAME=admin
+      - ADMIN_PASSWORD=admin
+      - GO_PIPELINE_LABEL=dev
+    ports:
+      - "9000:9000"
     depends_on:
       - webdb
+    networks:
+      playlistener-network:
 
 volumes:
   dataweb:
-    external: true
   webassets:
 
 

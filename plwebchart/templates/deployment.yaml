@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plweb
+  namespace: plweb
+spec:
+  selector:
+    matchLabels:
+      app: plwebapp
+  template:
+    metadata:
+      labels:
+        app: plwebapp
+    spec:
+      containers:
+        - name: plwebapp
+          image: {{ .Values.image }}
