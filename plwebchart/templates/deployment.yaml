@@ -15,3 +15,23 @@ spec:
       containers:
         - name: plwebapp
           image: {{ .Values.image }}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plwebdb
+  namespace: plweb
+spec:
+  selector:
+    matchLabels:
+      app: plwebdbapp
+  template:
+    metadata:
+      labels:
+        app: plwebdbapp
+    spec:
+      containers:
+        - name: plwebdbapp
+          image: postgres:alpine
