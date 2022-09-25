@@ -17,9 +17,8 @@ class YoutubeConfig(AppConfig):
 
         if "runserver" in sys.argv or "playlistenerweb.asgi:application" in sys.argv:
             logger.info("DEBUG: " + str(settings.DEBUG))
-            logger.info("PRODUCTION: " + str(settings.PRODUCTION))
             logger.info("GO_PIPELINE_LABEL: " + str(settings.GO_PIPELINE_LABEL))
-            logger.info("PLAAPI_PATH: " + str(settings.PLAAPI_PATH))
+            logger.info("PLAPI_PATH: " + str(settings.PLAPI_PATH))
             logger.info("youtube started")
 
             from django.contrib.auth.models import User

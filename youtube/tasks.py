@@ -123,7 +123,7 @@ def archive(instance):
         values["artists"] = artists
         values["description"] = instance.description
 
-        url_create = settings.PLAAPI_PATH + "/mediaresources/"
+        url_create = settings.PLAPI_PATH + "/mediaresources/"
         try:
             r1 = requests.post(
                 url_create, files={"audiofile": path.open(mode="rb")}, data=values

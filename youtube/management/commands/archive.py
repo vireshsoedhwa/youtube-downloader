@@ -84,7 +84,7 @@ class Command(BaseCommand):
                         tags.append(tag)
                 values["tags"] = tags
 
-                url_create = settings.PLAAPI_PATH + "/mediaresources/"
+                url_create = settings.PLAPI_PATH + "/mediaresources/"
                 r1 = requests.post(
                     url_create, files={"audiofile": path.open(mode="rb")}, data=values
                 )

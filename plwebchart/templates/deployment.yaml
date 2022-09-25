@@ -35,3 +35,54 @@ spec:
       containers:
         - name: plwebdbapp
           image: postgres:alpine
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgressecret
+                  key: username
+                  optional: false
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgressecret
+                  key: password
+                  optional: false
+            - name: ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: adminsecret
+                  key: username
+                  optional: false
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: adminsecret
+                  key: password
+                  optional: false
+            - name: DJANGO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: djangosecret
+                  key: secret
+                  optional: false           
+            - name: POSTGRES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: plweb-configmap
+                  key: plwebdb
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: plweb-configmap
+                  key: postgresdb
+            - name: GO_PIPELINE_LABEL
+              valueFrom:
+                configMapKeyRef:
+                  name: plweb-configmap
+                  key: gopipelinelabel
+            - name: PLAPI_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: plweb-configmap
+                  key: plapipath

@@ -22,8 +22,7 @@ services:
       - .:/code
     environment:
       - DEBUG=1
-      - PRODUCTION=0
-      - PLAAPI_PATH=http://playlistenerapidev:8000
+      - PLAPI_PATH=http://playlistenerapidev:8000
       - DJANGO_SECRET_KEY=WOOOOOOOOWOOOOOOOOWWW
       - POSTGRES_HOST=webdb
       - POSTGRES_PASSWORD=postgres
@@ -42,7 +41,6 @@ services:
 volumes:
   dataweb:
   webassets:
-
 
 networks:
   playlistener-network:

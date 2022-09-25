@@ -11,8 +11,7 @@ services:
       - webassets:/var/www/html
     environment:
       - DEBUG=0
-      - PRODUCTION=1
-      - PLAAPI_PATH=http://playlistenerapiproxy:8000
+      - PLAPI_PATH=http://playlistenerapiproxy:8000
     networks:
       playlistener-network:
         aliases:

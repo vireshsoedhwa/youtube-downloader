@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: plweb-configmap
+  namespace: plweb
+data:
+  postgreshost: plwebdb
+  postgresdb: postgres
+  gopipelinelabel: {{ .Values.GoPipelineLabel }}
+  plapipath: {{ .Values.PlapiPath }}
