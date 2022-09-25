@@ -35,6 +35,9 @@ spec:
       containers:
         - name: plwebdbapp
           image: postgres:alpine
+          envFrom:
+          - configMapRef:
+              name: plweb-configmap
           env:
             - name: POSTGRES_USER
               valueFrom:
@@ -48,16 +51,16 @@ spec:
                   name: postgressecret
                   key: password
                   optional: false
-            - name: POSTGRES_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: plweb-configmap
-                  key: POSTGRES_HOST
-            - name: POSTGRES_DB
-              valueFrom:
-                configMapKeyRef:
-                  name: plweb-configmap
-                  key: POSTGRES_DB
+            # - name: POSTGRES_HOST
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: plweb-configmap
+            #       key: POSTGRES_HOST
+            # - name: POSTGRES_DB
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: plweb-configmap
+            #       key: POSTGRES_DB
             # - name: ADMIN_USERNAME
             #   valueFrom:
             #     secretKeyRef:
