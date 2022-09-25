@@ -43,13 +43,13 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: postgressecret
-                  key: username
+                  key: POSTGRES_USER
                   optional: false
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: postgressecret
-                  key: password
+                  key: POSTGRES_PASSWORD
                   optional: false
             # - name: POSTGRES_HOST
             #   valueFrom:
