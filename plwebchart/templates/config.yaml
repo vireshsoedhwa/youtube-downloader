@@ -4,7 +4,7 @@ metadata:
   name: plweb-configmap
   namespace: plweb
 data:
-  postgreshost: plwebdb
-  postgresdb: postgres
-  gopipelinelabel: {{ .Values.GoPipelineLabel }}
-  plapipath: {{ .Values.PlapiPath }}
+  POSTGRES_HOST: plwebdb
+  POSTGRES_DB: postgres
+  GO_PIPELINE_LABEL: {{ .Values.GoPipelineLabel }}
+  PLAPI_PATH: {{ .Values.PlapiPath }}
