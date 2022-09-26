@@ -11,3 +11,19 @@ spec:
     protocol: TCP
     port: 8080
     targetPort: 9000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: plwebdb-svc
+  namespace: plweb
+spec:
+  selector:
+    app: plwebdb
+  ports:
+  - name: plwebdb
+    protocol: TCP
+    port: 5432
+    targetPort: 5432
