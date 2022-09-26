@@ -15,22 +15,29 @@ spec:
       containers:
         - name: plwebapp
           image: {{ .Values.image }}
-          env:
-            - name: ADMIN_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: adminsecret
-                  key: ADMIN_USERNAME
-                  optional: false
+          # env:
+          #   - name: ADMIN_USERNAME
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: adminsecret
+          #         key: ADMIN_USERNAME
+          #         optional: false
+          # env:
+          #   - name: ADMIN_PASSWORD
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: adminsecret
+          #         key: ADMIN_PASSWORD
+          #         optional: false
           envFrom:
           - configMapRef:
               name: plweb-configmap
           envFrom:
           - secretRef:
               name: postgressecret
-          # envFrom:
-          # - secretRef:
-          #     name: adminsecret
+          envFrom:
+          - secretRef:
+              name: adminsecret
           envFrom:
           - secretRef:
               name: djangosecret
