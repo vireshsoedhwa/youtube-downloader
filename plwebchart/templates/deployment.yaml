@@ -17,7 +17,7 @@ spec:
           image: {{ .Values.image }}
           envFrom:
           - configMapRef:
-              name: plweb-configmap
+              name: plweb-config
           - secretRef:
               name: postgressecret
           - secretRef:
@@ -47,6 +47,6 @@ spec:
             protocol: TCP
           envFrom:
           - configMapRef:
-              name: plweb-configmap
+              name: plweb-config
           - secretRef:
               name: postgressecret
