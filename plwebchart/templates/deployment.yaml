@@ -21,9 +21,7 @@ spec:
           - secretRef:
               name: postgressecret
           - secretRef:
-              name: adminsecret
-          - secretRef:
-              name: djangosecret
+              name: app-secret
 
 ---
 
