@@ -35,18 +35,20 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: plwebdbapp
+      app: plwebdb
   template:
     metadata:
       labels:
-        app: plwebdbapp
+        app: plwebdb
     spec:
       containers:
-        - name: plwebdbapp
+        - name: plwebdb
           image: postgres:alpine
+          ports:
+          - containerPort: 5432
+            protocol: TCP
           envFrom:
           - configMapRef:
               name: plweb-configmap
-          envFrom:
           - secretRef:
               name: postgressecret
