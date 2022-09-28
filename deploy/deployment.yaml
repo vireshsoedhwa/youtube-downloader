@@ -1,0 +1,52 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: plweb
+#   namespace: plweb
+# spec:
+#   selector:
+#     matchLabels:
+#       app: plwebapp
+#   template:
+#     metadata:
+#       labels:
+#         app: plwebapp
+#     spec:
+#       containers:
+#         - name: plwebapp
+#           image: {{ .Values.image }}
+#           envFrom:
+#           - configMapRef:
+#               name: plweb-config
+#           - secretRef:
+#               name: postgressecret
+#           - secretRef:
+#               name: app-secret
+
+# ---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plwebdb
+  namespace: plweb
+spec:
+  selector:
+    matchLabels:
+      app: plwebdb
+  template:
+    metadata:
+      labels:
+        app: plwebdb
+    spec:
+      containers:
+        - name: plwebdb
+          image: postgres:alpine
+          ports:
+          - containerPort: 5432
+            protocol: TCP
+          envFrom:
+          - configMapRef:
+              name: plweb-config
+          - secretRef:
+              name: postgressecret
