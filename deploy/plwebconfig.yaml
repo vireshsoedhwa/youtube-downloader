@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: plweb-config
-  namespace: default
+  namespace: plweb
 data:
   POSTGRES_HOST: plwebdb-svc
   POSTGRES_DB: postgres
