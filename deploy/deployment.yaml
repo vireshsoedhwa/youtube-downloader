@@ -1,29 +1,36 @@
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: plweb
-#   namespace: plweb
-# spec:
-#   selector:
-#     matchLabels:
-#       app: plwebapp
-#   template:
-#     metadata:
-#       labels:
-#         app: plwebapp
-#     spec:
-#       containers:
-#         - name: plwebapp
-#           image: {{ .Values.image }}
-#           envFrom:
-#           - configMapRef:
-#               name: plweb-config
-#           - secretRef:
-#               name: postgressecret
-#           - secretRef:
-#               name: app-secret
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plweb
+  namespace: plweb
+spec:
+  selector:
+    matchLabels:
+      app: plwebapp
+  template:
+    metadata:
+      labels:
+        app: plwebapp
+    spec:
+      containers:
+        - name: plwebapp
+          image: registry.wieru.com/plweb
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          envFrom:
+          - configMapRef:
+              name: plweb-config
+          - secretRef:
+              name: postgressecret
+          - secretRef:
+              name: app-secret
 
-# ---
+---
 
 apiVersion: apps/v1
 kind: Deployment
