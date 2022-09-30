@@ -12,6 +12,8 @@ spec:
       labels:
         app: plwebapp
     spec:
+      imagePullSecrets:
+      - name: regcred
       containers:
         - name: plwebapp
           image: registry.wieru.com/plweb:1.0
