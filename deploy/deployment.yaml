@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: plwebapp
-          image: registry.wieru.com/plweb:1.0
+          image: registry.wieru.com/plweb
           resources:
             requests:
               memory: "64Mi"
