@@ -5,12 +5,12 @@ metadata:
   namespace: plweb
 spec:
   selector:
-    app: plwebapp
+    app: plweb-proxy
   ports:
-  - name: plwebapp
+  - name: plweb-proxy
     protocol: TCP
     port: 8080
-    targetPort: 9000
+    targetPort: 80
   type: NodePort
   
 ---
