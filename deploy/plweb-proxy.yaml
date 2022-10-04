@@ -21,7 +21,7 @@ spec:
           - name: NGINX_PROXY_HOST
             value: "plweb-svc"
           - name: NGINX_PROXY_PORT
-            value: "9000"
+            value: "80"
           resources:
             requests:
               memory: "64Mi"
