@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
         - name: app
-          # image: registry.wieru.com/plweb
-          image: nginx
+          image: registry.wieru.com/plweb:1.0
+          # image: nginx
           resources:
             requests:
               memory: "64Mi"
@@ -24,7 +24,7 @@ spec:
               memory: "128Mi"
               cpu: "500m"
           ports:
-          - containerPort: 80
+          - containerPort: 9000
             protocol: TCP
           envFrom:
           - configMapRef:
