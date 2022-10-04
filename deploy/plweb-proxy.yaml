@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: plweb-proxy
-          image: nginx
+          image: registry.wieru.com/proxy
           resources:
             requests:
               memory: "64Mi"
