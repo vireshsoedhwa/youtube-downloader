@@ -23,9 +23,6 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "500m"
-          ports:
-          - containerPort: 80
-            protocol: TCP
           envFrom:
           - configMapRef:
               name: plweb-config
