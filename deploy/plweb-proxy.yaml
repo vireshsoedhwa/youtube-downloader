@@ -26,6 +26,6 @@ spec:
           - name: NGINX_PORT
             value: 80
           - name: NGINX_PROXY_HOST
-            value: plweb-svc
+            value: "plweb-svc"
           - name: NGINX_PROXY_PORT
             value: 9000
