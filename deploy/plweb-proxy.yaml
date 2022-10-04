@@ -15,17 +15,17 @@ spec:
       containers:
         - name: plweb-proxy
           image: registry.wieru.com/proxy
-          env:
-          - name: NGINX_PORT
-            value: "80"
-          - name: NGINX_PROXY_HOST
-            value: "plweb-svc"
-          - name: NGINX_PROXY_PORT
-            value: "9000"
-          resources:
-            requests:
-              memory: "64Mi"
-              cpu: "250m"
-            limits:
-              memory: "128Mi"
-              cpu: "500m"
+          # env:
+          # - name: NGINX_PORT
+          #   value: "80"
+          # - name: NGINX_PROXY_HOST
+          #   value: "plweb-svc"
+          # - name: NGINX_PROXY_PORT
+          #   value: "9000"
+          # resources:
+          #   requests:
+          #     memory: "64Mi"
+          #     cpu: "250m"
+          #   limits:
+          #     memory: "128Mi"
+          #     cpu: "500m"
