@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: plweb-proxy
+  name: app-proxy
   namespace: plweb
 spec:
   selector:
     matchLabels:
-      app: plweb-proxy
+      app: app-proxy
   template:
     metadata:
       labels:
-        app: plweb-proxy
+        app: app-proxy
     spec:
       containers:
-        - name: plweb-proxy
+        - name: app-proxy
           image: registry.wieru.com/proxy
           env:
           - name: NGINX_PORT
             value: "80"
           - name: NGINX_PROXY_HOST
-            value: "plweb-svc"
+            value: "app-svc"
           - name: NGINX_PROXY_PORT
             value: "80"
           resources:

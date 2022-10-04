@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: plweb-proxy-svc
+  name: app-proxy-svc
   namespace: plweb
 spec:
   selector:
-    app: plweb-proxy
+    app: app-proxy
   ports:
-  - name: plweb-proxy
+  - name: app-proxy
     protocol: TCP
     port: 80
     targetPort: 80
@@ -18,13 +18,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: plweb-svc
+  name: app-svc
   namespace: plweb
 spec:
   selector:
-    app: plweb
+    app: app
   ports:
-  - name: plweb
+  - name: app
     protocol: TCP
     port: 80
     targetPort: 80
@@ -35,13 +35,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: plwebdb-svc
+  name: db-svc
   namespace: plweb
 spec:
   selector:
-    app: plwebdb
+    app: db
   ports:
-  - name: plwebdb
+  - name: db
     protocol: TCP
     port: 5432
     targetPort: 5432
