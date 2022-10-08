@@ -13,7 +13,7 @@ spec:
         app: app
     spec:
       volumes:
-      - name: dnsupdatervolume
+      - name: plweb-webassets
         persistentVolumeClaim:
           claimName: plweb-webassets-pvc
       containers:
@@ -34,7 +34,9 @@ spec:
               name: postgressecret
           - secretRef:
               name: app-secret
-
+          volumeMounts:
+          - mountPath: /var/www/html
+            name: plweb-webassets
 ---
 
 apiVersion: apps/v1
