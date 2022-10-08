@@ -12,6 +12,10 @@ spec:
       labels:
         app: app
     spec:
+      volumes:
+      - name: dnsupdatervolume
+        persistentVolumeClaim:
+          claimName: plweb-webassets-pvc
       containers:
         - name: app
           image: registry.wieru.com/plweb:1.0
@@ -20,9 +24,6 @@ spec:
             requests:
               memory: "64Mi"
               cpu: "250m"
-            limits:
-              memory: "128Mi"
-              cpu: "500m"
           # ports:
           # - containerPort: 9000
           #   protocol: TCP
@@ -57,9 +58,6 @@ spec:
             requests:
               memory: "64Mi"
               cpu: "250m"
-            limits:
-              memory: "128Mi"
-              cpu: "500m"
           ports:
           - containerPort: 5432
             protocol: TCP
