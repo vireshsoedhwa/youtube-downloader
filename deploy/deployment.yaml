@@ -16,6 +16,9 @@ spec:
       - name: webassets
         persistentVolumeClaim:
           claimName: plwebassets
+      - name: data
+        persistentVolumeClaim:
+          claimName: plwebdata
       containers:
         - name: app
           image: registry.wieru.com/plweb:1.0
@@ -36,6 +39,8 @@ spec:
           volumeMounts:
           - mountPath: /var/www/html
             name: webassets
+          - mountPath: /code/data
+            name: data
 ---
 
 apiVersion: apps/v1
