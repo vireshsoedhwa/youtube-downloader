@@ -13,9 +13,9 @@ spec:
         app: app-proxy
     spec:
       volumes:
-      - name: plweb-webassets
+      - name: webassets
         persistentVolumeClaim:
-          claimName: plweb-webassets-pvc
+          claimName: plwebassets
       containers:
         - name: app-proxy
           image: registry.wieru.com/proxy
@@ -32,4 +32,4 @@ spec:
               cpu: "250m"
           volumeMounts:
           - mountPath: /var/www/html
-            name: plweb-webassets
+            name: webassets
