@@ -13,13 +13,12 @@ spec:
         app: app
     spec:
       volumes:
-      - name: plweb-webassets
+      - name: webassets
         persistentVolumeClaim:
-          claimName: plweb-webassets-pvc
+          claimName: plwebassets
       containers:
         - name: app
           image: registry.wieru.com/plweb:1.0
-          # image: nginx
           resources:
             requests:
               memory: "64Mi"
@@ -36,7 +35,7 @@ spec:
               name: app-secret
           volumeMounts:
           - mountPath: /var/www/html
-            name: plweb-webassets
+            name: webassets
 ---
 
 apiVersion: apps/v1
@@ -53,6 +52,10 @@ spec:
       labels:
         app: db
     spec:
+      volumes:
+      - name: dbvolume
+        persistentVolumeClaim:
+          claimName: plwebdb
       containers:
         - name: db
           image: postgres:alpine
@@ -68,3 +71,6 @@ spec:
               name: plweb-config
           - secretRef:
               name: postgressecret
+          volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: dbvolume
