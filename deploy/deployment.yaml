@@ -21,7 +21,7 @@ spec:
           claimName: plwebdata
       containers:
         - name: app
-          image: registry.wieru.com/plweb:1.0
+          image: registry.wieru.com/plweb:latest
           resources:
             requests:
               memory: "64Mi"

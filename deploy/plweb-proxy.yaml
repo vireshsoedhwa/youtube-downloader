@@ -18,7 +18,7 @@ spec:
           claimName: plwebassets
       containers:
         - name: app-proxy
-          image: registry.wieru.com/proxy
+          image: registry.wieru.com/proxy:latest
           env:
           - name: NGINX_PORT
             value: "80"
