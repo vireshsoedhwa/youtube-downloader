@@ -10,11 +10,18 @@ server {
     # path for static files
     root /var/www/html;
 
+    location /admin {
+      allow 172.18.0.0/16;
+      allow 127.0.0.1;
+      allow 192.168.1.0/24;
+      deny all;
+      try_files $uri @proxy_to_app;
+    }
+
     location / {
       # checks for static file, if not found proxy to app
       # autoindex on;
       try_files $uri @proxy_to_app;
-      # try_files $uri $uri/ =404;
     }
 
     location @proxy_to_app {
