@@ -42,7 +42,6 @@ COPY docker-entrypoint.sh /usr/local/bin
 
 COPY playlistenerweb playlistenerweb/
 COPY youtube youtube/
-COPY home home/
 
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
@@ -50,5 +49,5 @@ EXPOSE 9000
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-CMD ["supervisord", "-c", "supervisord.conf", "-n"]
-
+# CMD ["supervisord", "-c", "supervisord.conf", "-n"]
+CMD ["daphne", "-b", "0.0.0.0", "-p", "9000", "playlistenerweb.asgi:application"]

@@ -1,47 +1,73 @@
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: plweb
-#   namespace: plweb
-# spec:
-#   selector:
-#     matchLabels:
-#       app: plwebapp
-#   template:
-#     metadata:
-#       labels:
-#         app: plwebapp
-#     spec:
-#       containers:
-#         - name: plwebapp
-#           image: {{ .Values.image }}
-#           envFrom:
-#           - configMapRef:
-#               name: plweb-config
-#           - secretRef:
-#               name: postgressecret
-#           - secretRef:
-#               name: app-secret
-
-# ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  namespace: plweb
+spec:
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      volumes:
+      - name: webassets
+        persistentVolumeClaim:
+          claimName: plwebassets
+      - name: data
+        persistentVolumeClaim:
+          claimName: plwebdata
+      containers:
+        - name: app
+          image: registry.wieru.com/plweb:1.0
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+          # ports:
+          # - containerPort: 9000
+          #   protocol: TCP
+          envFrom:
+          - configMapRef:
+              name: plweb-config
+          - secretRef:
+              name: postgressecret
+          - secretRef:
+              name: app-secret
+          volumeMounts:
+          - mountPath: /var/www/html
+            name: webassets
+          - mountPath: /code/data
+            name: data
+---
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: plwebdb
-  namespace: default
+  name: db
+  namespace: plweb
 spec:
   selector:
     matchLabels:
-      app: plwebdb
+      app: db
   template:
     metadata:
       labels:
-        app: plwebdb
+        app: db
     spec:
+      volumes:
+      - name: dbvolume
+        persistentVolumeClaim:
+          claimName: plwebdb
       containers:
-        - name: plwebdb
+        - name: db
           image: postgres:alpine
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
           ports:
           - containerPort: 5432
             protocol: TCP
@@ -50,3 +76,6 @@ spec:
               name: plweb-config
           - secretRef:
               name: postgressecret
+          volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: dbvolume
