@@ -6,5 +6,4 @@ metadata:
 data:
   POSTGRES_HOST: db-svc
   POSTGRES_DB: postgres
-  PIPELINE_LABEL: test
-  PLAPI_PATH: playlistenerapidev:8000
+  PLAPI_PATH: plapi-proxy-svc
