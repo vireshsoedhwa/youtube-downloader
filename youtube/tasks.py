@@ -70,7 +70,6 @@ def archive(instance):
     # check if Done. Review done or download done
     if not instance.status == instance.Status.ARCHIVE:
         raise ArchiveError(instance, "not ready for archive")
-
     # check if audiofile is there
     path = Path(
         settings.MEDIA_ROOT + str(instance.youtube_id) + "/" + instance.filename
@@ -98,19 +97,20 @@ def archive(instance):
                 if not instance.tags == None:
                     for tag in instance.tags:
                         if possible_artist.lower() in tag.lower():
-                            instance.status = instance.Status.DONE
                             instance.artist = possible_artist
                             break
                         else:
                             instance.status = instance.Status.REVIEW
-
+                            instance.error = "Could not derive artist from title"
+                            instance.save()
+                            return
                 else:
                     instance.status = instance.Status.REVIEW
-    else:
-        # artist already recorded. no analysis needed
-        instance.status = instance.Status.DONE
+                    instance.error = "no tags present"
+                    instance.save()
+                    return
 
-    if instance.status == instance.Status.DONE:
+    if instance.status == instance.Status.ARCHIVE:
         values = {}
         values["title"] = instance.title
         artists = []
@@ -128,19 +128,19 @@ def archive(instance):
             r1 = requests.post(
                 url_create, files={"audiofile": path.open(mode="rb")}, data=values
             )
+            if r1.status_code == requests.codes.created:
+                logger.info("mediaresource created on Archive backend")
+                instance.status = instance.Status.ARCHIVED
+                instance.save()
+            else:
+                instance.status = instance.Status.REVIEW
+                instance.save()
+                raise ArchiveError(
+                    instance, f"request to api failed with code: {r1.status_code}"
+                )
         except:
             raise ArchiveError(instance, "request to api failed")
 
-        if r1.status_code == requests.codes.created:
-            logger.info("mediaresource created on Archive backend")
-            instance.status = instance.Status.ARCHIVED
-            instance.save()
-        else:
-            instance.status = instance.Status.REVIEW
-            instance.save()
-            raise ArchiveError(
-                instance, f"request to api failed with code: {r1.status_code}"
-            )
     else:
         instance.status = instance.Status.REVIEW
         instance.save()
