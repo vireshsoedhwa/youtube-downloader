@@ -185,7 +185,7 @@ LOGGING = {
             "style": "{",
         },
         "custom": {
-            "format": "{levelname} {asctime} {id} {name} {funcName} >>> {message}",
+            "format": "{levelname} {asctime} {name} {funcName} >>> {message}",
             "style": "{",
         },
     },

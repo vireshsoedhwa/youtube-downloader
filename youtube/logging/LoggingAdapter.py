@@ -5,4 +5,4 @@ class LoggingAdapter(logging.LoggerAdapter):
         id = ""
         if 'id' in self.extra:
             id = str(self.extra['id'])
-        return f"[{id} {msg}]"
+        return f"[{id}] {msg}", kwargs

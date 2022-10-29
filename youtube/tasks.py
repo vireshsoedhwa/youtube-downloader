@@ -41,23 +41,21 @@ def get_video(instance):
 
 def archive_oldest():
     from .models import YoutubeResource
-    logger = LoggingAdapter(newlogger, {})
     grab_only_music = YoutubeResource.objects.filter(is_music=True).filter(
         is_playlist=False
     )
     grab_only_done = grab_only_music.filter(status=YoutubeResource.Status.DONE)
     if len(grab_only_done) == 0:
-        logger.info(f"Nothing to archive")
+        newlogger.info(f"Nothing to archive")
     else:
         oldest = grab_only_done.order_by("created_at")[0]
         oldest.status = oldest.Status.ARCHIVE
         oldest.save()
-        logger.info(f"Archiving : {oldest.id}")
+        newlogger.info(f"Archiving : {oldest.id}")
 
 
 def archive(instance):
     logger = LoggingAdapter(newlogger, {'id': instance.id})
-
     # check if Needs review
     if instance.status == instance.Status.REVIEW:
         raise ArchiveError("Needs review before archiving")
@@ -71,7 +69,11 @@ def archive(instance):
     )
     if not path.is_file():
         raise ArchiveError(instance, "file is missing")
+
+    print("test3")
     logger.info("Audio file is present")
+    print("test4")
+
     # check if music
     if not instance.is_music:
         raise ArchiveError(instance, "not Music category")
@@ -133,6 +135,8 @@ def archive(instance):
                 instance.save()
         except Exception as e:
             logger.error(f"Failed to Archive {e}")
+            instance.status = instance.Status.REVIEW
+            instance.save()
             raise ArchiveError(e)
 
     else:
