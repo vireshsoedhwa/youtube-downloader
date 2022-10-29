@@ -143,11 +143,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 Q_CLUSTER = {
     "name": "playlistener",
     "max_attempts": 1,
-    "retry": 1000,
+    "retry": 4000, # The value must be bigger than the time it takes to complete longest task (timeout)
     "workers": 1,
-    "recycle": 500,
-    "timeout": 900,
+    "recycle": 500, # The number of tasks a worker will process before recycling .
+    "timeout": 3600, # The number of seconds a worker is allowed to spend on a task before it’s terminated. 
     "compress": True,
+    "catch_up": False,
     "cpu_affinity": 1,
     "save_limit": 250,
     "queue_limit": 500,
@@ -184,7 +185,7 @@ LOGGING = {
             "style": "{",
         },
         "custom": {
-            "format": "{levelname} {asctime} {id} {youtubeid} {name} {funcName} >>> {message}",
+            "format": "{levelname} {asctime} {id} {name} {funcName} >>> {message}",
             "style": "{",
         },
     },

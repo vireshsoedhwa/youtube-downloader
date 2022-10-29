@@ -7,7 +7,8 @@ from django.conf import settings
 from youtube_dl.utils import ExtractorError, YoutubeDLError
 
 import logging
-logger = logging.getLogger(__name__)
+newlogger = logging.getLogger(__name__)
+from .logging.LoggingAdapter import LoggingAdapter
 
 class YT:
     def __init__(self, youtubeobject):
@@ -28,7 +29,7 @@ class YT:
                     "key": "EmbedThumbnail",
                 },
             ],
-            "logger": MyLogger(),
+            "logger": MyLogger(self.youtubeobject),
             "progress_hooks": [self.my_hook],
             "download_archive": settings.MEDIA_ROOT + "/archive",
             "keepvideo": False,
@@ -42,10 +43,9 @@ class YT:
             + str(self.youtubeobject.youtube_id)
             + "/%(title)s.%(ext)s",
         }
-        loggingfilter = YoutubeIdFilter(youtuberesource=youtubeobject)
-        logger.addFilter(loggingfilter)
 
     def my_hook(self, d):
+        logger = LoggingAdapter(newlogger, {'id': self.youtubeobject.id})
         if d["status"] == "downloading":
             progress = (d["downloaded_bytes"] / d["total_bytes"]) * 100
             self.youtubeobject.eta = d["eta"]
@@ -70,6 +70,7 @@ class YT:
                 logger.error("file not found")
 
     def run(self):
+        logger = LoggingAdapter(newlogger, {'id': self.youtubeobject.id})
         youtube_target_url = "https://youtube.com/watch?v=" + str(
             self.youtubeobject.youtube_id
         )
@@ -91,6 +92,7 @@ class YT:
                 self.youtubeobject.save()
 
     def extract_info(self):
+        logger = LoggingAdapter(newlogger, {'id': self.youtubeobject.id})
         with youtube_dl.YoutubeDL(self.ydl_opts) as ydl:
             logger.info("Starting metadata extraction ...")
             extracted_info = ydl.extract_info(
@@ -137,6 +139,7 @@ class YT:
             self.youtubeobject.save()
 
     def _extract_single_item(self):
+        logger = LoggingAdapter(newlogger, {'id': self.youtubeobject.id})
         youtube_target_url = "https://youtube.com/watch?v=" + str(
             self.youtubeobject.youtube_id
         )
@@ -154,18 +157,18 @@ class YT:
 
 
 class MyLogger(object):
+    def __init__(self, youtubeobject_id) -> None:
+        self.youtubeobject_id = youtubeobject_id
     def debug(self, msg):
+        logger = LoggingAdapter(newlogger, {'id': self.youtubeobject_id})
         if settings.DEBUG:
             logger.info(msg)
-            pass
-
     def warning(self, msg):
+        logger = LoggingAdapter(newlogger, {'id': self.youtubeobject_id})
         logger.warn(msg)
-        pass
-
     def error(self, msg):
+        logger = LoggingAdapter(newlogger, {'id': self.youtubeobject_id})
         logger.error(msg)
-        pass
 
 
 # for reference

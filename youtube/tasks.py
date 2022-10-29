@@ -11,15 +11,11 @@ import requests
 import re
 
 import logging
-
-logger = logging.getLogger(__name__)
-from .logging.YoutubeIdFilter import YoutubeIdFilter
-
-logger.addFilter(YoutubeIdFilter())
-
+newlogger = logging.getLogger(__name__)
+from .logging.LoggingAdapter import LoggingAdapter
 
 def get_video(instance):
-    logger.addFilter(YoutubeIdFilter(youtuberesource=instance))
+    logger = LoggingAdapter(newlogger, {'id': instance.id})
     try:
         logger.info("Download Task starting")
         instance.status = instance.Status.BUSY
@@ -45,7 +41,7 @@ def get_video(instance):
 
 def archive_oldest():
     from .models import YoutubeResource
-
+    logger = LoggingAdapter(newlogger, {})
     grab_only_music = YoutubeResource.objects.filter(is_music=True).filter(
         is_playlist=False
     )
@@ -60,27 +56,26 @@ def archive_oldest():
 
 
 def archive(instance):
-    loggingfilter = YoutubeIdFilter(youtuberesource=instance)
-    logger.addFilter(loggingfilter)
+    logger = LoggingAdapter(newlogger, {'id': instance.id})
 
     # check if Needs review
     if instance.status == instance.Status.REVIEW:
-        raise ArchiveError(instance, "Needs review before archiving")
+        raise ArchiveError("Needs review before archiving")
 
     # check if Done. Review done or download done
     if not instance.status == instance.Status.ARCHIVE:
-        raise ArchiveError(instance, "not ready for archive")
+        raise ArchiveError("not ready for archive")
     # check if audiofile is there
     path = Path(
         settings.MEDIA_ROOT + str(instance.youtube_id) + "/" + instance.filename
     )
     if not path.is_file():
         raise ArchiveError(instance, "file is missing")
-
+    logger.info("Audio file is present")
     # check if music
     if not instance.is_music:
         raise ArchiveError(instance, "not Music category")
-
+    logger.info("is Music category")
     # check if artist exists
     if instance.artist == None or instance.artist == "":
         # check if title exists
@@ -124,6 +119,7 @@ def archive(instance):
         values["description"] = instance.description
 
         url_create = settings.PLAPI_PATH + "/mediaresources/"
+        logger.info(f"API: {url_create}")
         try:
             r1 = requests.post(
                 url_create, files={"audiofile": path.open(mode="rb")}, data=values
@@ -135,26 +131,22 @@ def archive(instance):
             else:
                 instance.status = instance.Status.REVIEW
                 instance.save()
-                raise ArchiveError(
-                    instance, f"request to api failed with code: {r1.status_code}"
-                )
-        except:
-            raise ArchiveError(instance, "request to api failed")
+        except Exception as e:
+            logger.error(f"Failed to Archive {e}")
+            raise ArchiveError(e)
 
     else:
         instance.status = instance.Status.REVIEW
         instance.save()
+        logger.info(f"Needs review")
         return
 
     logger.info("Archive finished succesfully")
 
 
 class ArchiveError(Exception):
-    def __init__(self, instance, message="Archive failed"):
+    def __init__(self, reason, message="ArchiveError"):
         self.message = message
-        self.instance_id = instance.id
-        super().__init__(self.message)
-
+        self.reason = reason
     def __str__(self):
-        logger.error(self.message)
-        return f"{str(self.instance_id)} -> {self.message}"
+        return f"{self.message} -> {self.reason}"
