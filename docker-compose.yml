@@ -22,7 +22,7 @@ services:
       - .:/code
     environment:
       - DEBUG=1
-      - PLAPI_PATH=http://playlistenerapi:8000
+      - PLAPI_PATH=playlistenerapi:8000
       - DJANGO_SECRET_KEY=WOOOOOOOOWOOOOOOOOWWW
       - POSTGRES_HOST=webdb
       - POSTGRES_PASSWORD=postgres

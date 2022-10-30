@@ -120,7 +120,7 @@ def archive(instance):
         values["artists"] = artists
         values["description"] = instance.description
 
-        url_create = settings.PLAPI_PATH + "/mediaresources/"
+        url_create = "http://" + settings.PLAPI_PATH + "/mediaresources/"
         logger.info(f"API: {url_create}")
         try:
             r1 = requests.post(
