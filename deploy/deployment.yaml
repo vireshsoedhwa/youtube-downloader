@@ -21,7 +21,7 @@ spec:
           claimName: plwebdata
       containers:
         - name: app
-          image: localhost:32000/plweb:latest
+          image: localhost:32000/plweb
           resources:
             requests:
               memory: "64Mi"
