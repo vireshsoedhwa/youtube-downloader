@@ -40,7 +40,7 @@ COPY --from=base /root/.cache /root/.cache
 COPY --from=base /opt/venv /opt/venv
 
 RUN mkdir -p /run/daphne
-COPY manage.py supervisord.conf ./
+COPY manage.py ./
 COPY docker-entrypoint.sh /usr/local/bin
 
 COPY playlistenerweb playlistenerweb/
@@ -52,5 +52,4 @@ EXPOSE 9000
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-# CMD ["supervisord", "-c", "supervisord.conf", "-n"]
 CMD ["daphne", "-b", "0.0.0.0", "-p", "9000", "playlistenerweb.asgi:application"]
