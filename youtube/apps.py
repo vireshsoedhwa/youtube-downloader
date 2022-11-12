@@ -17,7 +17,7 @@ class YoutubeConfig(AppConfig):
 
         if "runserver" in sys.argv or "playlistenerweb.asgi:application" in sys.argv:
             logger.info("DEBUG: " + str(settings.DEBUG))
-            logger.info("GO_PIPELINE_LABEL: " + str(settings.GO_PIPELINE_LABEL))
+            logger.info("VERSION: " + str(settings.VERSION))
             logger.info("PLAPI_PATH: " + str(settings.PLAPI_PATH))
             logger.info("youtube started")
 

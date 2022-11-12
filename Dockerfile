@@ -24,14 +24,17 @@ FROM python:3.10-slim-buster AS release
 ENV PYTHONUNBUFFERED 1
 ENV PATH /code:/opt/venv/bin:$PATH
 
-COPY requirements.txt ./
+WORKDIR /code
+ARG VERSION
+ENV VERSION=${VERSION:-1.0.0}
+RUN echo $VERSION > .env
 
 RUN set -ex; \
         apt-get update; \
         apt-get install -y --no-install-recommends \
             ffmpeg;
 
-WORKDIR /code
+
 COPY --from=webassets-builder /code/youtube/static ./youtube/static
 COPY --from=base /root/.cache /root/.cache
 COPY --from=base /opt/venv /opt/venv

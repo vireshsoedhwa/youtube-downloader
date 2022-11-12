@@ -18,8 +18,10 @@ services:
     image: playlistenerweb
     build:
       context: .
-    volumes:
-      - .:/code
+      args:
+        - VERSION=1.0.0
+    # volumes:
+    #   - .:/code
     environment:
       - DEBUG=1
       - PLAPI_PATH=playlistenerapi:8000
@@ -30,7 +32,6 @@ services:
       - POSTGRES_USER=postgres
       - ADMIN_USERNAME=admin
       - ADMIN_PASSWORD=admin
-      - GO_PIPELINE_LABEL=dev
     ports:
       - "9000:9000"
     depends_on:

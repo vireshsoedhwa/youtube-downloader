@@ -21,7 +21,7 @@ def index(request):
         print(str(request.headers["Cookie"]))
     request.session.set_test_cookie()
     context = {
-        "version": settings.GO_PIPELINE_LABEL,
+        "version": settings.VERSION,
     }
     return render(request, "youtube/index.html", context)
 
