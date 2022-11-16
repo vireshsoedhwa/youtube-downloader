@@ -4,7 +4,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: {
-        app: './src/index.js',
+        app: './src/app/index.js',
+        login: './src/login/index.js'
     },
     plugins: [
         // new CleanWebpackPlugin(),
@@ -14,7 +15,7 @@ module.exports = {
         //     filename: "./index.html"
         // }),
         new HtmlWebpackPlugin({
-            favicon: "./src/favicon.ico"
+            favicon: "./src/app/favicon.ico"
         }),
     ],
     output: {

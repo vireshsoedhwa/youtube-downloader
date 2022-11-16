@@ -4,10 +4,15 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<h2>Log In</h2>
+{% load static %}
+{% csrf_token %}
+<div id="login">
+</div>
+<script src="{% static 'youtube/login.bundle.js' %}?={{ version }}"></script>
+<!-- <h2>Log In</h2>
 <form method="post">
   {% csrf_token %}
   {{ form.as_p }}
   <button type="submit">Log In</button>
-</form>
+</form> -->
 {% endblock %}

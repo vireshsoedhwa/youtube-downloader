@@ -4,9 +4,13 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+{% load static %}
 {% if user.is_authenticated %}
   Hi {{ user.username }}!
   <p><a href="{% url 'logout' %}">Log Out</a></p>
+    <!-- <div id="root">
+    </div>
+  <script src="{% static 'youtube/app.bundle.js' %}?={{ version }}"></script> -->
 {% else %}
   <p>You are not logged in</p>
   <a href="{% url 'login' %}">Log In</a>

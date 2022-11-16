@@ -9,21 +9,34 @@ from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
+from django.views.generic import TemplateView
+
 from django.conf import settings
 import logging
 
 logger = logging.getLogger(__name__)
 logger.addFilter(YoutubeIdFilter())
 
-@ensure_csrf_cookie
-def index(request):
-    if request.session.test_cookie_worked():
-        print(str(request.headers["Cookie"]))
-    request.session.set_test_cookie()
-    context = {
-        "version": settings.VERSION,
-    }
-    return render(request, "youtube/index.html", context)
+decorators = [never_cache, login_required]
+
+@method_decorator(decorators, name='dispatch')
+class BaseView(TemplateView):
+    template_name = 'home.html'
+    extra_context={'version': 'Custom Title'}
+
+
+# @ensure_csrf_cookie
+# def index(request):
+#     if request.session.test_cookie_worked():
+#         print(str(request.headers["Cookie"]))
+#     request.session.set_test_cookie()
+#     context = {
+#         "version": settings.VERSION,
+#     }
+#     return render(request, "youtube/index.html", context)
 
 
 class YoutubeResourceViewset(viewsets.ModelViewSet):

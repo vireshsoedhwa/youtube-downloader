@@ -1,14 +1,26 @@
 <!-- templates/base.html -->
 <!DOCTYPE html>
 <html>
+{% load static %}
+
 <head>
-  <meta charset="utf-8">
-  <title>{% block title %}Django Auth Tutorial{% endblock %}</title>
+    <meta charset="utf-8" name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'site.webmanifest' %}">
+    <title>{% block title %}PL Youtube{% endblock %}</title>
 </head>
+
 <body>
-  <main>
-    {% block content %}
-    {% endblock %}
-  </main>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+    <footer id="footer" style="position: fixed; bottom: 0;">
+        {{ version }}
+    </footer>
 </body>
+
 </html>
