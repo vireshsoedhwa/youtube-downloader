@@ -19,6 +19,18 @@ export default function App() {
         authFailed: false
     });
 
+    const [usernameError, setusernameError] = React.useState(false)
+    const [passwordError, setpasswordError] = React.useState(false)
+    const [disableSubmit, setdisableSubmit] = React.useState(true)
+
+    useEffect(() => {    
+        if (values.username == '' || values.password == '') {
+            setdisableSubmit(true)
+        } else {
+            setdisableSubmit(false)
+        }
+    },[values]);
+
     const handleChange = (prop) => (event) => {
         setValues({ ...values, [prop]: event.target.value });
     };
@@ -35,6 +47,13 @@ export default function App() {
     };
 
     const handleSubmit = (event) => {
+        if (values.username == '') {
+            setusernameError(true)
+        }
+        if (values.password == '') {
+            setpasswordError(true)
+        }
+
         event.preventDefault();
         const formData = new FormData();
         const request = new Request('/accounts/login/', {
@@ -60,6 +79,8 @@ export default function App() {
                     setValues({
                         ...values,
                         authFailed: true,
+                        username: '',
+                        password: '',
                     });
                 }
             })
@@ -79,6 +100,7 @@ export default function App() {
                         <FormControl sx={{ marginTop: 2, width: '100%' }} variant="outlined" fullWidth>
                             <InputLabel>Username</InputLabel>
                             <OutlinedInput
+                                error={usernameError}
                                 onChange={handleChange('username')}
                                 label="Username"
                             />
@@ -86,6 +108,7 @@ export default function App() {
                         <FormControl sx={{ marginTop: 2, width: '100%' }} variant="outlined" >
                             <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
                             <OutlinedInput
+                                error={passwordError}
                                 id="outlined-adornment-password"
                                 type={values.showPassword ? 'text' : 'password'}
                                 value={values.password}
@@ -109,6 +132,7 @@ export default function App() {
                             <Alert sx={{ marginTop: 2, p: 0, width: '100%' }} severity="error">Auth Failed</Alert>
                         }
                         <Button
+                            disabled={disableSubmit}
                             sx={{ marginTop: 2, p: 2, width: '100%' }}
                             variant="contained"
                             color="primary"
