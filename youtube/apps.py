@@ -30,15 +30,15 @@ class YoutubeConfig(AppConfig):
                     settings.ADMIN_PASSWORD,
                 )
             
-            from django_q.models import Schedule
-            if not Schedule.objects.filter(name="archive_schedule").exists():
-                logger.info("setting up archive schedule")
-                Schedule.objects.create(
-                    name="archive_schedule",
-                    func="youtube.tasks.archive_oldest",
-                    schedule_type=Schedule.MINUTES,
-                    minutes=5,
-                    repeats=-1,
-                )
-            else:
-                logger.info("schedule already exists")
+            # from django_q.models import Schedule
+            # if not Schedule.objects.filter(name="archive_schedule").exists():
+            #     logger.info("setting up archive schedule")
+            #     Schedule.objects.create(
+            #         name="archive_schedule",
+            #         func="youtube.tasks.archive_oldest",
+            #         schedule_type=Schedule.MINUTES,
+            #         minutes=5,
+            #         repeats=-1,
+            #     )
+            # else:
+            #     logger.info("schedule already exists")

@@ -1,6 +1,6 @@
+<!-- templates/base.html -->
 <!DOCTYPE html>
-<html lang="en">
-{% csrf_token %}
+<html>
 {% load static %}
 
 <head>
@@ -14,17 +14,13 @@
 </head>
 
 <body>
-    <div id="root">
-    </div>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
     <footer id="footer" style="position: fixed; bottom: 0;">
-        v-{{ version }}
+        {{ version }}
     </footer>
 </body>
-<!-- {% csrf_token %}
-{% load static %} -->
-
-<!-- <script src="static/youtube/app.bundle.js?id={{version}}"></script> -->
-
-<script src="{% static 'youtube/app.bundle.js' %}?={{ version }}"></script>
 
 </html>

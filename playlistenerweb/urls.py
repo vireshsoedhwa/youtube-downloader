@@ -15,10 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-import youtube
 
 urlpatterns = [
-    # path('', include('home.urls')),
     path('', include('youtube.urls')),
     path('admin/', admin.site.urls),
 ]
