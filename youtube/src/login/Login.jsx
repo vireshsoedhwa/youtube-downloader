@@ -10,6 +10,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import Grid from '@mui/material/Grid'
 import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
 
 export default function App() {
     const [values, setValues] = React.useState({
@@ -23,13 +24,13 @@ export default function App() {
     const [passwordError, setpasswordError] = React.useState(false)
     const [disableSubmit, setdisableSubmit] = React.useState(true)
 
-    useEffect(() => {    
+    useEffect(() => {
         if (values.username == '' || values.password == '') {
             setdisableSubmit(true)
         } else {
             setdisableSubmit(false)
         }
-    },[values]);
+    }, [values]);
 
     const handleChange = (prop) => (event) => {
         setValues({ ...values, [prop]: event.target.value });
@@ -97,10 +98,11 @@ export default function App() {
             >
                 <Grid item sx={{ paddingTop: 5 }}>
                     <form onSubmit={handleSubmit}>
-                        <FormControl sx={{ marginTop: 2, width: '100%' }} variant="outlined" fullWidth>
+                        <FormControl sx={{ marginTop: 2, width: '100%' }} variant="outlined" >
                             <InputLabel>Username</InputLabel>
                             <OutlinedInput
                                 error={usernameError}
+                                value={values.username}
                                 onChange={handleChange('username')}
                                 label="Username"
                             />
@@ -128,9 +130,11 @@ export default function App() {
                                 label="Password"
                             />
                         </FormControl>
-                        {values.authFailed &&
-                            <Alert sx={{ marginTop: 2, p: 0, width: '100%' }} severity="error">Auth Failed</Alert>
-                        }
+                        <Box sx={{ marginTop: 2, p: 0 }}>
+                            {values.authFailed &&
+                                <Alert severity="error">Auth Failed</Alert>
+                            }
+                        </Box>
                         <Button
                             disabled={disableSubmit}
                             sx={{ marginTop: 2, p: 2, width: '100%' }}

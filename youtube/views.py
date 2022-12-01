@@ -13,6 +13,8 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from django.conf import settings
 import logging
@@ -25,7 +27,7 @@ decorators = [never_cache, login_required]
 @method_decorator(decorators, name='dispatch')
 class BaseView(TemplateView):
     template_name = 'home.html'
-    extra_context={'version': 'Custom Title'}
+    extra_context={'version': settings.VERSION}
 
 
 # @ensure_csrf_cookie
@@ -43,6 +45,8 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
     queryset = YoutubeResource.objects.all()
     serializer_class = YoutubeResourceSerializer
     parser_classes = (MultiPartParser, FormParser, JSONParser)
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def list(self, request):
         recent = self.queryset.order_by("-created_at")[:100]
