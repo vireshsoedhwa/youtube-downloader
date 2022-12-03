@@ -192,7 +192,7 @@ export default function YoutubeMediadetail(props) {
                 </Box>
                 {/* </Box> */}
             </CardContent>
-            <CardActions disableSpacing>
+            {/* <CardActions disableSpacing>
                 <ExpandMore
                     expand={expanded}
                     onClick={handleExpandClick}
@@ -209,7 +209,7 @@ export default function YoutubeMediadetail(props) {
                         <TagsList tags={props.data.tags} />
                     </Box>
                 </CardContent>
-            </Collapse>
+            </Collapse> */}
         </Card >
     );
 }
