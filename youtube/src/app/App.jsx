@@ -59,11 +59,12 @@ export default function App() {
     const listupdate = () => {
         fetch('/resource/', {
             method: 'get',
-            mode: 'no-cors',
+            mode: 'same-origin',
             credentials: 'same-origin',
             headers: {
                 'Access-Control-Allow-Origin': '*',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRFTOKEN': document.querySelector('[name=csrfmiddlewaretoken]').value
             },
             redirect: 'follow'
         })
@@ -104,11 +105,12 @@ export default function App() {
 
         fetch(url, {
             method: 'POST',
-            mode: 'no-cors',
-            credentials: 'omit',
+            mode: 'same-origin',
+            credentials: 'same-origin',
             headers: {
                 'Access-Control-Allow-Origin': '*',
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFTOKEN': document.querySelector('[name=csrfmiddlewaretoken]').value
             },
             body: formBody
         })
