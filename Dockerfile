@@ -32,7 +32,8 @@ RUN echo $VERSION > .env
 RUN set -ex; \
         apt-get update; \
         apt-get install -y --no-install-recommends \
-            ffmpeg;
+            ffmpeg \
+            nginx;
 
 
 COPY --from=webassets-builder /code/youtube/static ./youtube/static
@@ -43,6 +44,8 @@ RUN mkdir -p /run/daphne
 COPY manage.py ./
 COPY docker-entrypoint.sh /usr/local/bin
 
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
+
 COPY playlistenerweb playlistenerweb/
 COPY youtube youtube/
 
@@ -52,4 +55,4 @@ EXPOSE 9000
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-CMD ["daphne", "-b", "0.0.0.0", "-p", "9000", "playlistenerweb.asgi:application"]
+CMD ["daphne", "-b", "0.0.0.0", "-p", "9001", "playlistenerweb.asgi:application"]
