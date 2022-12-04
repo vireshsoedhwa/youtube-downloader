@@ -18,5 +18,8 @@ python manage.py collectstatic --noinput
 python manage.py qcluster &
 echo "-------------------------------------------------------------------------------------------\n"
 
+>&2 echo "Starting Nginx..."
+nginx
+
 >&2 echo "Starting Daphne..."
 exec "$@"
