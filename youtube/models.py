@@ -1,8 +1,9 @@
+from .logging.YoutubeIdFilter import YoutubeIdFilter
 from django.db import models
 from django.core.files.storage import FileSystemStorage
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Deferrable, UniqueConstraint
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django_q.tasks import async_task
 from .tasks import archive
@@ -11,10 +12,10 @@ from pathlib import Path
 from django.conf import settings
 
 import re
+import shutil
 import logging
 
 logger = logging.getLogger(__name__)
-from .logging.YoutubeIdFilter import YoutubeIdFilter
 loggingfilter = YoutubeIdFilter()
 logger.addFilter(loggingfilter)
 
@@ -36,8 +37,8 @@ class YoutubeResource(models.Model):
         BUSY = "BUSY", _("Busy")
         FAILED = "FAILED", _("Failed")
         DONE = "DONE", _("Done")
-        REVIEW = "REVIEW", _("Review")
-        ARCHIVE = "ARCHIVE", _("Archive")
+        # REVIEW = "REVIEW", _("Review")
+        # ARCHIVE = "ARCHIVE", _("Archive")
         ARCHIVED = "ARCHIVED", _("Archived")
 
     id = models.AutoField(primary_key=True)
@@ -54,14 +55,19 @@ class YoutubeResource(models.Model):
     is_music = models.BooleanField(default=False)
     artist = models.TextField(max_length=100, null=True, blank=True)
     tags = models.JSONField(encoder=None, decoder=None, null=True, blank=True)
-    categories = models.JSONField(encoder=None, decoder=None, null=True, blank=True)
-    status = models.CharField(max_length=15, choices=Status.choices, default=Status.NEW)
+    categories = models.JSONField(
+        encoder=None, decoder=None, null=True, blank=True)
+    status = models.CharField(
+        max_length=15, choices=Status.choices, default=Status.NEW)
     downloadprogress = models.DecimalField(
         max_digits=3, decimal_places=0, blank=True, default=0
     )
-    eta = models.DecimalField(max_digits=5, decimal_places=0, blank=True, default=0)
-    elapsed = models.DecimalField(max_digits=5, decimal_places=0, blank=True, default=0)
-    speed = models.DecimalField(max_digits=10, decimal_places=0, blank=True, default=0)
+    eta = models.DecimalField(
+        max_digits=5, decimal_places=0, blank=True, default=0)
+    elapsed = models.DecimalField(
+        max_digits=5, decimal_places=0, blank=True, default=0)
+    speed = models.DecimalField(
+        max_digits=10, decimal_places=0, blank=True, default=0)
     error = models.TextField(max_length=500, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -70,7 +76,8 @@ class YoutubeResource(models.Model):
 
     def get_file_path(self):
         try:
-            path = Path(settings.MEDIA_ROOT + self.youtube_id + "/" + self.filename)
+            path = Path(settings.MEDIA_ROOT +
+                        self.youtube_id + "/" + self.filename)
             if path.is_file():
                 self.logger.info("File found for download")
                 return path
@@ -79,6 +86,19 @@ class YoutubeResource(models.Model):
                 return None
         except:
             return None
+
+# signal for deleting
+
+
+@receiver(post_delete, sender=YoutubeResource, dispatch_uid="delete_record")
+def postdelete(sender, instance, **kwargs):
+    logger.info(f"Deleting record id#: {instance.id} - {instance.youtube_id}")
+    try:
+        shutil.rmtree(settings.MEDIA_ROOT + str(instance.youtube_id))
+        logger.info(
+            f"Files deleted id#: {instance.id} - {instance.youtube_id} -  {instance.title}")
+    except:
+        logger.error("Files could not be deleted")
 
 
 @receiver(post_save, sender=YoutubeResource, dispatch_uid="add_record")
@@ -90,26 +110,33 @@ def postsave(sender, instance, created, raw, using, update_fields, **kwargs):
         async_task("youtube.tasks.get_video", instance, sync=False)
         logger.info("task scheduled")
 
-
-    if instance.status == YoutubeResource.Status.DONE:        
+    if instance.status == YoutubeResource.Status.DONE:
         logger.info("DONE")
-
-    if instance.status == YoutubeResource.Status.FAILED:        
-        logger.info("FAILED")
-    
-    if instance.status == YoutubeResource.Status.BUSY:        
-        logger.info("Instance Busy")
-
-    if instance.status == YoutubeResource.Status.REVIEW:        
-        logger.info("REVIEW")
-    
-    if instance.status == YoutubeResource.Status.ARCHIVE:        
-        logger.info("ARCHIVE triggered")
         try:
             archive(instance)
+            logger.info("ARCHIVED")
         except Exception as e:
             logger.error(f"Archive failed: {e}")
 
-    if instance.status == YoutubeResource.Status.ARCHIVED:        
-        logger.info("ARCHIVED")
+    if instance.status == YoutubeResource.Status.FAILED:
+        logger.info("FAILED")
 
+    if instance.status == YoutubeResource.Status.BUSY:
+        logger.info("Instance Busy")
+
+    # if instance.status == YoutubeResource.Status.REVIEW:
+    #     logger.info("REVIEW")
+
+    # if instance.status == YoutubeResource.Status.ARCHIVE:
+    #     logger.info("ARCHIVE triggered")
+    #     try:
+    #         archive(instance)
+    #     except Exception as e:
+    #         logger.error(f"Archive failed: {e}")
+
+    # if instance.status == YoutubeResource.Status.ARCHIVED:
+    #     try:
+    #         archive(instance)
+    #         logger.info("ARCHIVED")
+    #     except Exception as e:
+    #         logger.error(f"Archive failed: {e}")

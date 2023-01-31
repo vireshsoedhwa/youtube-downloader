@@ -15,6 +15,9 @@ import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 import FolderSpecialIcon from '@mui/icons-material/FolderSpecial';
 import FindReplaceIcon from '@mui/icons-material/FindReplace';
+import DeleteIcon from '@mui/icons-material/Delete';
+
+import Deletedialog from './Deletedialog';
 
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
@@ -149,7 +152,7 @@ export default function YoutubeMediadetail(props) {
                         :
                         <div>
                         </div>}
-                    {(props.data.status == 'DONE' || props.data.status == 'ARCHIVED' || props.data.status == 'REVIEW') &&
+                    {(props.data.status == 'DONE' || props.data.status == 'ARCHIVED') &&
                         <Box sx={{ display: 'flex', alignItems: 'center', pl: 3, pb: 0 }}>
                             <div>
                                 <audio controls preload="none">
@@ -157,6 +160,8 @@ export default function YoutubeMediadetail(props) {
                                     Your browser does not support the audio element.
                                 </audio>
                             </div>
+
+                            <Deletedialog title={props.data.title} id={props.data.id} delete_item={props.delete_item} />
                         </Box>
                     }
                     {props.data.is_music == true &&
@@ -182,13 +187,13 @@ export default function YoutubeMediadetail(props) {
                             </Tooltip>
                         </Box>
                     }
-                    {props.data.status == 'REVIEW' &&
+                    {/* {props.data.status == 'REVIEW' &&
                         <Box sx={{ display: 'flex', alignItems: 'center', pl: 2, pb: 0 }}>
                             <Tooltip title="needs review">
                                 <FindReplaceIcon color="error" />
                             </Tooltip>
                         </Box>
-                    }
+                    } */}
                 </Box>
                 {/* </Box> */}
             </CardContent>

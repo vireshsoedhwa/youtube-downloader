@@ -23,7 +23,7 @@ function MediaList(props) {
     const listItems = listofmedia.map((media, index) =>
         <div key={media.id}>
             {props.filter != media.youtube_id ?
-                <YoutubeMediadetail data={media} listupdate={props.listupdate} />
+                <YoutubeMediadetail data={media} listupdate={props.listupdate} delete_item = {props.delete_item}/>
                 :
                 <div></div>
             }
@@ -133,6 +133,36 @@ export default function App() {
             })
     }
 
+    const delete_item = (item) => {
+        let url = '/resource/' + item + '/'
+        fetch(url, {
+            method: 'DELETE',
+            mode: 'same-origin',
+            credentials: 'same-origin',
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFTOKEN': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                }
+                else {
+
+                    console.log("deleted")
+                }
+                throw response
+            })
+            .then(data => {
+                console.log(data)
+            })
+            .catch(error => {
+                console.error(error)
+            })
+    }
+
     return (
         <Fragment>
             <Box sx={{ flexGrow: 1 }}>
@@ -181,7 +211,8 @@ export default function App() {
                             </Typography>
                             <MediaList listofmedia={RecentList}
                                 filter={UrlId}
-                                listupdate={listupdate} />
+                                listupdate={listupdate} 
+                                delete_item={delete_item}/>
                         </Grid>
                     </>
                     :
