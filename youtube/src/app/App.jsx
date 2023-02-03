@@ -23,7 +23,7 @@ function MediaList(props) {
     const listItems = listofmedia.map((media, index) =>
         <div key={media.id}>
             {props.filter != media.youtube_id ?
-                <YoutubeMediadetail data={media} listupdate={props.listupdate} delete_item = {props.delete_item}/>
+                <YoutubeMediadetail data={media} listupdate={props.listupdate} delete_item={props.delete_item} retry={props.retry} />
                 :
                 <div></div>
             }
@@ -145,22 +145,20 @@ export default function App() {
                 'X-CSRFTOKEN': document.querySelector('[name=csrfmiddlewaretoken]').value
             }
         })
-            .then(response => {
-                if (response.ok) {
-                    return response.json()
-                }
-                else {
+    }
 
-                    console.log("deleted")
-                }
-                throw response
-            })
-            .then(data => {
-                console.log(data)
-            })
-            .catch(error => {
-                console.error(error)
-            })
+    const retry = (item) => {
+        let url = '/resource/' + item + '/'
+        fetch(url, {
+            method: 'PUT',
+            mode: 'same-origin',
+            credentials: 'same-origin',
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFTOKEN': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
     }
 
     return (
@@ -178,7 +176,7 @@ export default function App() {
                             <MenuIcon />
                         </IconButton>
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                            
+
                         </Typography>
                         <Button href="/accounts/logout/" color="inherit">Logout</Button>
                     </Toolbar>
@@ -211,8 +209,9 @@ export default function App() {
                             </Typography>
                             <MediaList listofmedia={RecentList}
                                 filter={UrlId}
-                                listupdate={listupdate} 
-                                delete_item={delete_item}/>
+                                listupdate={listupdate}
+                                delete_item={delete_item}
+                                retry={retry} />
                         </Grid>
                     </>
                     :

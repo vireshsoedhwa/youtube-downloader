@@ -97,6 +97,15 @@ def postdelete(sender, instance, **kwargs):
         shutil.rmtree(settings.MEDIA_ROOT + str(instance.youtube_id))
         logger.info(
             f"Files deleted id#: {instance.id} - {instance.youtube_id} -  {instance.title}")
+
+        import os
+        with open(settings.MEDIA_ROOT + 'archive', "r") as file_input:
+            with open(settings.MEDIA_ROOT + 'archive_temp', "w") as output:
+                for line in file_input:
+                    if line.strip("\n") != "youtube " + str(instance.youtube_id):
+                        output.write(line)
+                        os.replace(settings.MEDIA_ROOT + 'archive_temp',
+                                   settings.MEDIA_ROOT + 'archive')
     except:
         logger.error("Files could not be deleted")
 
@@ -123,20 +132,3 @@ def postsave(sender, instance, created, raw, using, update_fields, **kwargs):
 
     if instance.status == YoutubeResource.Status.BUSY:
         logger.info("Instance Busy")
-
-    # if instance.status == YoutubeResource.Status.REVIEW:
-    #     logger.info("REVIEW")
-
-    # if instance.status == YoutubeResource.Status.ARCHIVE:
-    #     logger.info("ARCHIVE triggered")
-    #     try:
-    #         archive(instance)
-    #     except Exception as e:
-    #         logger.error(f"Archive failed: {e}")
-
-    # if instance.status == YoutubeResource.Status.ARCHIVED:
-    #     try:
-    #         archive(instance)
-    #         logger.info("ARCHIVED")
-    #     except Exception as e:
-    #         logger.error(f"Archive failed: {e}")

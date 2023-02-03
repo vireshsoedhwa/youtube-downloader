@@ -61,6 +61,13 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
 
+    def update(self, request, pk):
+        resource = self.get_object()
+        if resource.status == YoutubeResource.Status.FAILED:
+            resource.status = YoutubeResource.Status.QUEUED
+            resource.save()
+        return Response(status=204)
+
     @action(detail=True)
     def download(self, request, pk=None):
         resource = self.get_object()

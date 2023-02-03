@@ -63,9 +63,6 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
             loggingfilter = YoutubeIdFilter(youtuberesource=record)
             logger.addFilter(loggingfilter)
             logger.info("Existing Record Found")
-            if record.status == YoutubeResource.Status.FAILED:
-                record.status = YoutubeResource.Status.NEW
-                record.save()
             return record
         except YoutubeResource.DoesNotExist:
             record = YoutubeResource.objects.create(**validated_data)

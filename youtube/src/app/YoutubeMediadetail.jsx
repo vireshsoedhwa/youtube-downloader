@@ -16,6 +16,7 @@ import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 import FolderSpecialIcon from '@mui/icons-material/FolderSpecial';
 import FindReplaceIcon from '@mui/icons-material/FindReplace';
 import DeleteIcon from '@mui/icons-material/Delete';
+import FiberNewIcon from '@mui/icons-material/FiberNew';
 
 import Deletedialog from './Deletedialog';
 
@@ -88,14 +89,14 @@ export default function YoutubeMediadetail(props) {
     };
 
     const clickqueue = () => {
-        if (props.data.status == "DONE" || props.data.status == "ARCHIVED" || props.data.status == "REVIEW") {
+        if (props.data.status == "DONE" || props.data.status == "ARCHIVED") {
             onDownload(props.data.id)
         }
     }
 
     const retry = () => {
         if (props.data.status == "FAILED") {
-            props.Submit_link(props.data.youtube_url)
+            props.retry(props.data.id)
         }
     }
 
@@ -106,6 +107,7 @@ export default function YoutubeMediadetail(props) {
     };
 
     const MEDIADETAIL_STATES = {
+        NEW: <FiberNewIcon sx={{ height: 38, width: 38 }} />,
         DONE: <DownloadIcon color="success" sx={{ height: 38, width: 38 }} />,
         REVIEW: <DownloadIcon color="success" sx={{ height: 38, width: 38 }} />,
         ARCHIVED: <DownloadIcon color="success" sx={{ height: 38, width: 38 }} />,
@@ -129,11 +131,14 @@ export default function YoutubeMediadetail(props) {
                 alt="audio file"
             />
             {/* <Box sx={{ display: 'flex', flexDirection: 'column' }}> */}
-            <CardContent sx={{ flex: '1 0 auto' }}>
+            <CardContent sx={{ flex: '1 0 auto', width: '7rem' }}>
+                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                    {props.data.youtube_id}
+                </Typography>
                 <Typography component="div" variant="subtitle1">
                     {props.data.title}
                 </Typography>
-                <Typography variant="subtitle2" color="text.secondary" component="div">
+                <Typography component="div" variant="subtitle2" color="text.secondary">
                     {props.data.filename}
                 </Typography>
 
@@ -154,12 +159,12 @@ export default function YoutubeMediadetail(props) {
                         </div>}
                     {(props.data.status == 'DONE' || props.data.status == 'ARCHIVED') &&
                         <Box sx={{ display: 'flex', alignItems: 'center', pl: 3, pb: 0 }}>
-                            <div>
+                            {/* <div>
                                 <audio controls preload="none">
                                     <source src={'/resource/' + props.data.id + '/download'} type="audio/mpeg" />
                                     Your browser does not support the audio element.
                                 </audio>
-                            </div>
+                            </div> */}
 
                             <Deletedialog title={props.data.title} id={props.data.id} delete_item={props.delete_item} />
                         </Box>
@@ -187,13 +192,6 @@ export default function YoutubeMediadetail(props) {
                             </Tooltip>
                         </Box>
                     }
-                    {/* {props.data.status == 'REVIEW' &&
-                        <Box sx={{ display: 'flex', alignItems: 'center', pl: 2, pb: 0 }}>
-                            <Tooltip title="needs review">
-                                <FindReplaceIcon color="error" />
-                            </Tooltip>
-                        </Box>
-                    } */}
                 </Box>
                 {/* </Box> */}
             </CardContent>

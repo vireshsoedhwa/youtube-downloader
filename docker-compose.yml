@@ -34,6 +34,7 @@ services:
       - ADMIN_PASSWORD=admin
     ports:
       - "9000:9000"
+      - "9001:9001"
     depends_on:
       - webdb
     networks:
@@ -41,7 +42,6 @@ services:
 
 volumes:
   dataweb:
-  webassets:
 
 networks:
   playlistener-network:
