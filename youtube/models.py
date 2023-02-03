@@ -112,11 +112,11 @@ def postsave(sender, instance, created, raw, using, update_fields, **kwargs):
 
     if instance.status == YoutubeResource.Status.DONE:
         logger.info("DONE")
-        try:
-            archive(instance)
-            logger.info("ARCHIVED")
-        except Exception as e:
-            logger.error(f"Archive failed: {e}")
+        # try:
+        #     archive(instance)
+        #     logger.info("ARCHIVED")
+        # except Exception as e:
+        #     logger.error(f"Archive failed: {e}")
 
     if instance.status == YoutubeResource.Status.FAILED:
         logger.info("FAILED")
