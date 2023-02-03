@@ -23,7 +23,7 @@ function MediaList(props) {
     const listItems = listofmedia.map((media, index) =>
         <div key={media.id}>
             {props.filter != media.youtube_id ?
-                <YoutubeMediadetail data={media} listupdate={props.listupdate} delete_item={props.delete_item} retry={props.retry} />
+                <YoutubeMediadetail data={media} listupdate={props.listupdate} delete_item={props.delete_item} retry={props.retry} archive={props.archive}/>
                 :
                 <div></div>
             }
@@ -148,7 +148,21 @@ export default function App() {
     }
 
     const retry = (item) => {
-        let url = '/resource/' + item + '/'
+        let url = '/resource/' + item + '/retry/'
+        fetch(url, {
+            method: 'PUT',
+            mode: 'same-origin',
+            credentials: 'same-origin',
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFTOKEN': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+    }
+
+    const archive = (item) => {
+        let url = '/resource/' + item + '/archive/'
         fetch(url, {
             method: 'PUT',
             mode: 'same-origin',
@@ -211,7 +225,8 @@ export default function App() {
                                 filter={UrlId}
                                 listupdate={listupdate}
                                 delete_item={delete_item}
-                                retry={retry} />
+                                retry={retry}
+                                archive={archive} />
                         </Grid>
                     </>
                     :

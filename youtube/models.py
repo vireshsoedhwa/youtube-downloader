@@ -37,8 +37,7 @@ class YoutubeResource(models.Model):
         BUSY = "BUSY", _("Busy")
         FAILED = "FAILED", _("Failed")
         DONE = "DONE", _("Done")
-        # REVIEW = "REVIEW", _("Review")
-        # ARCHIVE = "ARCHIVE", _("Archive")
+        ARCHIVE = "ARCHIVE", _("Archive")
         ARCHIVED = "ARCHIVED", _("Archived")
 
     id = models.AutoField(primary_key=True)
@@ -121,6 +120,9 @@ def postsave(sender, instance, created, raw, using, update_fields, **kwargs):
 
     if instance.status == YoutubeResource.Status.DONE:
         logger.info("DONE")
+
+    if instance.status == YoutubeResource.Status.ARCHIVE:
+        logger.info("ARCHIVNIGN")
         # try:
         #     archive(instance)
         #     logger.info("ARCHIVED")

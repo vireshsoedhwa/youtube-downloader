@@ -14,11 +14,10 @@ import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 import FolderSpecialIcon from '@mui/icons-material/FolderSpecial';
-import FindReplaceIcon from '@mui/icons-material/FindReplace';
-import DeleteIcon from '@mui/icons-material/Delete';
 import FiberNewIcon from '@mui/icons-material/FiberNew';
 
-import Deletedialog from './Deletedialog';
+import DeleteDialog from './DeleteDialog';
+import ArchiveDialog from './ArchiveDialog';
 
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
@@ -100,6 +99,12 @@ export default function YoutubeMediadetail(props) {
         }
     }
 
+    // const retry = () => {
+    //     if (props.data.status == "FAILED") {
+    //         props.retry(props.data.id)
+    //     }
+    // }
+
     const onDownload = (id) => {
         const link = document.createElement("a");
         link.href = '/resource/' + id + '/download';
@@ -158,7 +163,7 @@ export default function YoutubeMediadetail(props) {
                         <div>
                         </div>}
                     {(props.data.status == 'DONE' || props.data.status == 'ARCHIVED') &&
-                        <Box sx={{ display: 'flex', alignItems: 'center', pl: 3, pb: 0 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
                             {/* <div>
                                 <audio controls preload="none">
                                     <source src={'/resource/' + props.data.id + '/download'} type="audio/mpeg" />
@@ -166,7 +171,11 @@ export default function YoutubeMediadetail(props) {
                                 </audio>
                             </div> */}
 
-                            <Deletedialog title={props.data.title} id={props.data.id} delete_item={props.delete_item} />
+                            <DeleteDialog title={props.data.title} id={props.data.id} delete_item={props.delete_item} />
+
+                            {(props.data.status == 'DONE') &&
+                                <ArchiveDialog title={props.data.title} id={props.data.id} archive={props.archive} />
+                            }
                         </Box>
                     }
                     {props.data.is_music == true &&

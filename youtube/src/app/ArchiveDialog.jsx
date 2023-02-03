@@ -6,9 +6,9 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-import DeleteIcon from '@mui/icons-material/Delete';
+import ArchiveIcon from '@mui/icons-material/Archive';
 import IconButton from '@mui/material/IconButton';
-export default function DeleteDialog(props) {
+export default function ArchiveDialog(props) {
     const [open, setOpen] = React.useState(false);
 
     const handleClickOpen = () => {
@@ -20,7 +20,7 @@ export default function DeleteDialog(props) {
     };
 
     const handleCloseDelete = () => {
-        props.delete_item(props.id)
+        props.archive(props.id)
         setOpen(false);
     };
 
@@ -30,7 +30,7 @@ export default function DeleteDialog(props) {
                 Open alert dialog
             </Button> */}
             <IconButton onClick={handleClickOpen}>
-                <DeleteIcon />
+                <ArchiveIcon />
             </IconButton>
 
             <Dialog
@@ -40,7 +40,7 @@ export default function DeleteDialog(props) {
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
-                    {"Delete File?"}
+                    {"Archive File?"}
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
