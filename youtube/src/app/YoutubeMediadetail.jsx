@@ -138,7 +138,7 @@ export default function YoutubeMediadetail(props) {
             {/* <Box sx={{ display: 'flex', flexDirection: 'column' }}> */}
             <CardContent sx={{ flex: '1 0 auto', width: '7rem' }}>
                 <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                    {props.data.youtube_id}
+                    {props.data.youtube_id} - {props.data.status}
                 </Typography>
                 <Typography component="div" variant="subtitle1">
                     {props.data.title}
@@ -162,7 +162,7 @@ export default function YoutubeMediadetail(props) {
                         :
                         <div>
                         </div>}
-                    {(props.data.status == 'DONE' || props.data.status == 'ARCHIVED') &&
+                    {(props.data.status == 'DONE' || props.data.status == 'ARCHIVE' || props.data.status == 'ARCHIVED') &&
                         <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
                             {/* <div>
                                 <audio controls preload="none">
@@ -173,9 +173,9 @@ export default function YoutubeMediadetail(props) {
 
                             <DeleteDialog title={props.data.title} id={props.data.id} delete_item={props.delete_item} />
 
-                            {(props.data.status == 'DONE') &&
+                            {/* {(props.data.status == 'DONE') &&
                                 <ArchiveDialog title={props.data.title} id={props.data.id} archive={props.archive} />
-                            }
+                            } */}
                         </Box>
                     }
                     {props.data.is_music == true &&
@@ -194,34 +194,21 @@ export default function YoutubeMediadetail(props) {
                             </Tooltip>
                         </Box>
                     }
-                    {props.data.status == 'ARCHIVED' &&
+                    {props.data.status == 'ARCHIVED' ?
                         <Box sx={{ display: 'flex', alignItems: 'center', pl: 2, pb: 0 }}>
                             <Tooltip title="Archived">
                                 <FolderSpecialIcon />
                             </Tooltip>
                         </Box>
+                        :
+                        <div>
+                            {(props.data.status == 'DONE') &&
+                                <ArchiveDialog title={props.data.title} id={props.data.id} archive={props.archive} />
+                            }
+                        </div>
                     }
                 </Box>
-                {/* </Box> */}
             </CardContent>
-            {/* <CardActions disableSpacing>
-                <ExpandMore
-                    expand={expanded}
-                    onClick={handleExpandClick}
-                    aria-expanded={expanded}
-                    aria-label="show more"
-                >
-                    <ExpandMoreIcon />
-                </ExpandMore>
-            </CardActions>
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
-                <CardContent>
-                    <Box sx={{ display: 'flex', alignItems: 'center', pl: 0, pb: 0 }}>
-                        <CategoryList tags={props.data.categories} />
-                        <TagsList tags={props.data.tags} />
-                    </Box>
-                </CardContent>
-            </Collapse> */}
         </Card >
     );
 }

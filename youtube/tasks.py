@@ -38,30 +38,11 @@ def get_video(instance):
         instance.status = instance.Status.FAILED
         instance.save()
 
-
-# def archive_oldest():
-#     from .models import YoutubeResource
-#     grab_only_music = YoutubeResource.objects.filter(is_music=True).filter(
-#         is_playlist=False
-#     )
-#     grab_only_done = grab_only_music.filter(status=YoutubeResource.Status.DONE)
-#     if len(grab_only_done) == 0:
-#         newlogger.info(f"Nothing to archive")
-#     else:
-#         oldest = grab_only_done.order_by("created_at")[0]
-#         oldest.status = oldest.Status.ARCHIVE
-#         oldest.save()
-#         newlogger.info(f"Archiving : {oldest.id}")
-
-
 def archive(instance):
     logger = LoggingAdapter(newlogger, {'id': instance.id})
-    # check if Needs review
-    # if instance.status == instance.Status.REVIEW:
-    #     raise ArchiveError("Needs review before archiving")
 
     # check if Done. Review done or download done
-    if not instance.status == instance.Status.DONE:
+    if not instance.status == instance.Status.ARCHIVE:
         raise ArchiveError("not ready for archive")
     # check if audiofile is there
     path = Path(
@@ -72,41 +53,6 @@ def archive(instance):
 
     logger.info("Audio file is present")
 
-    # check if music
-    # if not instance.is_music:
-    #     raise ArchiveError(instance, "not Music category")
-    # logger.info("is Music category")
-    
-    # check if artist exists
-    # if instance.artist == None or instance.artist == "":
-    #     # check if title exists
-    #     if instance.title == None:
-    #         raise ArchiveError(instance, "title is missing")
-    #     else:
-    #         # check if tags
-    #         possible_artist = None
-    #         x = re.search(r"(^.*)-", instance.title)
-    #         if x is None:
-    #             raise ArchiveError(instance, "Could not derive artist from title")
-    #         else:
-    #             possible_artist = x.group(1).strip()
-    #             if not instance.tags == None:
-    #                 for tag in instance.tags:
-    #                     if possible_artist.lower() in tag.lower():
-    #                         instance.artist = possible_artist
-    #                         break
-    #                     else:
-    #                         instance.status = instance.Status.REVIEW
-    #                         instance.error = "Could not derive artist from title"
-    #                         instance.save()
-    #                         return
-    #             else:
-    #                 instance.status = instance.Status.REVIEW
-    #                 instance.error = "no tags present"
-    #                 instance.save()
-    #                 return
-
-    # if instance.status == instance.Status.ARCHIVE:
     values = {}
     values["title"] = instance.title
     artists = []
@@ -130,20 +76,11 @@ def archive(instance):
             instance.status = instance.Status.ARCHIVED
             instance.save()
             logger.info("Archive finished succesfully")
-        # else:
-            # instance.status = instance.Status.REVIEW
-            # instance.save()
+        else:
+            raise Exception("Archive failed on backend. File could be present or backend unavailable")
     except Exception as e:
         logger.error(f"Failed to Archive {e}")
-        # instance.status = instance.Status.REVIEW
-        # instance.save()
         raise ArchiveError(e)
-
-    # else:
-    #     instance.status = instance.Status.REVIEW
-    #     instance.save()
-    #     logger.info(f"Needs review")
-    #     return
 
 
 class ArchiveError(Exception):

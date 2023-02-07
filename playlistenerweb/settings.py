@@ -169,12 +169,6 @@ REST_FRAMEWORK = {
 #    ),
 }
 
-# REST_SAFE_LIST_IPS = [
-#     "127.0.0.1",
-#     "172.18.0.",
-#     "192.168.1.",
-# ]
-
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
