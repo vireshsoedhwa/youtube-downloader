@@ -45,8 +45,8 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
     queryset = YoutubeResource.objects.all()
     serializer_class = YoutubeResourceSerializer
     parser_classes = (MultiPartParser, FormParser, JSONParser)
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [SessionAuthentication]
+    # permission_classes = [IsAuthenticated]
 
     def list(self, request):
         recent = self.queryset.order_by("-created_at")[:100]
@@ -54,6 +54,10 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
+
+        print("hallo")
+        return Response("halo")
+    
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             instance = serializer.save()

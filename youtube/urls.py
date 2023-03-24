@@ -12,7 +12,7 @@ router.register(r'resource', YoutubeResourceViewset,
 
 urlpatterns = [
     # path('', views.index),
-    path('', BaseView.as_view(template_name='home.html'), name='home'),
+    # path('', BaseView.as_view(template_name='home.html'), name='home'),
     path('', include(router.urls)),
     path("accounts/", include("django.contrib.auth.urls")),
 ]

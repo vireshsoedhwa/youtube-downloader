@@ -36,7 +36,7 @@ RUN set -ex; \
             nginx;
 
 
-COPY --from=webassets-builder /code/youtube/static ./youtube/static
+# COPY --from=webassets-builder /code/youtube/static ./youtube/static
 COPY --from=base /root/.cache /root/.cache
 COPY --from=base /opt/venv /opt/venv
 
