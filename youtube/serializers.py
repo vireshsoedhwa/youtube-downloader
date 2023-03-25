@@ -21,7 +21,7 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(max_value=None, min_value=None, read_only=True)
     youtube_id = serializers.CharField(max_length=20, min_length=None, read_only=True)
-    youtube_url = serializers.CharField(
+    url = serializers.CharField(
         max_length=100, min_length=None, allow_blank=False, trim_whitespace=True
     )
 
@@ -30,29 +30,18 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "youtube_id",
-            "youtube_url",
-            "title",
-            "description",
-            "is_playlist",
-            "is_music",
-            "artist",
-            "tags",
-            "categories",
+            "url",
             "status",
-            "filename",
-            "downloadprogress",
+            "progress",
             "eta",
             "elapsed",
             "speed",
-            "error",
-            "created_at",
+            "error"
         ]
 
     def validate(self, attrs):
-        youtube_url = attrs.get("youtube_url")
-        attrs["youtube_id"] = get_youtube_id(youtube_url)
-        # raise serializers.ValidationError(
-        #     " fault")
+        url = attrs.get("url")
+        attrs["youtube_id"] = get_youtube_id(url)
         return attrs
 
     def create(self, validated_data):
@@ -63,13 +52,15 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
             loggingfilter = YoutubeIdFilter(youtuberesource=record)
             logger.addFilter(loggingfilter)
             logger.info("Existing Record Found")
+            if record.status == record.Status.FAILED:
+                record.status = record.Status.QUEUED
             return record
         except YoutubeResource.DoesNotExist:
             record = YoutubeResource.objects.create(**validated_data)
             loggingfilter = YoutubeIdFilter(youtuberesource=record)
             logger.addFilter(loggingfilter)          
             logger.info("Creating New Record")
-            record.status = YoutubeResource.Status.QUEUED
+            record.status = record.Status.QUEUED
             return record
 
     def update(self, instance, validated_data):

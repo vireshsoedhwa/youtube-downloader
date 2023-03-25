@@ -18,16 +18,18 @@ from rest_framework.permissions import IsAuthenticated
 
 from django.conf import settings
 import logging
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 logger.addFilter(YoutubeIdFilter())
 
 decorators = [never_cache, login_required]
 
+
 @method_decorator(decorators, name='dispatch')
 class BaseView(TemplateView):
     template_name = 'home.html'
-    extra_context={'version': settings.VERSION}
+    extra_context = {'version': settings.VERSION}
 
 
 # @ensure_csrf_cookie
@@ -54,10 +56,6 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-
-        print("hallo")
-        return Response("halo")
-    
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             instance = serializer.save()
@@ -65,29 +63,18 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
 
-    @action(detail=True, methods=['put'])
-    def retry(self, request, pk):
+    @action(detail=True)
+    def getvideo(self, request, pk=None):
         resource = self.get_object()
-        if resource.status == YoutubeResource.Status.FAILED:
-            resource.status = YoutubeResource.Status.QUEUED
-            resource.save()
-        return Response(status=204)
-
-    @action(detail=True, methods=['put'])
-    def archive(self, request, pk):
-        resource = self.get_object()
-        if resource.status == YoutubeResource.Status.DONE:
-            resource.status = YoutubeResource.Status.ARCHIVE
-            resource.save()
-        return Response(status=204)
+        file_response = FileResponse(
+            resource.videofile, as_attachment=True
+        )
+        return file_response
 
     @action(detail=True)
-    def download(self, request, pk=None):
+    def getaudio(self, request, pk=None):
         resource = self.get_object()
-        file_path = resource.get_file_path()
-        if file_path is not None:
-            file_response = FileResponse(
-                open(file_path, "rb"), as_attachment=True, filename=resource.filename
-            )
-            return file_response
-        return Response("File missing", status=404)
+        file_response = FileResponse(
+            resource.audiofile, as_attachment=True
+        )
+        return file_response

@@ -1,91 +1,117 @@
+from .logging.LoggingAdapter import LoggingAdapter
 import time
 from django.core.files.base import ContentFile
 from django.core.files import File
 from django.conf import settings
-from .youtube import YT
+# from .youtube import YT
 import time
 from pathlib import Path
-from youtube_dl.utils import ExtractorError, YoutubeDLError
+# from youtube_dl.utils import ExtractorError, YoutubeDLError
 
-import requests
+import json
+import yt_dlp
+import glob
 import re
 
 import logging
 newlogger = logging.getLogger(__name__)
-from .logging.LoggingAdapter import LoggingAdapter
+
 
 def get_video(instance):
     logger = LoggingAdapter(newlogger, {'id': instance.id})
-    try:
-        logger.info("Download Task starting")
-        instance.status = instance.Status.BUSY
-        instance.save()
-        youtube_process = YT(instance)
-        logger.info("Extracting Metadata ...")
-        youtube_process.extract_info()
-        logger.info("Finished extracting metadata ...")
-        logger.info("Running download process ...")
-        youtube_process.run()
-        logger.info("Finished download process ...")
-    except YoutubeDLError as ex:
-        logger.error("YoutubeDL error")
-        instance.error = ex.args
-        instance.status = instance.Status.FAILED
-        instance.save()
-    except Exception as e:
-        logger.error("YoutubeDL general error")
-        instance.error = str(e)
-        instance.status = instance.Status.FAILED
-        instance.save()
+    instance.status = instance.Status.BUSY
+    instance.save()
+    downloader = Downloader(instance)
+    downloader.run()
 
-def archive(instance):
-    logger = LoggingAdapter(newlogger, {'id': instance.id})
 
-    # check if Done. Review done or download done
-    if not instance.status == instance.Status.ARCHIVE:
-        raise ArchiveError("not ready for archive")
-    # check if audiofile is there
-    path = Path(
-        settings.MEDIA_ROOT + str(instance.youtube_id) + "/" + instance.filename
-    )
-    if not path.is_file():
-        raise ArchiveError(instance, "file is missing")
+class Downloader:
+    def __init__(self, obj):
+        self.obj = obj
 
-    logger.info("Audio file is present")
+        self.ydl_opts = {
+            # 'format': 'bv*+ba/b',
+            'outtmpl': settings.MEDIA_ROOT
+            + str(self.obj.id) + '/%(title)s.%(ext)s',
+            'keepvideo': True,
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+            }],
+            'logger': MyLogger(self.obj),
+            'progress_hooks': [self.progress_hooks],
+            'postprocessor_hooks': [self.postprocessor_hooks]
+        }
 
-    values = {}
-    values["title"] = instance.title
-    artists = []
-    artists.append(instance.artist)
-    tags = []
-    if not instance.tags == None:
-        for tag in instance.tags:
-            tags.append(tag)
-    values["tags"] = tags
-    values["artists"] = artists
-    values["description"] = instance.description
+    def run(self):
+        logger = LoggingAdapter(newlogger, {'id': self.obj.id})
+        with yt_dlp.YoutubeDL(self.ydl_opts) as ydl:
+            result = ydl.download(self.obj.url)
+            logger.info(result)
 
-    url_create = "http://" + settings.PLAPI_PATH + "/mediaresources/"
-    logger.info(f"API: {url_create}")
-    try:
-        r1 = requests.post(
-            url_create, files={"audiofile": path.open(mode="rb")}, data=values
-        )
-        if r1.status_code == requests.codes.created:
-            logger.info("mediaresource created on Archive backend")
-            instance.status = instance.Status.ARCHIVED
-            instance.save()
-            logger.info("Archive finished succesfully")
+    def progress_hooks(self, d):
+        logger = LoggingAdapter(newlogger, {'id': self.obj.id})
+        if d["status"] == "downloading":
+            self.obj.eta = d["eta"]
+            self.obj.elapsed = d["elapsed"]
+            self.obj.speed = d["speed"]
+            self.obj.save()
+            logger.info("eta " + str(d["eta"]))
+        if d["status"] == "error":
+            self.obj.status = self.obj.Status.FAILED
+            self.obj.save()
+        if d["status"] == "finished":
+            path = Path(d["filename"])
+            if path.is_file():
+                logger.info("video file finished downloading")
+            else:
+                logger.error("file not found")
+
+    def postprocessor_hooks(self, d):
+        logger = LoggingAdapter(newlogger, {'id': self.obj.id})
+        if d["status"] == "started":
+            logger.info("start postprocessor")
+        if d["status"] == "processing":
+            pass
+        if d["status"] == "finished":
+            logger.info("finished postprocessor")
+            video_paths = []
+            for name in glob.glob(settings.MEDIA_ROOT
+                                  + str(self.obj.id) + '/*'):
+                if re.search(r"\.mp3$", name):
+                    self.obj.audiofile.name = name
+                    self.obj.save()
+                else:
+                    video_paths.append(name)
+            shortest_video_filename = min(video_paths, key=len)
+            self.obj.videofile.name = shortest_video_filename
+            self.obj.status = self.obj.Status.DONE
+            self.obj.save()
+
+
+
+class MyLogger:
+    def __init__(self, obj) -> None:
+        self.obj = obj
+
+    def debug(self, msg):
+        logger = LoggingAdapter(newlogger, {'id': self.obj.id})
+        if msg.startswith('[debug] '):
+            pass
         else:
-            raise Exception("Archive failed on backend. File could be present or backend unavailable")
-    except Exception as e:
-        logger.error(f"Failed to Archive {e}")
-        raise ArchiveError(e)
+            self.info(msg)
+            logger.info(msg)
 
+    def info(self, msg):
+        logger = LoggingAdapter(newlogger, {'id': self.obj.id})
+        logger.info(msg)
+        pass
 
-class ArchiveError(Exception):
-    def __init__(self, reason, message="ArchiveError"):
-        self.message = message
-        self.reason = reason
-    def __str__(self):
-        return f"{self.message} -> {self.reason}"
+    def warning(self, msg):
+        logger = LoggingAdapter(newlogger, {'id': self.obj.id})
+        logger.warning(msg)
+        pass
+
+    def error(self, msg):
+        logger = LoggingAdapter(newlogger, {'id': self.obj.id})
+        logger.error(msg)

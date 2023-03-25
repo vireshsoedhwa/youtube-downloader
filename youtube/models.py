@@ -6,12 +6,11 @@ from django.db.models import Deferrable, UniqueConstraint
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django_q.tasks import async_task
-from .tasks import archive
 from pathlib import Path
 
 from django.conf import settings
 
-import re
+import os
 import shutil
 import logging
 
@@ -21,15 +20,10 @@ logger.addFilter(loggingfilter)
 
 
 def file_directory_path(instance, filename):
-    return "/code/dl/{0}/{1}".format(instance.id, filename)
+    return f"{settings.MEDIA_ROOT}/{instance.id}/{filename}"
 
 
 class YoutubeResource(models.Model):
-    def __init__(self, *args, **kwargs):
-        super(YoutubeResource, self).__init__(*args, **kwargs)
-        loggingfilter = YoutubeIdFilter(self)
-        logger.addFilter(loggingfilter)
-        self.logger = logger
 
     class Status(models.TextChoices):
         NEW = "NEW", _("New")
@@ -37,28 +31,20 @@ class YoutubeResource(models.Model):
         BUSY = "BUSY", _("Busy")
         FAILED = "FAILED", _("Failed")
         DONE = "DONE", _("Done")
-        ARCHIVE = "ARCHIVE", _("Archive")
-        ARCHIVED = "ARCHIVED", _("Archived")
 
     id = models.AutoField(primary_key=True)
     youtube_id = models.TextField(unique=True, max_length=200)
-    youtube_url = models.TextField(max_length=500, null=True, blank=True)
-    title = models.TextField(max_length=200, null=True, blank=True, default="")
-    description = models.TextField(max_length=5000, null=True, blank=True)
-    genre = models.TextField(max_length=100, null=True, blank=True)
-    filename = models.TextField(max_length=100, null=True, blank=True)
-    # audiofile = models.FileField(upload_to=file_directory_path,
-    #                              null=True,
-    #                              blank=True)
-    is_playlist = models.BooleanField(default=False)
-    is_music = models.BooleanField(default=False)
-    artist = models.TextField(max_length=100, null=True, blank=True)
-    tags = models.JSONField(encoder=None, decoder=None, null=True, blank=True)
-    categories = models.JSONField(
-        encoder=None, decoder=None, null=True, blank=True)
+    url = models.TextField(max_length=500, null=True, blank=True)
+    # title = models.TextField(max_length=200, null=True, blank=True, default="")
+    audiofile = models.FileField(upload_to=file_directory_path,
+                                 null=True,
+                                 blank=True, max_length=200)
+    videofile = models.FileField(upload_to=file_directory_path,
+                                 null=True,
+                                 blank=True, max_length=200)
     status = models.CharField(
         max_length=15, choices=Status.choices, default=Status.NEW)
-    downloadprogress = models.DecimalField(
+    progress = models.DecimalField(
         max_digits=3, decimal_places=0, blank=True, default=0
     )
     eta = models.DecimalField(
@@ -71,20 +57,26 @@ class YoutubeResource(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{str(self.id)} : {self.youtube_id} >>> {self.title[0:40]}..."
+        return f"{str(self.id)} : {self.youtube_id}"
 
-    def get_file_path(self):
-        try:
-            path = Path(settings.MEDIA_ROOT +
-                        self.youtube_id + "/" + self.filename)
-            if path.is_file():
-                self.logger.info("File found for download")
-                return path
-            else:
-                self.logger.info("File missing")
-                return None
-        except:
-            return None
+    def audiofile_name(self):
+        return os.path.basename(self.audiofile.name)
+
+    def videofile_name(self):
+        return os.path.basename(self.videofile.name)
+
+    # def get_file_path(self):
+    #     try:
+    #         path = Path(settings.MEDIA_ROOT +
+    #                     self.youtube_id + "/" + self.filename)
+    #         if path.is_file():
+    #             logger.info("File found for download")
+    #             return path
+    #         else:
+    #             logger.info("File missing")
+    #             return None
+    #     except:
+    #         return None
 
 # signal for deleting
 
@@ -93,18 +85,9 @@ class YoutubeResource(models.Model):
 def postdelete(sender, instance, **kwargs):
     logger.info(f"Deleting record id#: {instance.id} - {instance.youtube_id}")
     try:
-        shutil.rmtree(settings.MEDIA_ROOT + str(instance.youtube_id))
+        shutil.rmtree(settings.MEDIA_ROOT + str(instance.id))
         logger.info(
-            f"Files deleted id#: {instance.id} - {instance.youtube_id} -  {instance.title}")
-
-        import os
-        with open(settings.MEDIA_ROOT + 'archive', "r") as file_input:
-            with open(settings.MEDIA_ROOT + 'archive_temp', "w") as output:
-                for line in file_input:
-                    if line.strip("\n") != "youtube " + str(instance.youtube_id):
-                        output.write(line)
-                        os.replace(settings.MEDIA_ROOT + 'archive_temp',
-                                   settings.MEDIA_ROOT + 'archive')
+            f"Files deleted id#: {instance.id} - {instance.youtube_id}")
     except:
         logger.error("Files could not be deleted")
 
@@ -120,14 +103,6 @@ def postsave(sender, instance, created, raw, using, update_fields, **kwargs):
 
     if instance.status == YoutubeResource.Status.DONE:
         logger.info("DONE")
-
-    if instance.status == YoutubeResource.Status.ARCHIVE:
-        logger.info("ARCHIVING")
-        try:
-            archive(instance)
-            logger.info("ARCHIVED")
-        except Exception as e:
-            logger.error(f"Archive failed: {e}")
 
     if instance.status == YoutubeResource.Status.FAILED:
         logger.info("FAILED")
