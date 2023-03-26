@@ -80,3 +80,9 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
             )
             return file_response
         return HttpResponse("File not ready yet", status=400)
+    
+    @action(detail=True)
+    def getresult(self, request, pk=None):
+        resource = self.get_object()
+        serializer = self.get_serializer(resource)
+        return Response(serializer.data)

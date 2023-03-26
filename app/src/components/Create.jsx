@@ -15,7 +15,7 @@ export default function Create() {
     const [Pollingdelay, setPollingdelay] = useState(null)
 
     useInterval(async () => {
-        create_or_query(Url)
+        getresult()
     }, Pollingdelay);
 
 
@@ -36,8 +36,34 @@ export default function Create() {
         }
     }, [Result]);
 
+    const getresult = () => {
+        let headers = new Headers()
+        headers.append("X-CSRFTOKEN", document.querySelector('[name=csrfmiddlewaretoken]').value)
+        const request = new Request('/resource/' + Id + '/getresult', {
+            method: 'GET',
+            headers: headers
+        });
 
-    const create_or_query = (url) => {
+        fetch(request)
+            .then(async (response) => {
+                if (response.ok) {
+                    const jsonResponse = await response.json();
+                    setResult(jsonResponse)
+                    setError(null)
+                }
+                else {
+                    const jsonResponse = await response.json();
+                    try {
+                        setError(jsonResponse)
+                    } catch {
+                        setError("Unknown error")
+                    }
+                }
+            })
+
+    }
+
+    const create = (url) => {
         let headers = new Headers()
         headers.append("X-CSRFTOKEN", document.querySelector('[name=csrfmiddlewaretoken]').value)
         const formData = new FormData();
@@ -71,7 +97,7 @@ export default function Create() {
         let url = event.target[0].value
         event.preventDefault();
         setUrl(url)
-        create_or_query(url)
+        create(url)
     };
 
     const handleReset = () => {
@@ -106,16 +132,23 @@ export default function Create() {
             <>
                 <Preview youtube_id={Youtube_id} />
                 <div class="flex flex-col justify-around gap-4">
-                    <div class="justify-center">
-                        <a  href={"/resource/" + Id + "/getvideo"}>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <div class="flex flex-row justify-evenly">
+                        <a
+                            href={"/resource/" + Id + "/getvideo"}>
+                            Download Video
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor"
+                                class="w-6 h-6 m-auto">
                                 <path stroke-linecap="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
                             </svg>
                         </a>
-                    </div>
-                    <div class="justify-center">
                         <a href={"/resource/" + Id + "/getaudio"}>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            Download Audio
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor"
+                                class="w-6 h-6 m-auto">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z" />
                             </svg>
                         </a>
