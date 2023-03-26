@@ -48,11 +48,11 @@ class YoutubeResource(models.Model):
         max_digits=3, decimal_places=0, blank=True, default=0
     )
     eta = models.DecimalField(
-        max_digits=5, decimal_places=0, blank=True, default=0)
+        max_digits=15, decimal_places=0, blank=True, default=0)
     elapsed = models.DecimalField(
-        max_digits=5, decimal_places=0, blank=True, default=0)
+        max_digits=15, decimal_places=0, blank=True, default=0)
     speed = models.DecimalField(
-        max_digits=10, decimal_places=0, blank=True, default=0)
+        max_digits=15, decimal_places=0, blank=True, default=0)
     error = models.TextField(max_length=500, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -98,7 +98,7 @@ def postsave(sender, instance, created, raw, using, update_fields, **kwargs):
     logger.addFilter(loggingfilter)
 
     if instance.status == YoutubeResource.Status.QUEUED:
-        async_task("youtube.tasks.get_video", instance, sync=False)
+        async_task("app.tasks.get_video", instance, sync=False)
         logger.info("task scheduled")
 
     if instance.status == YoutubeResource.Status.DONE:
@@ -108,4 +108,6 @@ def postsave(sender, instance, created, raw, using, update_fields, **kwargs):
         logger.info("FAILED")
 
     if instance.status == YoutubeResource.Status.BUSY:
-        logger.info("Instance Busy")
+        # logger.info("Instance Busy")
+        logger.info(f"ETA: {instance.eta}")
+        pass

@@ -1,6 +1,9 @@
 #!/bin/sh
 
 set -e
+if [ -z "${DJANGO_SECRET_KEY}" ];then
+  echo DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY >> .env
+fi
 
 >&2 echo "Make Database migrations"
 python manage.py makemigrations app
@@ -9,6 +12,8 @@ echo "--------------------------------------------------------------------------
 >&2 echo "Run Database migrations"
 python manage.py migrate
 echo "-------------------------------------------------------------------------------------------\n"
+
+mkdir -p /code/app/build/static
 
 # Collect static files
 >&2 echo "Collect static"

@@ -10,11 +10,15 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
-    networks:
-      playlistener-network:   
 
   app:
-    command: python manage.py runserver 0.0.0.0:9001
+    command:
+      - /bin/sh
+      - -c
+      - |
+        python manage.py runserver 0.0.0.0:9001
+      # (cd app && npm install)
+      # (cd app && npm run build)
     image: playlistenerweb
     build:
       context: .
@@ -37,14 +41,23 @@ services:
       - "9001:9001"
     depends_on:
       - webdb
-    networks:
-      playlistener-network:
+
+  # frontend-builder:
+
+
+
+
+  
+# FROM node:lts-alpine as webassets-builder
+
+# WORKDIR /app
+
+# COPY app .
+# RUN npm install
+# RUN npm run build
+
+
 
 volumes:
   dataweb:
 
-networks:
-  playlistener-network:
-    external: true
-    driver: bridge
-    name: playlistener-network

@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "django_q",
-    "channels",
     "django_filters",
     
     "app",
@@ -66,7 +65,7 @@ ROOT_URLCONF = "playlistenerweb.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        'DIRS': [BASE_DIR / 'app/build'],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -82,7 +81,8 @@ TEMPLATES = [
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
 
-ASGI_APPLICATION = "playlistenerweb.asgi.application"
+# ASGI_APPLICATION = "playlistenerweb.asgi.application"
+WSGI_APPLICATION = 'playlistenerweb.wsgi.application'
 
 DATABASES = {
     "default": {
@@ -152,7 +152,7 @@ Q_CLUSTER = {
     "name": "playlistener",
     "max_attempts": 1,
     "retry": 4000, # The value must be bigger than the time it takes to complete longest task (timeout)
-    "workers": 1,
+    "workers": 2,
     "recycle": 500, # The number of tasks a worker will process before recycling .
     "timeout": 3600, # The number of seconds a worker is allowed to spend on a task before it’s terminated. 
     "compress": True,

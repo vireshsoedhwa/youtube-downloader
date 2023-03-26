@@ -15,7 +15,7 @@ class AppConfig(AppConfig):
 
     def ready(self):
 
-        if "runserver" in sys.argv or "playlistenerweb.asgi:application" in sys.argv:
+        if "runserver" in sys.argv or "playlistenerweb.wsgi" in sys.argv:
             logger.info("DEBUG: " + str(settings.DEBUG))
             logger.info("VERSION: " + str(settings.VERSION))
             logger.info("PLAPI_PATH: " + str(settings.PLAPI_PATH))

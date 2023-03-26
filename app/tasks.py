@@ -19,10 +19,14 @@ newlogger = logging.getLogger(__name__)
 
 def get_video(instance):
     logger = LoggingAdapter(newlogger, {'id': instance.id})
+    logger.info("starting download")
     instance.status = instance.Status.BUSY
     instance.save()
     downloader = Downloader(instance)
     downloader.run()
+
+    instance.status = instance.Status.DONE
+    instance.save()
 
 
 class Downloader:
@@ -56,11 +60,13 @@ class Downloader:
             self.obj.elapsed = d["elapsed"]
             self.obj.speed = d["speed"]
             self.obj.save()
-            logger.info("eta " + str(d["eta"]))
+            # logger.info("eta " + str(d["eta"]))
         if d["status"] == "error":
             self.obj.status = self.obj.Status.FAILED
             self.obj.save()
         if d["status"] == "finished":
+            self.obj.eta = 0
+            self.obj.save()
             path = Path(d["filename"])
             if path.is_file():
                 logger.info("video file finished downloading")
@@ -85,9 +91,7 @@ class Downloader:
                     video_paths.append(name)
             shortest_video_filename = min(video_paths, key=len)
             self.obj.videofile.name = shortest_video_filename
-            self.obj.status = self.obj.Status.DONE
             self.obj.save()
-
 
 
 class MyLogger:

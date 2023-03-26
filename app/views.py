@@ -23,14 +23,11 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 logger.addFilter(YoutubeIdFilter())
 
-decorators = [never_cache, login_required]
-
-
-@method_decorator(decorators, name='dispatch')
+# decorators = [never_cache]
+# @method_decorator(decorators, name='dispatch')
 class BaseView(TemplateView):
-    template_name = 'home.html'
+    # template_name = 'index.html'
     extra_context = {'version': settings.VERSION}
-
 
 # @ensure_csrf_cookie
 # def index(request):
@@ -56,6 +53,7 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
+        # print("creating")
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             instance = serializer.save()
@@ -66,15 +64,19 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
     @action(detail=True)
     def getvideo(self, request, pk=None):
         resource = self.get_object()
-        file_response = FileResponse(
-            resource.videofile, as_attachment=True
-        )
-        return file_response
+        if resource.audiofile:
+            file_response = FileResponse(
+                resource.videofile, as_attachment=True
+            )
+            return file_response
+        return HttpResponse("File not ready yet", status=400)
 
     @action(detail=True)
     def getaudio(self, request, pk=None):
         resource = self.get_object()
-        file_response = FileResponse(
-            resource.audiofile, as_attachment=True
-        )
-        return file_response
+        if resource.audiofile:
+            file_response = FileResponse(
+                resource.audiofile, as_attachment=True
+            )
+            return file_response
+        return HttpResponse("File not ready yet", status=400)
