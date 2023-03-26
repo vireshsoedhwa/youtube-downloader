@@ -135,6 +135,11 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = "/var/www/html/static/"
 
+STATICFILES_DIRS = [
+    "/code/app/build/static",
+    "/code/app/build"
+]
+
 MEDIA_ROOT = "/code/data/"
 # MEDIA_URL =
 
