@@ -11,9 +11,9 @@ RUN set -ex; \
 
 FROM node:lts-alpine as webassets-builder
 
-WORKDIR /code/youtube
+WORKDIR /code/app
 
-COPY youtube ./
+COPY app ./
 RUN npm install
 RUN npm run build
 
@@ -47,7 +47,7 @@ COPY docker-entrypoint.sh /usr/local/bin
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 
 COPY playlistenerweb playlistenerweb/
-COPY youtube youtube/
+COPY app app/
 
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 

@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     "channels",
     "django_filters",
     
-    "youtube",
+    "app",
 ]
 
 MIDDLEWARE = [
@@ -204,7 +204,7 @@ LOGGING = {
             "level": "ERROR",
             "propagate": True,
         },
-        "youtube": {
+        "app": {
             "handlers": ["console"],
             "level": "INFO",
             "propagate": True,

@@ -10,8 +10,8 @@ from .logging.YoutubeIdFilter import YoutubeIdFilter
 logger.addFilter(YoutubeIdFilter())
 
 
-class YoutubeConfig(AppConfig):
-    name = "youtube"
+class AppConfig(AppConfig):
+    name = "app"
 
     def ready(self):
 

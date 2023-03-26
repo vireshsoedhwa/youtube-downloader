@@ -3,7 +3,7 @@
 set -e
 
 >&2 echo "Make Database migrations"
-python manage.py makemigrations youtube
+python manage.py makemigrations app
 echo "-------------------------------------------------------------------------------------------\n"
 
 >&2 echo "Run Database migrations"
