@@ -7,8 +7,6 @@ export default function Create() {
 
     const [Error, setError] = useState(null)
     const [Status, setStatus] = useState("NEW")
-    const [Done, setDone] = useState(false)
-    const [Url, setUrl] = useState(null)
     const [Id, setId] = useState(null)
     const [Youtube_id, setYoutube_id] = useState(null)
     const [Result, setResult] = useState(null)
@@ -96,7 +94,6 @@ export default function Create() {
     const handleSubmit = (event) => {
         let url = event.target[0].value
         event.preventDefault();
-        setUrl(url)
         create(url)
     };
 
