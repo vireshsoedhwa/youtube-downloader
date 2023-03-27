@@ -10,11 +10,15 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
-    networks:
-      playlistener-network:   
 
   app:
-    command: python manage.py runserver 0.0.0.0:9001
+    command:
+      - /bin/sh
+      - -c
+      - |
+        python manage.py runserver 0.0.0.0:9001
+      # (cd app && npm install)
+      # (cd app && npm run build)
     image: playlistenerweb
     build:
       context: .
@@ -23,8 +27,7 @@ services:
     volumes:
       - .:/code
     environment:
-      - DEBUG=1
-      - PLAPI_PATH=playlistenerapi:8000
+      - DEBUG=0
       - DJANGO_SECRET_KEY=WOOOOOOOOWOOOOOOOOWWW
       - POSTGRES_HOST=webdb
       - POSTGRES_PASSWORD=postgres
@@ -34,17 +37,25 @@ services:
       - ADMIN_PASSWORD=admin
     ports:
       - "9000:9000"
+      - "9001:9001"
     depends_on:
-      - webdb
-    networks:
-      playlistener-network:
+      webdb:
+        condition: service_started
+      frontend-builder:
+        condition: service_completed_successfully
+
+  frontend-builder:
+    command:
+      - /bin/sh
+      - -c
+      - |
+        npm install
+        npm run build
+    image: node:lts-alpine
+    working_dir: /code/app
+    volumes:
+      - .:/code
 
 volumes:
   dataweb:
-  webassets:
 
-networks:
-  playlistener-network:
-    external: true
-    driver: bridge
-    name: playlistener-network

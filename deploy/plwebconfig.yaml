@@ -6,4 +6,3 @@ metadata:
 data:
   POSTGRES_HOST: db-svc
   POSTGRES_DB: postgres
-  PLAPI_PATH: plapi-proxy-svc.plapi
