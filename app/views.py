@@ -25,19 +25,11 @@ logger.addFilter(YoutubeIdFilter())
 
 # decorators = [never_cache]
 # @method_decorator(decorators, name='dispatch')
+
+
 class BaseView(TemplateView):
     # template_name = 'index.html'
     extra_context = {'version': settings.VERSION}
-
-# @ensure_csrf_cookie
-# def index(request):
-#     if request.session.test_cookie_worked():
-#         print(str(request.headers["Cookie"]))
-#     request.session.set_test_cookie()
-#     context = {
-#         "version": settings.VERSION,
-#     }
-#     return render(request, "youtube/index.html", context)
 
 
 class YoutubeResourceViewset(viewsets.ModelViewSet):
@@ -58,6 +50,10 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
         if serializer.is_valid():
             instance = serializer.save()
             instance.save()
+            # delete anything older than the last 15 items
+            selection = self.queryset.order_by("-created_at")[15:]
+            for item in selection:
+                item.delete()
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
 
@@ -80,7 +76,7 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
             )
             return file_response
         return HttpResponse("File not ready yet", status=400)
-    
+
     @action(detail=True)
     def getresult(self, request, pk=None):
         resource = self.get_object()

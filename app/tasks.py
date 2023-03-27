@@ -6,7 +6,7 @@ from django.conf import settings
 # from .youtube import YT
 import time
 from pathlib import Path
-# from youtube_dl.utils import ExtractorError, YoutubeDLError
+from .models import YoutubeResource
 
 import json
 import yt_dlp
@@ -27,7 +27,6 @@ def get_video(instance):
 
     instance.status = instance.Status.DONE
     instance.save()
-
 
 class Downloader:
     def __init__(self, obj):
