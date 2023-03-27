@@ -21,8 +21,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 VERSION = os.getenv("VERSION", "0.0.0")
 SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 ADMIN_USERNAME = os.environ["ADMIN_USERNAME"]
-ADMIN_PASSWORD = os.environ["ADMIN_PASSWORD"]
-PLAPI_PATH = os.environ["PLAPI_PATH"]
 DEBUG = os.getenv("DEBUG", False) == "1"
 
 ALLOWED_HOSTS = ["*"]
@@ -46,7 +44,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "django_q",
     "django_filters",
-    
+
     "app",
 ]
 
@@ -151,10 +149,13 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 Q_CLUSTER = {
     "name": "playlistener",
     "max_attempts": 1,
-    "retry": 4000, # The value must be bigger than the time it takes to complete longest task (timeout)
+    # The value must be bigger than the time it takes to complete longest task (timeout)
+    "retry": 4000,
     "workers": 2,
-    "recycle": 500, # The number of tasks a worker will process before recycling .
-    "timeout": 3600, # The number of seconds a worker is allowed to spend on a task before it’s terminated. 
+    # The number of tasks a worker will process before recycling .
+    "recycle": 500,
+    # The number of seconds a worker is allowed to spend on a task before it’s terminated.
+    "timeout": 3600,
     "compress": True,
     "catch_up": False,
     "cpu_affinity": 1,
@@ -169,14 +170,19 @@ REST_FRAMEWORK = {
     # "DEFAULT_PERMISSION_CLASSES": [
     #     "rest_framework.permissions.AllowAny",
     # ],
-#     'DEFAULT_AUTHENTICATION_CLASSES': (
-#        'rest_framework.authentication.TokenAuthentication',
-#    ),
+    #     'DEFAULT_AUTHENTICATION_CLASSES': (
+    #        'rest_framework.authentication.TokenAuthentication',
+    #    ),
 }
 
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "filters": {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        }
+    },
     "formatters": {
         "verbose": {
             "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
@@ -193,24 +199,27 @@ LOGGING = {
     },
     "handlers": {
         "console": {
-            "level": "INFO",
+            "level": "ERROR",
             "class": "logging.StreamHandler",
             "formatter": "custom",
         },
-        "systemconsole": {
-            "level": "INFO",
-            "class": "logging.StreamHandler",
-            "formatter": "verbose",
+        "console_dev": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "dev.log",
+            "formatter": "custom",
+            "maxBytes": 1024 * 1024 * 10,  # 10 MB
+            "filters": ['require_debug_true']
         },
     },
     "loggers": {
         "django": {
-            "handlers": ["systemconsole"],
+            "handlers": ["console"],
             "level": "ERROR",
             "propagate": True,
         },
         "app": {
-            "handlers": ["console"],
+            "handlers": ["console", "console_dev"],
             "level": "INFO",
             "propagate": True,
         },

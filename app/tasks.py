@@ -63,6 +63,7 @@ class Downloader:
         if d["status"] == "error":
             self.obj.status = self.obj.Status.FAILED
             self.obj.save()
+            logger.error("download failed")
         if d["status"] == "finished":
             self.obj.eta = 0
             self.obj.save()

@@ -21,7 +21,7 @@ export default function Create() {
         if (Result) {
             let resultstatus = Result['status']
             if (resultstatus == "QUEUED" || resultstatus == "BUSY") {
-                setPollingdelay(5000)
+                setPollingdelay(1000)
             }
             else {
                 setPollingdelay(null)
