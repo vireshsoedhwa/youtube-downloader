@@ -13,9 +13,6 @@ spec:
         app: app
     spec:
       volumes:
-      - name: webassets
-        persistentVolumeClaim:
-          claimName: plwebassets
       - name: data
         persistentVolumeClaim:
           claimName: plwebdata
@@ -37,8 +34,6 @@ spec:
           - secretRef:
               name: app-secret
           volumeMounts:
-          - mountPath: /var/www/html
-            name: webassets
           - mountPath: /code/data
             name: data
 ---
