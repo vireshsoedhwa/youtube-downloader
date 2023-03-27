@@ -35,10 +35,6 @@ RUN set -ex; \
             curl; \
         mkdir -p /run/daphne;
 
-RUN set -ex; \
-    curl -fsSL https://deb.nodesource.com/setup_19.x | bash - && \
-    apt-get install -y nodejs
-
 COPY --from=webassets-builder /app/build ./app/build
 COPY --from=base /root/.cache /root/.cache
 COPY --from=base /opt/venv /opt/venv
