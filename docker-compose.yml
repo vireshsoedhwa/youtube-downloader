@@ -39,23 +39,22 @@ services:
       - "9000:9000"
       - "9001:9001"
     depends_on:
-      - webdb
+      webdb:
+        condition: service_started
+      frontend-builder:
+        condition: service_completed_successfully
 
-  # frontend-builder:
-
-
-
-
-  
-# FROM node:lts-alpine as webassets-builder
-
-# WORKDIR /app
-
-# COPY app .
-# RUN npm install
-# RUN npm run build
-
-
+  frontend-builder:
+    command:
+      - /bin/sh
+      - -c
+      - |
+        npm install
+        npm run build
+    image: node:lts-alpine
+    working_dir: /code/app
+    volumes:
+      - .:/code
 
 volumes:
   dataweb:
