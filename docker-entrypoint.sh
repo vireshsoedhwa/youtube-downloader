@@ -26,5 +26,5 @@ echo "--------------------------------------------------------------------------
 >&2 echo "Starting Nginx..."
 nginx
 
->&2 echo "Starting Daphne..."
+>&2 echo "Starting Gunicorn..."
 exec "$@"

@@ -8,7 +8,9 @@ logger = logging.getLogger(__name__)
 from .logging.YoutubeIdFilter import YoutubeIdFilter
 
 logger.addFilter(YoutubeIdFilter())
-
+gunicorn_logger = logging.getLogger('gunicorn.error')
+logger.handlers = gunicorn_logger.handlers
+logger.setLevel(gunicorn_logger.level)
 
 class AppConfig(AppConfig):
     name = "app"
@@ -21,13 +23,14 @@ class AppConfig(AppConfig):
             logger.info("youtube started")
 
             from django.contrib.auth.models import User
-
             if not User.objects.filter(username=settings.ADMIN_USERNAME).exists():
                 User.objects.create_superuser(
                     settings.ADMIN_USERNAME,
                     "admin@example.com",
                     settings.ADMIN_PASSWORD,
                 )
+            else:
+                logger.info("ADMIN user already exists")
             
             # from django_q.models import Schedule
             # if not Schedule.objects.filter(name="archive_schedule").exists():

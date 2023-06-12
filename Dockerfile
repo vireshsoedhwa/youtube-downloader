@@ -53,4 +53,4 @@ EXPOSE 9000
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-CMD ["gunicorn", "-w", "3", "-b", "0.0.0.0:9001", "--forwarded-allow-ips=*", "playlistenerweb.wsgi"]
+CMD ["gunicorn", "-w", "3", "-b", "0.0.0.0:9001", "--forwarded-allow-ips=*", "--log-level", "info", "playlistenerweb.wsgi"]
