@@ -45,14 +45,14 @@ class YoutubeResource(models.Model):
     status = models.CharField(
         max_length=15, choices=Status.choices, default=Status.NEW)
     progress = models.DecimalField(
-        max_digits=3, decimal_places=0, blank=True, default=0
+        max_digits=3, decimal_places=0, blank=True, null=True, default=0
     )
     eta = models.DecimalField(
-        max_digits=15, decimal_places=0, blank=True, default=0)
+        max_digits=15, decimal_places=0, blank=True, null=True, default=0)
     elapsed = models.DecimalField(
-        max_digits=15, decimal_places=0, blank=True, default=0)
+        max_digits=15, decimal_places=0, blank=True, null=True, default=0)
     speed = models.DecimalField(
-        max_digits=15, decimal_places=0, blank=True, default=0)
+        max_digits=15, decimal_places=0, blank=True, null=True, default=0)
     error = models.TextField(max_length=500, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
