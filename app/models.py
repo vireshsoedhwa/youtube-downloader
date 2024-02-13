@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models import Deferrable, UniqueConstraint
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from django_q.tasks import async_task
+# from django_q.tasks import async_task
 from pathlib import Path
 
 from django.conf import settings
@@ -98,7 +98,7 @@ def postsave(sender, instance, created, raw, using, update_fields, **kwargs):
     logger.addFilter(loggingfilter)
 
     if instance.status == YoutubeResource.Status.QUEUED:
-        async_task("app.tasks.get_video", instance, sync=False)
+        # async_task("app.tasks.get_video", instance, sync=False)
         logger.info("task scheduled")
 
     if instance.status == YoutubeResource.Status.DONE:

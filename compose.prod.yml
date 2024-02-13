@@ -1,0 +1,11 @@
+services:
+  db:
+    volumes:
+      - dbvol:/var/lib/postgresql/data
+
+  app:
+    environment:
+      PRODUCTION: 'true'
+
+volumes:
+  dbvol:

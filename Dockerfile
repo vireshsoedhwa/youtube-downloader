@@ -9,7 +9,7 @@ RUN set -ex; \
 
 # ============================================ WEB ASSETS BUILDER
 
-FROM node:lts-alpine as webassets-builder
+FROM node:19.4.0 as webassets-builder
 
 WORKDIR /app
 
@@ -53,4 +53,4 @@ EXPOSE 9000
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-CMD ["gunicorn", "-w", "3", "-b", "0.0.0.0:9001", "--forwarded-allow-ips=*", "--log-level", "info", "playlistenerweb.wsgi"]
+CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:9001", "--forwarded-allow-ips=*", "--log-level", "info", "playlistenerweb.wsgi"]

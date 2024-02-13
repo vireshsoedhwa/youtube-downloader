@@ -13,18 +13,17 @@ echo "--------------------------------------------------------------------------
 python manage.py migrate
 echo "-------------------------------------------------------------------------------------------\n"
 
+python manage.py createsuperuser --noinput
+
 mkdir -p /code/app/build/static
 
 # Collect static files
 >&2 echo "Collect static"
 python manage.py collectstatic --noinput
 
->&2 echo "Start Django Q task Scheduler"
-python manage.py qcluster &
-echo "-------------------------------------------------------------------------------------------\n"
+# >&2 echo "Start Django Q task Scheduler"
+# python manage.py qcluster &
+# echo "-------------------------------------------------------------------------------------------\n"
 
->&2 echo "Starting Nginx..."
-nginx
-
->&2 echo "Starting Gunicorn..."
+>&2 echo "Starting youtube-downloader..."
 exec "$@"
