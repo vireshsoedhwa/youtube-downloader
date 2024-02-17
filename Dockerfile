@@ -44,7 +44,7 @@ COPY docker-entrypoint.sh /usr/local/bin
 
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 
-COPY playlistenerweb playlistenerweb/
+COPY youtube_downloader youtube_downloader/
 COPY app app
 
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
@@ -53,4 +53,4 @@ EXPOSE 9000
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:9001", "--forwarded-allow-ips=*", "--log-level", "info", "playlistenerweb.wsgi"]
+CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:9000", "--forwarded-allow-ips=*", "--log-level", "info", "youtube_downloader.wsgi"]

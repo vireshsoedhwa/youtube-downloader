@@ -23,6 +23,7 @@ def file_directory_path(instance, filename):
     return f"{settings.MEDIA_ROOT}/{instance.id}/{filename}"
 
 
+
 class YoutubeResource(models.Model):
 
     class Status(models.TextChoices):

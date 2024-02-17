@@ -36,7 +36,7 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
     queryset = YoutubeResource.objects.all()
     serializer_class = YoutubeResourceSerializer
     parser_classes = (MultiPartParser, FormParser, JSONParser)
-    # authentication_classes = [SessionAuthentication]
+    authentication_classes = [SessionAuthentication]
     # permission_classes = [IsAuthenticated]
 
     def list(self, request):

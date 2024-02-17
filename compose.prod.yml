@@ -1,11 +1,12 @@
 services:
   db:
     volumes:
-      - dbvol:/var/lib/postgresql/data
+      - youtube_downloader_db:/var/lib/postgresql/data
 
   app:
     environment:
       PRODUCTION: 'true'
 
 volumes:
-  dbvol:
+  youtube_downloader_db:
+    external: true

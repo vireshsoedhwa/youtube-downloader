@@ -16,6 +16,13 @@ import re
 import logging
 newlogger = logging.getLogger(__name__)
 
+from celery import shared_task
+
+@shared_task
+def add(x, y):
+    return x + y
+
+
 
 def get_video(instance):
     logger = LoggingAdapter(newlogger, {'id': instance.id})
