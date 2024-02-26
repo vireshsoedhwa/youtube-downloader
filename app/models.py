@@ -5,8 +5,9 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models import Deferrable, UniqueConstraint
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-# from django_q.tasks import async_task
 from pathlib import Path
+
+import celery
 
 from django.conf import settings
 
@@ -99,8 +100,10 @@ def postsave(sender, instance, created, raw, using, update_fields, **kwargs):
     logger.addFilter(loggingfilter)
 
     if instance.status == YoutubeResource.Status.QUEUED:
-        # async_task("app.tasks.get_video", instance, sync=False)
+        logger.info("before task scheduled")
+        celery.current_app.send_task('app.tasks.download', [instance.id])
         logger.info("task scheduled")
+        # logger.info(result.get())
 
     if instance.status == YoutubeResource.Status.DONE:
         logger.info("DONE")
@@ -111,4 +114,3 @@ def postsave(sender, instance, created, raw, using, update_fields, **kwargs):
     if instance.status == YoutubeResource.Status.BUSY:
         # logger.info("Instance Busy")
         logger.info(f"ETA: {instance.eta}")
-        pass

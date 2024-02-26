@@ -199,7 +199,7 @@ LOGGING = {
     },
     "handlers": {
         "console": {
-            "level": "ERROR",
+            "level": "DEBUG",
             "class": "logging.StreamHandler",
             "formatter": "custom",
         },
@@ -219,9 +219,18 @@ LOGGING = {
             "propagate": True,
         },
         "app": {
-            "handlers": ["console", "console_dev"],
-            "level": "INFO",
+            "handlers": ["console"],
+            "level": "DEBUG",
             "propagate": True,
         },
+        "celery.task": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": True,
+        }
     },
 }
+
+CELERY_BROKER_URL = 'redis://redis:6379'
+CELERY_RESULT_BACKEND = 'redis://redis:6379'
+CELERYD_TIME_LIMIT=1800
