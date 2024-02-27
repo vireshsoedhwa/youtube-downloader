@@ -35,9 +35,9 @@ class YoutubeResource(models.Model):
         DONE = "DONE", _("Done")
 
     id = models.AutoField(primary_key=True)
+    session = models.TextField(null=True, blank=True, max_length=200)
     youtube_id = models.TextField(unique=True, max_length=200)
     url = models.TextField(max_length=500, null=True, blank=True)
-    # title = models.TextField(max_length=200, null=True, blank=True, default="")
     audiofile = models.FileField(upload_to=file_directory_path,
                                  null=True,
                                  blank=True, max_length=200)

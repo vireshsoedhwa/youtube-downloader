@@ -103,6 +103,8 @@ services:
         python manage.py makemigrations app
         python manage.py migrate
         python manage.py createsuperuser --noinput || true
+    volumes:
+      - .:/code
     working_dir: /code
     environment:
       - DJANGO_SECRET_KEY=WOOOOOOOOWOOOOOOOOWWW
@@ -131,6 +133,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    volumes:
+      - youtube_downloader_db:/var/lib/postgresql/data
 
 
 
@@ -140,3 +144,5 @@ services:
     healthcheck:
       test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
 
+volumes:
+  youtube_downloader_db:

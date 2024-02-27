@@ -76,6 +76,8 @@ def download(instance_id):
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         result = ydl.download(youtube_resource.url)
         loggercelery.info(result)
+        youtube_resource.status = youtube_resource.Status.DONE
+        youtube_resource.save()
 
 
 class MyLogger:

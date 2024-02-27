@@ -30,6 +30,7 @@ CSRF_TRUSTED_ORIGINS = ["http://localhost"]
 CSRF_USE_SESSIONS = True
 CSRF_COOKIE_HTTPONLY = True
 
+SESSION_ENGINE='django.contrib.sessions.backends.signed_cookies'
 # Application definition
 
 INSTALLED_APPS = [
