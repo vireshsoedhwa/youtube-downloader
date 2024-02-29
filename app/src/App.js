@@ -1,4 +1,4 @@
-import { Route, Routes, Link, Outlet } from 'react-router-dom'
+import { Route, Routes, Navigate } from 'react-router-dom'
 
 import BaseLayout from './containers/BaseLayout';
 import Home from './components/Home';
@@ -12,6 +12,7 @@ function App() {
         <Route path="/" element={<BaseLayout />} >
           <Route path="home" element={<Home />} />
           <Route path="create" element={<Create />} />
+          <Route path="" element={<Navigate to="/home" replace={true} />} />
         </Route>
       </Routes>
     </>

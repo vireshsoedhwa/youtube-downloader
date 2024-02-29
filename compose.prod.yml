@@ -5,8 +5,10 @@ services:
 
   app:
     environment:
-      PRODUCTION: 'true'
+      DEBUG: 'true'
 
 volumes:
   youtube_downloader_db:
+    external: true
+  youtube_downloader:
     external: true
