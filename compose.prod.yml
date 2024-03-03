@@ -4,11 +4,101 @@ services:
       - youtube_downloader_db:/var/lib/postgresql/data
 
   app:
+    volumes:
+      - youtube_downloader:/code/data
     environment:
-      DEBUG: 'true'
+      DEBUG : 'true'
+      DJANGO_SECRET_KEY : WOOOOOOOOWOOOOOOOOWWW
+      POSTGRES_HOST : db
+      POSTGRES_PASSWORD : postgres
+      POSTGRES_DB : postgres
+      POSTGRES_USER : postgres
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      db_init_prod:
+        condition: service_completed_successfully
+
+  celery:
+    build:
+      context: .
+    command:
+      - /bin/sh
+      - -c
+      - |
+        /opt/venv/bin/celery -A youtube_downloader worker -l INFO
+    volumes:
+      - youtube_downloader:/code/data
+    working_dir: /code
+    environment:
+      - DJANGO_SECRET_KEY=WOOOOOOOOWOOOOOOOOWWW
+      - POSTGRES_HOST=db
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  nginx:
+    image: nginxinc/nginx-unprivileged
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - app_assets:/var/www/html
+    ports:
+      - "8080:8080"
+    depends_on:
+      collect_static:
+        condition: service_completed_successfully
+      app:
+        condition: service_healthy
+
+  collect_static:
+    image: youtube_downloader
+    command:
+      - /bin/sh
+      - -c
+      - |
+        python manage.py collectstatic --noinput
+    volumes:
+      - app_assets:/var/www/html
+    working_dir: /code
+    environment:
+      - DJANGO_SECRET_KEY=WOOOOOOOOWOOOOOOOOWWW
+      - POSTGRES_HOST=db
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+
+
+  db_init_prod:
+    image: youtube_downloader
+    command:
+      - /bin/sh
+      - -c
+      - |
+        python manage.py migrate
+        python manage.py createsuperuser --noinput || true
+    working_dir: /code
+    environment:
+      - DJANGO_SECRET_KEY=WOOOOOOOOWOOOOOOOOWWW
+      - POSTGRES_HOST=db
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - DJANGO_SUPERUSER_USERNAME=admin
+      - DJANGO_SUPERUSER_PASSWORD=password
+      - DJANGO_SUPERUSER_EMAIL=admin@example.com
+    depends_on:
+      db:
+        condition: service_healthy
 
 volumes:
+  app_assets:
   youtube_downloader_db:
     external: true
   youtube_downloader:
     external: true
+  

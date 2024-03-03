@@ -8,8 +8,21 @@ from pathlib import Path
 import yt_dlp
 import glob
 import re
+import os
 
 loggercelery = get_task_logger(__name__)
+
+@shared_task(name='cleanup')
+def cleanup(arg):
+    loggercelery.info(f"Cleaning up files older than the last {arg} files")
+    # delete anything older than the last 20 items
+    selection = YoutubeResource.objects.order_by("-created_at")[arg:]
+    for item in selection:
+        loggercelery.info(item)
+        # item.delete()
+
+    # loggercelery.info(f"This is the testing test testtt")
+
 
 @shared_task()
 def download(instance_id):
@@ -22,6 +35,7 @@ def download(instance_id):
 
     def progress_hooks(d):
         if d["status"] == "downloading":
+            youtube_resource.title = Path(Path(os.path.basename(d["filename"])).stem).stem
             youtube_resource.eta = d["eta"]
             youtube_resource.elapsed = d["elapsed"]
             youtube_resource.speed = d["speed"]

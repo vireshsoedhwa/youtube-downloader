@@ -21,8 +21,10 @@ class AppConfig(AppConfig):
         # for item in sys.argv:
         #     logger.info("arguments")
         #     logger.info(item)
-
-        logger.info("APP ready")
+        if settings.DEBUG:
+            logger.info("started DEV")
+        else:
+            logger.info("started PRODUCTION")
 
         # from django.contrib.auth.models import User
 

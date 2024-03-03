@@ -30,6 +30,7 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "youtube_id",
+            "title",
             "url",
             "status",
             "progress",

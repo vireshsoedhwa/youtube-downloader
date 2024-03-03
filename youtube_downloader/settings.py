@@ -20,12 +20,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 VERSION = os.getenv("VERSION", "0.0.0")
 SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
-# ADMIN_USERNAME = os.environ["ADMIN_USERNAME"]
-# ADMIN_PASSWORD = os.environ["ADMIN_PASSWORD"]
 DEBUG = os.getenv("DEBUG", False) == "true"
 
 ALLOWED_HOSTS = ["*"]
-CSRF_TRUSTED_ORIGINS = ["http://localhost"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost", "http://localhost:8080", "http://localhost:9000"]
 
 CSRF_USE_SESSIONS = True
 CSRF_COOKIE_HTTPONLY = True
@@ -45,6 +43,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "django_filters",
+    "django_celery_beat",
 
     "app",
 ]
@@ -146,25 +145,6 @@ MEDIA_ROOT = "/code/data/"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-# Q_CLUSTER = {
-#     "name": "playlistener",
-#     "max_attempts": 1,
-#     # The value must be bigger than the time it takes to complete longest task (timeout)
-#     "retry": 4000,
-#     "workers": 2,
-#     # The number of tasks a worker will process before recycling .
-#     "recycle": 500,
-#     # The number of seconds a worker is allowed to spend on a task before it’s terminated.
-#     "timeout": 3600,
-#     "compress": True,
-#     "catch_up": False,
-#     "cpu_affinity": 1,
-#     "save_limit": 250,
-#     "queue_limit": 500,
-#     "label": "Django Q",
-#     "orm": "default",
-# }
 
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),

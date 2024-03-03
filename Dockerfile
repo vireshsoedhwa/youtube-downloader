@@ -31,9 +31,7 @@ RUN set -ex; \
         apt-get update; \
         apt-get install -y --no-install-recommends \
             ffmpeg \
-            nginx \
-            curl; \
-        mkdir -p /run/daphne;
+            curl; 
 
 COPY --from=webassets-builder /app/build ./app/build
 COPY --from=base /root/.cache /root/.cache
@@ -41,8 +39,6 @@ COPY --from=base /opt/venv /opt/venv
 
 COPY manage.py ./
 COPY docker-entrypoint.sh /usr/local/bin
-
-COPY nginx/nginx.conf /etc/nginx/nginx.conf
 
 COPY youtube_downloader youtube_downloader/
 COPY app app
