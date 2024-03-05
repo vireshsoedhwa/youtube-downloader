@@ -18,10 +18,8 @@ def cleanup(arg):
     # delete anything older than the last 20 items
     selection = YoutubeResource.objects.order_by("-created_at")[arg:]
     for item in selection:
-        loggercelery.info(item)
-        # item.delete()
-
-    # loggercelery.info(f"This is the testing test testtt")
+        item.delete()
+        loggercelery.info(f"{item} : deleted")
 
 
 @shared_task()

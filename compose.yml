@@ -24,7 +24,7 @@ services:
       - -c
       - |
         /opt/venv/bin/celery -A youtube_downloader worker --beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
-        /opt/venv/bin/celery -A youtube_downloader worker --loglevel=INFO --concurrency=10 -n worker1@%h
+        /opt/venv/bin/celery -A youtube_downloader worker --loglevel=INFO --concurrency=1 -n worker1@%h
     working_dir: /code
     environment:
       - DJANGO_SECRET_KEY=WOOOOOOOOWOOOOOOOOWWW

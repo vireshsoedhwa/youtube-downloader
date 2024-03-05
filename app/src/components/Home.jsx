@@ -125,7 +125,7 @@ export default function Home(props) {
                                                     </>
                                                     :
                                                     <>
-                                                        {item.eta} sec
+                                                        {item.status} --- {item.eta} sec
                                                     </>
                                                 }
                                             </td>
