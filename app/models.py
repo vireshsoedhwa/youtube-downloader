@@ -111,6 +111,12 @@ def postsave(sender, instance, created, raw, using, update_fields, **kwargs):
 
     if instance.status == YoutubeResource.Status.FAILED:
         logger.info("FAILED")
+        try:
+            shutil.rmtree(settings.MEDIA_ROOT + str(instance.id))
+            logger.info(
+                f"Files deleted id#: {instance.id} - {instance.youtube_id}")
+        except:
+            logger.error("Files could not be deleted")
 
     if instance.status == YoutubeResource.Status.BUSY:
         # logger.info("Instance Busy")
