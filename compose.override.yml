@@ -1,5 +1,12 @@
 services:
 
+  db:
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+
   app:
     command:
       - /bin/sh
@@ -28,6 +35,12 @@ services:
         condition: service_completed_successfully
 
   celery:
+    environment:
+      - DJANGO_SECRET_KEY=WOOOOOOOOWOOOOOOOOWWW
+      - POSTGRES_HOST=db
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
     volumes:
       - .:/code
 

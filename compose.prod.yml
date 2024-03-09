@@ -2,6 +2,8 @@ services:
   db:
     volumes:
       - youtube_downloader_db:/var/lib/postgresql/data
+    env_file:
+      - prod.env
 
   app:
     volumes:
@@ -19,14 +21,8 @@ services:
   celery:
     build:
       context: .
-    command:
-      - /bin/sh
-      - -c
-      - |
-        /opt/venv/bin/celery -A youtube_downloader worker -l INFO
     volumes:
       - youtube_downloader:/code/data
-    working_dir: /code
     env_file:
       - prod.env
     depends_on:
