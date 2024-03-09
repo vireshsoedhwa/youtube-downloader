@@ -9,7 +9,7 @@ RUN set -ex; \
 
 # ============================================ WEB ASSETS BUILDER
 
-FROM node:lts-alpine as webassets-builder
+FROM node:19.4.0 as webassets-builder
 
 WORKDIR /app
 
@@ -31,9 +31,7 @@ RUN set -ex; \
         apt-get update; \
         apt-get install -y --no-install-recommends \
             ffmpeg \
-            nginx \
-            curl; \
-        mkdir -p /run/daphne;
+            curl; 
 
 COPY --from=webassets-builder /app/build ./app/build
 COPY --from=base /root/.cache /root/.cache
@@ -42,9 +40,7 @@ COPY --from=base /opt/venv /opt/venv
 COPY manage.py ./
 COPY docker-entrypoint.sh /usr/local/bin
 
-COPY nginx/nginx.conf /etc/nginx/nginx.conf
-
-COPY playlistenerweb playlistenerweb/
+COPY youtube_downloader youtube_downloader/
 COPY app app
 
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
@@ -53,4 +49,4 @@ EXPOSE 9000
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-CMD ["gunicorn", "-w", "3", "-b", "0.0.0.0:9001", "--forwarded-allow-ips=*", "--log-level", "info", "playlistenerweb.wsgi"]
+CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:9000", "--forwarded-allow-ips=*", "--log-level", "info", "youtube_downloader.wsgi"]

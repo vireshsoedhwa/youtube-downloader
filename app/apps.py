@@ -17,30 +17,34 @@ class AppConfig(AppConfig):
 
     def ready(self):
 
-        if "runserver" in sys.argv or "playlistenerweb.wsgi" in sys.argv:
-            logger.info("DEBUG: " + str(settings.DEBUG))
-            logger.info("VERSION: " + str(settings.VERSION))
-            logger.info("youtube started")
+        # logger.info(sys.argv)
+        # for item in sys.argv:
+        #     logger.info("arguments")
+        #     logger.info(item)
+        if settings.DEBUG:
+            logger.info("started DEV")
+        else:
+            logger.info("started PRODUCTION")
 
-            from django.contrib.auth.models import User
-            if not User.objects.filter(username=settings.ADMIN_USERNAME).exists():
-                User.objects.create_superuser(
-                    settings.ADMIN_USERNAME,
-                    "admin@example.com",
-                    settings.ADMIN_PASSWORD,
-                )
-            else:
-                logger.info("ADMIN user already exists")
+        # from django.contrib.auth.models import User
+
+        # try:
+        #     logger.info("testuser")
+        #     for user in User.objects.all():
+        #         logger.info(user)
+                                            
+        #     logger.info(User.objects.filter(username=settings.ADMIN_USERNAME).exists())
+
+        #     if User.objects.filter(username=settings.ADMIN_USERNAME).exists():
+        #         logger.info("Superuser user already exists")
+        #     else:
+        #         logger.info("Creating superuser")
+        #         User.objects.create_superuser(
+        #             settings.ADMIN_USERNAME,
+        #             "admin@example.com",
+        #             settings.ADMIN_PASSWORD,
+        #         )
+
+        # except Exception as e:
+        #     logger.error(f"Error creating superuser: {e}")
             
-            # from django_q.models import Schedule
-            # if not Schedule.objects.filter(name="archive_schedule").exists():
-            #     logger.info("setting up archive schedule")
-            #     Schedule.objects.create(
-            #         name="archive_schedule",
-            #         func="youtube.tasks.archive_oldest",
-            #         schedule_type=Schedule.MINUTES,
-            #         minutes=5,
-            #         repeats=-1,
-            #     )
-            # else:
-            #     logger.info("schedule already exists")

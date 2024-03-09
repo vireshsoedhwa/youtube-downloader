@@ -5,8 +5,9 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models import Deferrable, UniqueConstraint
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from django_q.tasks import async_task
 from pathlib import Path
+
+import celery
 
 from django.conf import settings
 
@@ -23,6 +24,7 @@ def file_directory_path(instance, filename):
     return f"{settings.MEDIA_ROOT}/{instance.id}/{filename}"
 
 
+
 class YoutubeResource(models.Model):
 
     class Status(models.TextChoices):
@@ -33,9 +35,10 @@ class YoutubeResource(models.Model):
         DONE = "DONE", _("Done")
 
     id = models.AutoField(primary_key=True)
+    session = models.TextField(null=True, blank=True, max_length=200)
     youtube_id = models.TextField(unique=True, max_length=200)
+    title = models.TextField(unique=False, null=True, blank=True, default="N/A", max_length=200)
     url = models.TextField(max_length=500, null=True, blank=True)
-    # title = models.TextField(max_length=200, null=True, blank=True, default="")
     audiofile = models.FileField(upload_to=file_directory_path,
                                  null=True,
                                  blank=True, max_length=200)
@@ -98,16 +101,23 @@ def postsave(sender, instance, created, raw, using, update_fields, **kwargs):
     logger.addFilter(loggingfilter)
 
     if instance.status == YoutubeResource.Status.QUEUED:
-        async_task("app.tasks.get_video", instance, sync=False)
+        logger.info("before task scheduled")
+        celery.current_app.send_task('app.tasks.download', [instance.id])
         logger.info("task scheduled")
+        # logger.info(result.get())
 
     if instance.status == YoutubeResource.Status.DONE:
         logger.info("DONE")
 
     if instance.status == YoutubeResource.Status.FAILED:
         logger.info("FAILED")
+        try:
+            shutil.rmtree(settings.MEDIA_ROOT + str(instance.id))
+            logger.info(
+                f"Files deleted id#: {instance.id} - {instance.youtube_id}")
+        except:
+            logger.error("Files could not be deleted")
 
     if instance.status == YoutubeResource.Status.BUSY:
         # logger.info("Instance Busy")
         logger.info(f"ETA: {instance.eta}")
-        pass

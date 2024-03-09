@@ -4,6 +4,10 @@ Dev:
     
     docker compose up
 
+Prod:
+
+    docker compose -f compose.yml -f compose.prod.yml up -d
+    
 # create secrets:
     
 ## App
@@ -13,16 +17,11 @@ Dev:
 ## DB
     kubectl create secret generic postgressecret --namespace plweb --from-literal=POSTGRES_USER=postgres --from-literal=POSTGRES_PASSWORD=admin
 
-## The following ENV Variables need to be set for prod:
-- DJANGO_SECRET_KEY
-- POSTGRES_HOST
-- POSTGRES_PASSWORD
-- POSTGRES_DB
-- POSTGRES_USER
-- POSTGRES_PORT
-- ADMIN_USERNAME
-- ADMIN_PASSWORD
 
-Useful tools:
-    
-    from django.core.management.utils import get_random_secret_key 
+
+## The following ENV Variables need to be set for prod:
+DJANGO_SECRET_KEY=WOOOOOOOOWOOOOOOOOWWW
+POSTGRES_HOST=db
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=postgres
+POSTGRES_USER=postgres

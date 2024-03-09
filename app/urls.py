@@ -11,5 +11,8 @@ router.register(r'resource', YoutubeResourceViewset,
 
 urlpatterns = [
     path('', BaseView.as_view(template_name='index.html'), name='index'),
-    path('', include(router.urls)),
+    path('create', BaseView.as_view(template_name='index.html'), name='index'),
+    path('home', BaseView.as_view(template_name='index.html'), name='index'),
+    path('detail/<int:id>/', BaseView.as_view(template_name='index.html'), name='index'),
+    path('api/', include(router.urls)),
 ]

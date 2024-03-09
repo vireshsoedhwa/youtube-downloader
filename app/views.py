@@ -36,7 +36,7 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
     queryset = YoutubeResource.objects.all()
     serializer_class = YoutubeResourceSerializer
     parser_classes = (MultiPartParser, FormParser, JSONParser)
-    # authentication_classes = [SessionAuthentication]
+    authentication_classes = [SessionAuthentication]
     # permission_classes = [IsAuthenticated]
 
     def list(self, request):
@@ -45,15 +45,16 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        # print("creating")
+
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             instance = serializer.save()
+            instance.session = request.session["_csrftoken"]
             instance.save()
-            # delete anything older than the last 15 items
-            selection = self.queryset.order_by("-created_at")[15:]
-            for item in selection:
-                item.delete()
+            # # delete anything older than the last 20 items
+            # selection = self.queryset.order_by("-created_at")[20:]
+            # for item in selection:
+            #     item.delete()
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
 
@@ -82,3 +83,11 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
         resource = self.get_object()
         serializer = self.get_serializer(resource)
         return Response(serializer.data)
+
+    @action(detail=False)
+    def get_list_by_session(self, request):
+        if '_csrftoken' in request.session:
+            recent = self.queryset.filter(session=request.session["_csrftoken"]).order_by("-created_at")
+            serializer = self.get_serializer(recent, many=True)
+            return Response(serializer.data)
+        return Response("no session set")
