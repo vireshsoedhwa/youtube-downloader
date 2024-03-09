@@ -6,13 +6,8 @@ services:
   app:
     volumes:
       - youtube_downloader:/code/data
-    environment:
-      DEBUG : 'true'
-      DJANGO_SECRET_KEY : WOOOOOOOOWOOOOOOOOWWW
-      POSTGRES_HOST : db
-      POSTGRES_PASSWORD : postgres
-      POSTGRES_DB : postgres
-      POSTGRES_USER : postgres
+    env_file:
+      - prod.env
     depends_on:
       db:
         condition: service_healthy
@@ -32,12 +27,8 @@ services:
     volumes:
       - youtube_downloader:/code/data
     working_dir: /code
-    environment:
-      - DJANGO_SECRET_KEY=WOOOOOOOOWOOOOOOOOWWW
-      - POSTGRES_HOST=db
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
+    env_file:
+      - prod.env
     depends_on:
       redis:
         condition: service_healthy
@@ -65,13 +56,8 @@ services:
     volumes:
       - app_assets:/var/www/html
     working_dir: /code
-    environment:
-      - DJANGO_SECRET_KEY=WOOOOOOOOWOOOOOOOOWWW
-      - POSTGRES_HOST=db
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-
+    env_file:
+      - prod.env
 
   db_init_prod:
     image: youtube_downloader
@@ -80,17 +66,9 @@ services:
       - -c
       - |
         python manage.py migrate
-        python manage.py createsuperuser --noinput || true
     working_dir: /code
-    environment:
-      - DJANGO_SECRET_KEY=WOOOOOOOOWOOOOOOOOWWW
-      - POSTGRES_HOST=db
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - DJANGO_SUPERUSER_USERNAME=admin
-      - DJANGO_SUPERUSER_PASSWORD=password
-      - DJANGO_SUPERUSER_EMAIL=admin@example.com
+    env_file:
+      - prod.env
     depends_on:
       db:
         condition: service_healthy
