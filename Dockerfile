@@ -45,8 +45,6 @@ COPY app app
 
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-EXPOSE 9000
-
 ENTRYPOINT ["docker-entrypoint.sh"]
 
 CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:9000", "--forwarded-allow-ips=*", "--log-level", "info", "youtube_downloader.wsgi"]
