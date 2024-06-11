@@ -44,8 +44,9 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "django_filters",
     "django_celery_beat",
+    'django_vite',
 
-    "app",
+    "frontend",
 ]
 
 MIDDLEWARE = [
@@ -63,7 +64,7 @@ ROOT_URLCONF = "youtube_downloader.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        'DIRS': [BASE_DIR / 'app/build'],
+        'DIRS': [BASE_DIR / 'frontend/templates'],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -127,6 +128,12 @@ USE_L10N = True
 USE_TZ = True
 
 
+DJANGO_VITE = {
+  "default": {
+    "dev_mode": True
+  }
+}
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
@@ -134,8 +141,9 @@ STATIC_URL = "static/"
 STATIC_ROOT = "/var/www/html/static/"
 
 STATICFILES_DIRS = [
-    "/code/app/build/static",
-    "/code/app/build"
+    "/code/frontend/dist/assets",
+    "/code/frontend/dist",
+    BASE_DIR / "assets"
 ]
 
 MEDIA_ROOT = "/code/data/"

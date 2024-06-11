@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:16.2-alpine3.19
@@ -23,28 +21,28 @@ services:
 
 
   # Celery Service
-  celery:
-    build:
-      context: .
-    command:
-      - /bin/sh
-      - -c
-      - |
-        /opt/venv/bin/celery -A youtube_downloader worker --beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
-        /opt/venv/bin/celery -A youtube_downloader worker --loglevel=INFO --concurrency=1 -n worker1@%h
-    working_dir: /code
-    healthcheck:
-      test: /opt/venv/bin/celery -A youtube_downloader inspect ping worker1@%h
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    depends_on:
-      redis:
-        condition: service_healthy
+  # celery:
+  #   build:
+  #     context: .
+  #   command:
+  #     - /bin/sh
+  #     - -c
+  #     - |
+  #       /opt/venv/bin/celery -A youtube_downloader worker --beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+  #       /opt/venv/bin/celery -A youtube_downloader worker --loglevel=INFO --concurrency=1 -n worker1@%h
+  #   working_dir: /code
+  #   healthcheck:
+  #     test: /opt/venv/bin/celery -A youtube_downloader inspect ping worker1@%h
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #   depends_on:
+  #     redis:
+  #       condition: service_healthy
 
 
   # Redis Service
-  redis:
-    image: redis:alpine
-    healthcheck:
-      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+  # redis:
+  #   image: redis:alpine
+  #   healthcheck:
+  #     test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]

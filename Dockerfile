@@ -9,13 +9,13 @@ RUN set -ex; \
 
 # ============================================ WEB ASSETS BUILDER
 
-FROM node:19.4.0 as webassets-builder
+# FROM node:19.4.0 as webassets-builder
 
-WORKDIR /app
+# WORKDIR /app
 
-COPY app .
-RUN npm install
-RUN npm run build
+# COPY app .
+# RUN npm install
+# RUN npm run build
 
 # ============================================ Release
 
@@ -31,9 +31,14 @@ RUN set -ex; \
         apt-get update; \
         apt-get install -y --no-install-recommends \
             ffmpeg \
-            curl; 
+            curl \ 
+            gpg; \
+        mkdir -p /etc/apt/keyrings; \
+        curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg; \
+        echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list; \
+        apt-get update && apt-get install -y nodejs;
 
-COPY --from=webassets-builder /app/build ./app/build
+# COPY --from=webassets-builder /app/build ./app/build
 COPY --from=base /root/.cache /root/.cache
 COPY --from=base /opt/venv /opt/venv
 
@@ -41,7 +46,7 @@ COPY manage.py ./
 COPY docker-entrypoint.sh /usr/local/bin
 
 COPY youtube_downloader youtube_downloader/
-COPY app app
+COPY frontend frontend
 
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
