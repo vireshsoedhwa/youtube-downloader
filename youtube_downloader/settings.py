@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "django_celery_beat",
 
     "frontend",
+    "api"
 ]
 
 MIDDLEWARE = [
@@ -143,10 +144,7 @@ if not DEBUG:
     STATIC_ROOT = "/var/www/html/static/" # for production
 
 STATICFILES_DIRS = [
-    BASE_DIR / "frontend/src/assets",
-    BASE_DIR / "frontend/public",
     BASE_DIR / "frontend/static",
-
 ]
 
 MEDIA_ROOT = "/code/data/"

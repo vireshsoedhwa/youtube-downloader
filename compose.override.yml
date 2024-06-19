@@ -13,7 +13,6 @@ services:
       - -c
       - |
         python manage.py runserver 0.0.0.0:9000
-# (cd frontend && npm run dev) &
     environment:
       DEBUG : 'true'
       DJANGO_SECRET_KEY : WOOOOOOOOWOOOOOOOOWWW
@@ -30,49 +29,49 @@ services:
       #   condition: service_completed_successfully
       db:
         condition: service_healthy
-      # redis:
-      #   condition: service_healthy
-      # db_init:
-      #   condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+      db_init:
+        condition: service_completed_successfully
 
-  # celery:
-  #   environment:
-  #     - DJANGO_SECRET_KEY=WOOOOOOOOWOOOOOOOOWWW
-  #     - POSTGRES_HOST=db
-  #     - POSTGRES_PASSWORD=postgres
-  #     - POSTGRES_DB=postgres
-  #     - POSTGRES_USER=postgres
-  #   volumes:
-  #     - .:/code
+  celery:
+    environment:
+      - DJANGO_SECRET_KEY=WOOOOOOOOWOOOOOOOOWWW
+      - POSTGRES_HOST=db
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+    volumes:
+      - .:/code
     # depends_on:
     #   frontend-builder:
     #     condition: service_completed_successfully
 
-  # db_init:
-  #   build:
-  #     context: .
-  #   command:
-  #     - /bin/sh
-  #     - -c
-  #     - |
-  #       python manage.py makemigrations frontend
-  #       python manage.py migrate
-  #       python manage.py createsuperuser --noinput || true
-  #   volumes:
-  #     - .:/code
-  #   working_dir: /code
-  #   environment:
-  #     - DJANGO_SECRET_KEY=WOOOOOOOOWOOOOOOOOWWW
-  #     - POSTGRES_HOST=db
-  #     - POSTGRES_PASSWORD=postgres
-  #     - POSTGRES_DB=postgres
-  #     - POSTGRES_USER=postgres
-  #     - DJANGO_SUPERUSER_USERNAME=admin
-  #     - DJANGO_SUPERUSER_PASSWORD=password
-  #     - DJANGO_SUPERUSER_EMAIL=admin@example.com
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
+  db_init:
+    build:
+      context: .
+    command:
+      - /bin/sh
+      - -c
+      - |
+        python manage.py makemigrations api
+        python manage.py migrate
+        python manage.py createsuperuser --noinput || true
+    volumes:
+      - .:/code
+    working_dir: /code
+    environment:
+      - DJANGO_SECRET_KEY=WOOOOOOOOWOOOOOOOOWWW
+      - POSTGRES_HOST=db
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - DJANGO_SUPERUSER_USERNAME=admin
+      - DJANGO_SUPERUSER_PASSWORD=password
+      - DJANGO_SUPERUSER_EMAIL=admin@example.com
+    depends_on:
+      db:
+        condition: service_healthy
       # frontend-builder:
       #   condition: service_completed_successfully
 

@@ -47,6 +47,7 @@ COPY docker-entrypoint.sh /usr/local/bin
 
 COPY youtube_downloader youtube_downloader/
 COPY frontend frontend
+COPY api api
 
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 

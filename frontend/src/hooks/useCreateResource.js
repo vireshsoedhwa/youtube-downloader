@@ -13,6 +13,8 @@ const useCreateResource = () => {
         setCreateResourceIsSubmitted(true);
         setCreateResourceIsLoading(true);
 
+        console.log(event.target.url.value)
+
         await fetch(`/api/resource/`, {
             method: 'POST',
             headers: {
