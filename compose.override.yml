@@ -12,9 +12,6 @@ services:
       - /bin/sh
       - -c
       - |
-        (cd frontend && npm install)
-        (cd frontend && npm run build)    
-        (cd frontend && npm run dev) &
         python manage.py runserver 0.0.0.0:9000
 # (cd frontend && npm run dev) &
     environment:
@@ -24,16 +21,10 @@ services:
       POSTGRES_PASSWORD : postgres
       POSTGRES_DB : postgres
       POSTGRES_USER : postgres
-      # Django-vite
-      DJANGO_VITE_DEV_MODE : true
-      DJANGO_VITE_DEV_SERVER_PORT : 5175
-      DJANGO_VITE_DEV_SERVER_HOST : 0.0.0.0
     volumes:
       - .:/code
     ports:
       - 9000:9000
-      - 5175:5175
-      - 5173:5173
     depends_on:
       # frontend-builder:
       #   condition: service_completed_successfully

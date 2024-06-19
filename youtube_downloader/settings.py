@@ -22,6 +22,7 @@ VERSION = os.getenv("VERSION", "0.0.0")
 SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 DEBUG = os.getenv("DEBUG", False) == "true"
 
+INTERNAL_IPS = ['127.0.0.1']
 ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = ["http://localhost", "http://localhost:8080", "http://localhost:9000"]
 
@@ -44,7 +45,6 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "django_filters",
     "django_celery_beat",
-    'django_vite',
 
     "frontend",
 ]
@@ -128,26 +128,29 @@ USE_L10N = True
 USE_TZ = True
 
 
-DJANGO_VITE = {
-  "default": {
-    "dev_mode": True
-  }
-}
+# DJANGO_VITE = {
+#   "default": {
+#     "dev_mode": True
+#   }
+# }
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = "static/"
-STATIC_ROOT = "/var/www/html/static/"
+STATIC_URL = '/static/'
+
+if not DEBUG:
+    STATIC_ROOT = "/var/www/html/static/" # for production
 
 STATICFILES_DIRS = [
-    "/code/frontend/dist/assets",
-    "/code/frontend/dist",
-    BASE_DIR / "assets"
+    BASE_DIR / "frontend/src/assets",
+    BASE_DIR / "frontend/public",
+    BASE_DIR / "frontend/static",
+
 ]
 
 MEDIA_ROOT = "/code/data/"
-# MEDIA_URL =
+MEDIA_URL = "/media/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
