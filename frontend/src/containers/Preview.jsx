@@ -14,16 +14,39 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import InboxIcon from '@mui/icons-material/Inbox';
-import DraftsIcon from '@mui/icons-material/Drafts';
+import TimelapseIcon from '@mui/icons-material/Timelapse';
+import TimerIcon from '@mui/icons-material/Timer';
+import PercentIcon from '@mui/icons-material/Percent';
+
+import CircularProgress from '@mui/material/CircularProgress';
+import Stack from '@mui/system/Stack';
+
+import usePreviewResource from '../hooks/usePreviewResource';
+import Avatar from '@mui/material/Avatar';
+
+import { useInterval } from '../hooks/useInterval';
 
 export default function Preview() {
     const navigate = useNavigate();
     let location = useLocation();
-    const [previewobject, setPreviewObject] = useState(null);
+    const [previewid, setPreviewId] = useState(null);
+
+    const { PreviewResourceData,
+        PreviewResourceIsSuccesful,
+        PreviewResourceIsLoading,
+        PreviewResourceIsSubmitted,
+        PreviewResourceError,
+        PreviewResource } = usePreviewResource()
+
+    useInterval(async () => {
+        PreviewResource(previewid)
+        console.log(PreviewResourceData)
+    }, 5000);
 
     useEffect(() => {
         if (location.state) {
-            setPreviewObject(location.state.item.id)
+            setPreviewId(location.state.item.id)
+            PreviewResource(location.state.item.id)
         }
         else {
             navigate("/")
@@ -37,7 +60,8 @@ export default function Preview() {
                 marginBottom: "1em",
                 display: 'flex',
                 justifyContent: 'space-evenly',
-                flexDirection: 'column'
+                flexDirection: 'column',
+                textAlign: 'center'
             }}
         >
             <Typography variant="h5" gutterBottom>
@@ -47,18 +71,65 @@ export default function Preview() {
                 onClick={() => navigate("/")}>
                 <ArrowBackIcon />
             </Button>
-            {previewobject}
 
-            <List>
-                <ListItem disablePadding>
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <InboxIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Inbox" />
-                    </ListItemButton>
-                </ListItem>
-            </List>
+            <Stack
+                sx={{
+                    marginTop: "2em"
+                }}
+                direction="row"
+            >
+                <Avatar
+                    sx={{
+                        width: "3em",
+                        height: "3em",
+                        objectFit: "contain",
+                        // objectPosition: "50% 50%",
+                        alignSelf: "center",
+                        // justifySelf: "center",
+                        // marginLeft: "1em",
+                        marginRight: "1em",
+
+                    }}
+                    variant="rounded"
+                    alt={PreviewResourceData.title}
+                    src={"https://img.youtube.com/vi/" +
+                        PreviewResourceData.youtube_id +
+                        "/sddefault.jpg"}
+                />
+
+                {PreviewResourceData.status == "DONE" ?
+                    <Stack spacing={2} direction="column" >
+                        <Button href={"/api/resource/" + PreviewResourceData.id + "/getvideo"} variant="contained">
+                            Download Video
+                        </Button>
+                        <Button href={"/api/resource/" + PreviewResourceData.id + "/getaudio"} variant="contained">
+                            Download Audio
+                        </Button>
+                    </Stack>
+                    :
+                    <List>
+                        <ListItem disablePadding>
+                            <ListItemIcon>
+                                <TimerIcon />
+                            </ListItemIcon>
+                            <ListItemText
+                                primary="Estimated Time"
+                                secondary={PreviewResourceData.eta + " seconds"}
+                            />
+                        </ListItem>
+                        <ListItem disablePadding>
+                            <ListItemIcon>
+                                <TimelapseIcon />
+                            </ListItemIcon>
+                            <ListItemText
+                                primary="Progress"
+                                secondary={PreviewResourceData.progress + " %"}
+                            />
+                        </ListItem>
+                    </List>
+                }
+
+            </Stack>
         </Box>
     );
 }

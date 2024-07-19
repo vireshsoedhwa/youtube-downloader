@@ -12,8 +12,6 @@ const useResourceList = () => {
         setResourceListIsSubmitted(true);
         setResourceListIsLoading(true);
 
-        console.log("getting resource list")
-
         await fetch(`/api/resource/`, {
             method: 'GET',
             headers: {

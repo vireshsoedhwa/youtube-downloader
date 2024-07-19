@@ -51,24 +51,34 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         try:
-            record = YoutubeResource.objects.filter(
+            filterqs = YoutubeResource.objects.filter(
                     session=validated_data["session"])
-            record = record.get(youtube_id=validated_data["youtube_id"])
+            
+            print("something")
+            print(filterqs)
+            record = filterqs.get(youtube_id=validated_data["youtube_id"])
+            print("record"
+            )
+            print(record)
+            # record = record.get(youtube_id=validated_data["youtube_id"])
             # loggingfilter = YoutubeIdFilter(youtuberesource=record)
             # logger.addFilter(loggingfilter)
             # logger.info("Existing Record Found")
             if record.status == record.Status.FAILED:
                 record.status = record.Status.QUEUED
             return record
-        except YoutubeResource.DoesNotExist:
+        except Exception as e:
+            print("THIS SHOULD NOT RUN 333")
+            print(e)
             record = YoutubeResource.objects.create(**validated_data)
             loggingfilter = YoutubeIdFilter(youtuberesource=record)
             logger.addFilter(loggingfilter)          
             logger.info("Creating New Record")
             record.status = record.Status.QUEUED
             return record
+        except:
+            print("Something else went wrong") 
 
     def update(self, instance, validated_data):
-        print("update called")
 
         return instance

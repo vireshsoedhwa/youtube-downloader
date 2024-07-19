@@ -42,10 +42,21 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
         serializer = self.get_serializer(recent, many=True)
         return Response(serializer.data)
 
+    def retrieve(self, request, pk=None):
+        resource = self.get_object()
+        if '_csrftoken' in request.session:
+            if(request.session["_csrftoken"] == resource.session):
+                serializer = self.get_serializer(resource)
+                return Response(serializer.data) 
+            else:
+                return Response("session mismatch", status=403)
+        else:
+            return Response("session required", status=403)
 
     def create(self, request):
         if '_csrftoken' in request.session:
             request.data.update({"session": request.session["_csrftoken"]})
+
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             instance = serializer.save()

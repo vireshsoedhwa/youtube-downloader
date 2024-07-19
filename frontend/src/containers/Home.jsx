@@ -36,12 +36,9 @@ export default function Home() {
             <List sx={{ bgcolor: 'background.paper' }}>
                 {ResourceListData.map((item, index) => (
                     <React.Fragment key={index} >
-                        <ListItem 
-                        sx={{
-                            paddingLeft: '0px',
-                            paddingRight: '0px'
-                        }}
-                        alignItems="flex-start"
+                        <ListItem
+                            disablePadding
+                            alignItems="flex-start"
                             onClick={() => { navigate("/preview", { state: { item: item } }) }}
                         >
                             <ListItemButton>
@@ -89,11 +86,11 @@ export default function Home() {
                 flexDirection: 'column'
             }}
         >
-            <Typography 
-            sx={{
-                justifyContent:"center"
-            }}
-            variant="h5" gutterBottom>
+            <Typography
+                sx={{
+                    justifyContent: "center"
+                }}
+                variant="h5" gutterBottom>
                 Youtube Downloader
             </Typography>
             <Button variant="contained"

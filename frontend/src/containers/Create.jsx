@@ -37,10 +37,11 @@ export default function Create() {
             component="form"
             onSubmit={createResource}
             sx={{
+                textAlign: 'center',
             }}
         >
             <Typography variant="h5" gutterBottom>
-                 Create new :
+                 Create New
             </Typography>
             <FormControl fullWidth>
                 <Stack spacing={2} direction="column">
