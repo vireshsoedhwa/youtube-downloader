@@ -13,6 +13,7 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from "react-router-dom";
+import Typography from '@mui/material/Typography';
 
 export default function Create() {
     const navigate = useNavigate();
@@ -38,6 +39,9 @@ export default function Create() {
             sx={{
             }}
         >
+            <Typography variant="h5" gutterBottom>
+                 Create new :
+            </Typography>
             <FormControl fullWidth>
                 <Stack spacing={2} direction="column">
                     <TextField

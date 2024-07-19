@@ -11,6 +11,7 @@ import ListItem from '@mui/material/ListItem';
 import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
+import ListItemButton from '@mui/material/ListItemButton';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import Skeleton from '@mui/material/Skeleton';
@@ -32,36 +33,43 @@ export default function Home() {
     const Resourcelist = () => {
 
         return (
-            <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+            <List sx={{ bgcolor: 'background.paper' }}>
                 {ResourceListData.map((item, index) => (
                     <React.Fragment key={index} >
-                        <ListItem alignItems="flex-start"
-                            onClick={() => { console.log("clicked") }}
+                        <ListItem 
+                        sx={{
+                            paddingLeft: '0px',
+                            paddingRight: '0px'
+                        }}
+                        alignItems="flex-start"
+                            onClick={() => { navigate("/preview", { state: { item: item } }) }}
                         >
-                            <ListItemAvatar>
-                                <Avatar
-                                    variant="rounded"
-                                    alt={item.title}
-                                    src={"https://img.youtube.com/vi/" +
-                                        item.youtube_id +
-                                        "/sddefault.jpg"}
+                            <ListItemButton>
+                                <ListItemAvatar>
+                                    <Avatar
+                                        variant="rounded"
+                                        alt={item.title}
+                                        src={"https://img.youtube.com/vi/" +
+                                            item.youtube_id +
+                                            "/sddefault.jpg"}
+                                    />
+                                </ListItemAvatar>
+                                <ListItemText
+                                    primary={item.title}
+                                    secondary={
+                                        <React.Fragment>
+                                            <Typography
+                                                sx={{ display: 'inline' }}
+                                                component="span"
+                                                variant="body2"
+                                                color="text.primary"
+                                            >
+                                                {item.url}
+                                            </Typography>
+                                        </React.Fragment>
+                                    }
                                 />
-                            </ListItemAvatar>
-                            <ListItemText
-                                primary={item.title}
-                                secondary={
-                                    <React.Fragment>
-                                        <Typography
-                                            sx={{ display: 'inline' }}
-                                            component="span"
-                                            variant="body2"
-                                            color="text.primary"
-                                        >
-                                            {item.url}
-                                        </Typography>
-                                    </React.Fragment>
-                                }
-                            />
+                            </ListItemButton>
                         </ListItem>
                         <Divider variant="inset" component="li" />
                     </React.Fragment>
@@ -74,12 +82,20 @@ export default function Home() {
         <Box
             sx={{
                 alignContent: "center",
-                marginBottom: "1em",
+                // marginBottom: "1em",
+                textAlign: 'center',
                 display: 'flex',
                 justifyContent: 'space-evenly',
                 flexDirection: 'column'
             }}
         >
+            <Typography 
+            sx={{
+                justifyContent:"center"
+            }}
+            variant="h5" gutterBottom>
+                Youtube Downloader
+            </Typography>
             <Button variant="contained"
                 onClick={() => navigate("/create")}>
                 new

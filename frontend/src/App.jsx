@@ -7,6 +7,7 @@ import Home from '../src/containers/Home'
 
 import BaseLayout from './containers/BaseLayout';
 import { Route, Routes, Navigate } from 'react-router-dom'
+import Preview from './containers/Preview';
 
 function App() {
 
@@ -16,6 +17,7 @@ function App() {
         <Route path='' element={<Home />} />
         <Route path='home' element={<Home />} />
         <Route path='create' element={<Create />} />
+        <Route path='preview' element={<Preview />} />
       </Route>
     </Routes>
   )
