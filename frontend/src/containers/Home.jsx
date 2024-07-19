@@ -40,7 +40,7 @@ export default function Home() {
                             <ListItemAvatar>
                                 <Avatar
                                     variant="rounded"
-                                    alt="Remy Sharp"
+                                    alt={item.title}
                                     src={"https://img.youtube.com/vi/" +
                                         item.youtube_id +
                                         "/sddefault.jpg"}
