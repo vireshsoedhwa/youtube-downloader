@@ -15,6 +15,7 @@ from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
+from django.views.decorators.csrf import csrf_protect
 
 from django.conf import settings
 import logging
@@ -33,13 +34,18 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
     authentication_classes = [SessionAuthentication]
     # permission_classes = [IsAuthenticated]
 
+    # @csrf_protect
     def list(self, request):
-        recent = self.queryset.order_by("-created_at")[:100]
+        recent = self.queryset.filter(session=request.session["_csrftoken"])
+        recent = recent.order_by("-created_at")[:100]
+
         serializer = self.get_serializer(recent, many=True)
         return Response(serializer.data)
 
+
     def create(self, request):
-        print("hello")
+        if '_csrftoken' in request.session:
+            request.data.update({"session": request.session["_csrftoken"]})
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             instance = serializer.save()

@@ -20,6 +20,9 @@ def get_youtube_id(value):
 class YoutubeResourceSerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(max_value=None, min_value=None, read_only=True)
+    session = serializers.CharField(
+        max_length=500, min_length=None, allow_blank=False, trim_whitespace=True
+    )
     youtube_id = serializers.CharField(max_length=20, min_length=None, read_only=True)
     url = serializers.CharField(
         max_length=100, min_length=None, allow_blank=False, trim_whitespace=True
@@ -29,6 +32,7 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
         model = YoutubeResource
         fields = [
             "id",
+            "session",
             "youtube_id",
             "title",
             "url",
@@ -47,12 +51,12 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         try:
-            record = YoutubeResource.objects.get(
-                youtube_id=validated_data["youtube_id"]
-            )
-            loggingfilter = YoutubeIdFilter(youtuberesource=record)
-            logger.addFilter(loggingfilter)
-            logger.info("Existing Record Found")
+            record = YoutubeResource.objects.filter(
+                    session=validated_data["session"])
+            record = record.get(youtube_id=validated_data["youtube_id"])
+            # loggingfilter = YoutubeIdFilter(youtuberesource=record)
+            # logger.addFilter(loggingfilter)
+            # logger.info("Existing Record Found")
             if record.status == record.Status.FAILED:
                 record.status = record.Status.QUEUED
             return record
@@ -65,5 +69,6 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
             return record
 
     def update(self, instance, validated_data):
+        print("update called")
 
         return instance

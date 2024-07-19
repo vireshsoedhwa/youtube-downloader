@@ -26,7 +26,7 @@ export default function Create() {
 
     useEffect(() => {
         if (createResourceIsSuccesful) {
-            navigate("/home")
+            navigate("/")
         }
     }, [createResourceIsSuccesful]);
 
@@ -57,7 +57,7 @@ export default function Create() {
                     />
                     <Stack spacing={2} direction="row">
                         <Button variant="outlined"
-                            onClick={() => navigate("/home")}>
+                            onClick={() => navigate("/")}>
                             <ArrowBackIcon />
                         </Button>
                         {createResourceError &&

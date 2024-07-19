@@ -18,7 +18,8 @@ const useResourceList = () => {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                // 'X-CSRFTOKEN': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'X-CSRFTOKEN': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'mode': 'same-origin'
             }
         })
             .then((response) => {
@@ -32,9 +33,7 @@ const useResourceList = () => {
                 return response.json();
             })
             .then((data) => {
-                console.log("step 1")
                 setResourceListData(data)
-                console.log(data)
                 setResourceListIsSuccesful(true)
             })
             .catch((error) => {

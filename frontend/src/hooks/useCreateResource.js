@@ -19,7 +19,8 @@ const useCreateResource = () => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                // 'X-CSRFTOKEN': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'X-CSRFTOKEN': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'mode': 'same-origin'
             },
             body: JSON.stringify({
                 url: event.target.url.value
@@ -39,7 +40,6 @@ const useCreateResource = () => {
                 setCreateResourceIsSuccesful(true)
             })
             .catch((error) => {
-                console.log(error.message)
                 setCreateResourceIsSuccesful(false)
             })
             .finally(() => {

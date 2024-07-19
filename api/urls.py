@@ -1,5 +1,4 @@
 from django.urls import path, include
-from . import views
 from .views import YoutubeResourceViewset
 from rest_framework.routers import SimpleRouter
 

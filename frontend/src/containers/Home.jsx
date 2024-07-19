@@ -13,6 +13,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
+import Skeleton from '@mui/material/Skeleton';
 
 export default function Home() {
     const navigate = useNavigate();
@@ -85,7 +86,17 @@ export default function Home() {
                 <AddBoxIcon />
             </Button>
             {ResourceListIsSuccesful &&
-                <Resourcelist />
+                <>
+                    {ResourceListIsLoading ?
+                        <>
+                            <Skeleton />
+                        </>
+                        :
+                        <>
+                            <Resourcelist />
+                        </>
+                    }
+                </>
             }
         </Box>
     );
