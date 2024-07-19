@@ -14,15 +14,15 @@ from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
+from django.views.decorators.csrf import requires_csrf_token
 
 from django.conf import settings
 import logging
-from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
 
+# # @requires_csrf_token
 class BaseView(TemplateView):
     # template_name = 'index.html'
     extra_context = {'version': settings.VERSION}
-

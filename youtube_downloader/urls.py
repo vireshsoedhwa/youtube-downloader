@@ -18,8 +18,8 @@ from django.urls import path, include
 from django.conf import settings
 
 urlpatterns = [
-    path('', include('frontend.urls')),
-    path('api/', include('api.urls'))
+    path('api/', include('api.urls')),
+    path('', include('frontend.urls'))
 ]
 
 if settings.DEBUG:

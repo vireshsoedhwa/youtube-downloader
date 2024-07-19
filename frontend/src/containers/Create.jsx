@@ -7,7 +7,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import LinkIcon from '@mui/icons-material/Link';
+// import LinkIcon from '@mui/icons-material/Link';
 import useCreateResource from '../hooks/useCreateResource'
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Create() {
     const navigate = useNavigate();
+    const [submitButtonDisable, setSubmitButtonDisable] = useState(true);
 
     const { createResourceIsSuccesful,
         createResourceIsLoading,
@@ -24,10 +25,11 @@ export default function Create() {
         createResource } = useCreateResource()
 
     useEffect(() => {
-        if(createResourceIsSuccesful){
+        if (createResourceIsSuccesful) {
             navigate("/home")
         }
     }, [createResourceIsSuccesful]);
+
 
     return (
         <Box
@@ -44,6 +46,14 @@ export default function Create() {
                         label="URL"
                         name="url"
                         variant="outlined"
+                        onChange={(e) => {
+                            try {
+                                new URL(e.target.value);
+                                setSubmitButtonDisable(false)
+                            } catch (err) {
+                                setSubmitButtonDisable(true)
+                            }
+                        }}
                     />
                     <Stack spacing={2} direction="row">
                         <Button variant="outlined"
@@ -58,7 +68,7 @@ export default function Create() {
                         <Button
                             variant="contained"
                             type="submit"
-                            disabled={!createResourceIsSubmitted}
+                            disabled={submitButtonDisable}
                         >
                             Submit
                         </Button>

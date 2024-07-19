@@ -30,7 +30,7 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
     queryset = YoutubeResource.objects.all()
     serializer_class = YoutubeResourceSerializer
     parser_classes = [JSONParser]
-    # authentication_classes = [SessionAuthentication]
+    authentication_classes = [SessionAuthentication]
     # permission_classes = [IsAuthenticated]
 
     def list(self, request):
@@ -39,7 +39,7 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-
+        print("hello")
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             instance = serializer.save()

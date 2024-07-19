@@ -18,14 +18,18 @@ const useCreateResource = () => {
         await fetch(`/api/resource/`, {
             method: 'POST',
             headers: {
-                'X-CSRFTOKEN': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json',
+                // 'X-CSRFTOKEN': document.querySelector('[name=csrfmiddlewaretoken]').value,
             },
-            body: ""
+            body: JSON.stringify({
+                url: event.target.url.value
+            })
         })
             .then((response) => {
                 if (!response.ok) {
                     return response.json().then(errorData => {
                         setCreateResourceError(errorData)
+                        console.log(JSON.stringify(errorData))
                         throw new Error('error creating')
                     })
                 }
@@ -35,6 +39,7 @@ const useCreateResource = () => {
                 setCreateResourceIsSuccesful(true)
             })
             .catch((error) => {
+                console.log(error.message)
                 setCreateResourceIsSuccesful(false)
             })
             .finally(() => {

@@ -11,11 +11,14 @@ export default function BaseLayout(props) {
             <Box
                 sx={{
                     alignContent: "center",
-                    marginBottom: "1em"
+                    marginBottom: "1em",
+                    display: 'flex',
+                    justifyContent: 'space-evenly'
+
                 }}
             >
-                <Link href="/home">Home</Link>
-                <Link href="create">Create</Link>
+                <Link href="/home"> Home</Link>
+                <Link href="/create">Create</Link>
             </Box>
             <Outlet />
         </Container>
