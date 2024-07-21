@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import ensure_csrf_cookie
 from .serializers import YoutubeResourceSerializer
 from django.http import HttpResponse, JsonResponse, FileResponse
-from .models import YoutubeResource
+from .models import YoutubeResource, Session
 from rest_framework import viewsets
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.response import Response
@@ -34,18 +34,18 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
     authentication_classes = [SessionAuthentication]
     # permission_classes = [IsAuthenticated]
 
-    # @csrf_protect
     def list(self, request):
-        recent = self.queryset.filter(session=request.session["_csrftoken"])
-        recent = recent.order_by("-created_at")[:100]
-
+        recent = self.queryset.filter(session__token=request.session["_csrftoken"])
         serializer = self.get_serializer(recent, many=True)
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
         resource = self.get_object()
         if '_csrftoken' in request.session:
-            if(request.session["_csrftoken"] == resource.session):
+            sessions_by_resource = Session.objects.filter(resources = resource)
+            session_by_token_exists = sessions_by_resource.filter(token=request.session["_csrftoken"]).exists()
+
+            if(session_by_token_exists):
                 serializer = self.get_serializer(resource)
                 return Response(serializer.data) 
             else:
@@ -54,14 +54,16 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
             return Response("session required", status=403)
 
     def create(self, request):
-        if '_csrftoken' in request.session:
-            request.data.update({"session": request.session["_csrftoken"]})
+        # if '_csrftoken' in request.session:
+        #     request.data.update({"sessions": request.session["_csrftoken"]})
 
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             instance = serializer.save()
             # instance.session = request.session["_csrftoken"]
-            instance.save()
+            session, session_created = Session.objects.get_or_create(token=request.session["_csrftoken"])
+            session.resources.add(instance)
+
             # # delete anything older than the last 20 items
             # selection = self.queryset.order_by("-created_at")[20:]
             # for item in selection:

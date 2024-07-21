@@ -23,8 +23,6 @@ logger.addFilter(loggingfilter)
 def file_directory_path(instance, filename):
     return f"{settings.MEDIA_ROOT}/{instance.id}/{filename}"
 
-
-
 class YoutubeResource(models.Model):
 
     class Status(models.TextChoices):
@@ -35,7 +33,6 @@ class YoutubeResource(models.Model):
         DONE = "DONE", _("Done")
 
     id = models.AutoField(primary_key=True)
-    session = models.TextField(null=True, blank=True, max_length=200)
     youtube_id = models.TextField(unique=True, max_length=200)
     title = models.TextField(unique=False, null=True, blank=True, default="N/A", max_length=200)
     url = models.TextField(max_length=500, null=True, blank=True)
@@ -83,6 +80,12 @@ class YoutubeResource(models.Model):
 
 # signal for deleting
 
+class Session(models.Model):
+    id = models.AutoField(primary_key=True)
+    token = models.CharField(unique=True, max_length=500)
+    resources = models.ManyToManyField(YoutubeResource, related_name='session')
+    def __str__(self):
+        return f"{str(self.id)} : {self.token}"
 
 @receiver(post_delete, sender=YoutubeResource, dispatch_uid="delete_record")
 def postdelete(sender, instance, **kwargs):
@@ -100,9 +103,9 @@ def postsave(sender, instance, created, raw, using, update_fields, **kwargs):
     loggingfilter = YoutubeIdFilter(youtuberesource=instance)
     logger.addFilter(loggingfilter)
 
-    if instance.status == YoutubeResource.Status.QUEUED:
+    if instance.status == YoutubeResource.Status.NEW:
         logger.info("before task scheduled")
-        celery.current_app.send_task('api.tasks.download', [instance.id])
+        # celery.current_app.send_task('api.tasks.download', [instance.id])
         logger.info("task scheduled")
         # logger.info(result.get())
 

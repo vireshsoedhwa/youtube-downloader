@@ -35,8 +35,7 @@ const usePreviewResource = () => {
                 setPreviewResourceIsSuccesful(true)
             })
             .catch((error) => {
-                console.log("step 2")
-                console.log(error.message)
+                setPreviewResourceError(error)
                 setPreviewResourceIsSuccesful(false)
             })
             .finally(() => {
