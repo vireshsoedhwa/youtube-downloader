@@ -12,7 +12,9 @@ export default function BaseLayout(props) {
                 sx={{
                     // alignContent: "center",
                     paddingTop: "1em",
+                    // paddingBottom: "2em",
                     margin: "1em",
+                    // marginBottom: "2em",
                     // display: 'flex',
                     // justifyContent: 'space-evenly'
                 }}

@@ -53,18 +53,19 @@ export default function Home() {
                                 </ListItemAvatar>
                                 <ListItemText
                                     primary={item.title}
-                                    secondary={
-                                        <React.Fragment>
-                                            <Typography
-                                                sx={{ display: 'inline' }}
-                                                component="span"
-                                                variant="body2"
-                                                color="text.primary"
-                                            >
-                                                {item.url}
-                                            </Typography>
-                                        </React.Fragment>
-                                    }
+                                    // secondary={
+                                    //     <React.Fragment>
+                                    //         <Typography
+                                    //             sx={{ display: 'inline' }}
+                                    //             component="span"
+                                    //             variant="body2"
+                                    //             color="text.primary"
+                                    //             noWrap={true}
+                                    //         >
+                                    //             {item.youtube_id}
+                                    //         </Typography>
+                                    //     </React.Fragment>
+                                    // }
                                 />
                             </ListItemButton>
                         </ListItem>

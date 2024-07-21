@@ -38,7 +38,6 @@ class YoutubeResourceSerializer(serializers.ModelSerializer):
             "title",
             "url",
             "status",
-            "progress",
             "eta",
             "elapsed",
             "speed",

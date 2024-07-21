@@ -30,7 +30,7 @@ import { useInterval } from '../hooks/useInterval';
 export default function Preview() {
     const navigate = useNavigate();
     let location = useLocation();
-    const [previewid, setPreviewId] = useState(location.state.item.id);
+    const [previewid, setPreviewId] = useState(null);
 
     const { PreviewResourceData,
         PreviewResourceIsSuccesful,
@@ -40,8 +40,11 @@ export default function Preview() {
         PreviewResource } = usePreviewResource()
 
     useInterval(async () => {
-        PreviewResource(previewid)
-        // console.log(PreviewResourceData)
+        if (PreviewResourceIsSuccesful) {
+            if (PreviewResourceData != 'DONE') {
+                PreviewResource(previewid)
+            }
+        }
     }, 5000);
 
     useEffect(() => {
@@ -54,106 +57,114 @@ export default function Preview() {
         }
     }, [location]);
 
-    return (
-        <Box
-            sx={{
-                alignContent: "center",
-                marginBottom: "1em",
-                display: 'flex',
-                justifyContent: 'space-evenly',
-                flexDirection: 'column',
-                textAlign: 'center'
-            }}
-        >
-            <Typography variant="h5" gutterBottom>
-                Preview
-            </Typography>
-            <Button variant="outlined"
-                onClick={() => navigate("/")}>
-                <ArrowBackIcon />
-            </Button>
+    const retry = () => {
+        console.log("retry ckickede")
+    }
 
-            <Stack
+    if (PreviewResourceIsSuccesful) {
+        return (
+            <Box
                 sx={{
-                    marginTop: "2em"
+                    alignContent: "center",
+                    marginBottom: "1em",
+                    display: 'flex',
+                    justifyContent: 'space-evenly',
+                    flexDirection: 'column',
+                    textAlign: 'center'
                 }}
-                direction="row"
             >
-                <Avatar
+                <Typography variant="h5" gutterBottom>
+                    Preview
+                </Typography>
+                <Button variant="outlined"
+                    onClick={() => navigate("/")}>
+                    <ArrowBackIcon />
+                </Button>
+
+                <Stack
                     sx={{
-                        width: "3em",
-                        height: "3em",
-                        objectFit: "contain",
-                        // objectPosition: "50% 50%",
-                        alignSelf: "center",
-                        // justifySelf: "center",
-                        // marginLeft: "1em",
-                        marginRight: "1em",
-
+                        marginTop: "2em"
                     }}
-                    variant="rounded"
-                    alt={PreviewResourceData.title}
-                    src={"https://img.youtube.com/vi/" +
-                        PreviewResourceData.youtube_id +
-                        "/sddefault.jpg"}
-                />
+                    direction="column"
+                    spacing={2}
+                >
+                    <a href={PreviewResourceData.url} target="_blank" >
 
-                {PreviewResourceData.status == "DONE" ?
-                    <Stack spacing={2} direction="column" >
-                        <Button href={"/api/resource/" + PreviewResourceData.id + "/getvideo"} variant="contained">
-                            Download Video
-                        </Button>
-                        <Button href={"/api/resource/" + PreviewResourceData.id + "/getaudio"} variant="contained">
-                            Download Audio
-                        </Button>
-                    </Stack>
-                    :
-                    <List>
-                        <ListItem disablePadding>
-                            <ListItemIcon>
-                                <FlagIcon />
-                            </ListItemIcon>
-                            <ListItemText
-                                primary="Status"
-                                secondary={
-                                    PreviewResourceData.status
+
+                        <Avatar
+                            sx={{
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "contain",
+                                // objectPosition: "50% 50%",
+                                alignSelf: "center",
+                                // justifySelf: "center",
+                                // marginLeft: "1em",
+                                // marginRight: "1em",
+
+                            }}
+                            variant="rounded"
+                            alt={PreviewResourceData.title}
+                            src={"https://img.youtube.com/vi/" +
+                                PreviewResourceData.youtube_id +
+                                "/sddefault.jpg"}
+                        />
+                    </a>
+
+                    {PreviewResourceData.status == "DONE" ?
+                        <Stack spacing={2} direction="column" >
+                            <Button href={"/api/resource/" + PreviewResourceData.id + "/getvideo"} variant="contained">
+                                Download Video
+                            </Button>
+                            <Button href={"/api/resource/" + PreviewResourceData.id + "/getaudio"} variant="contained">
+                                Download Audio
+                            </Button>
+                        </Stack>
+                        :
+                        <List>
+                            <ListItem disablePadding>
+                                <ListItemIcon>
+                                    <FlagIcon />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary="Status"
+                                    secondary={
+                                        PreviewResourceData.status
+                                    }
+                                />
+                                {PreviewResourceData.status == "FAILED" &&
+                                    <ListItemButton
+                                        // href={"/api/resource/" + PreviewResourceData.id + "/retry"}
+                                        onClick={retry}
+                                    >
+                                        <ReplayIcon />
+                                        <ListItemText primary="Retry" />
+                                    </ListItemButton>
                                 }
-                            />
-                        </ListItem>
-                        {PreviewResourceData.status == "FAILED" &&
-                            <>
-                                <Button variant="contained"
-                                    color="error"
-                                    size="small"
-                                    startIcon={<ReplayIcon />}
-                                    href={"/api/resource/" + PreviewResourceData.id + "/retry"}
-                                >
-                                    Retry
-                                </Button>
-                            </>
-                        }
-                        <ListItem disablePadding>
-                            <ListItemIcon>
-                                <TimerIcon />
-                            </ListItemIcon>
-                            <ListItemText
-                                primary="Estimated Time"
-                                secondary={PreviewResourceData.eta + " seconds"}
-                            />
-                        </ListItem>
-                        <ListItem disablePadding>
-                            <ListItemIcon>
-                                <TimelapseIcon />
-                            </ListItemIcon>
-                            <ListItemText
-                                primary="Progress"
-                                secondary={PreviewResourceData.progress + " %"}
-                            />
-                        </ListItem>
-                    </List>
-                }
+                            </ListItem>
+                            <ListItem disablePadding>
+                                <ListItemIcon>
+                                    <TimerIcon />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary="Estimated Time"
+                                    secondary={PreviewResourceData.eta + " seconds"}
+                                />
+                            </ListItem>
+                            {/* <ListItem disablePadding>
+                                <ListItemIcon>
+                                    <TimelapseIcon />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary="Eta"
+                                    secondary={PreviewResourceData.eta + " seconds"}
+                                />
+                            </ListItem> */}
+                        </List>
+                    }
 
-            </Stack>
-        </Box>
-    );
+                </Stack>
+            </Box>
+        );
+    }
 }

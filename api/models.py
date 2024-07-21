@@ -44,9 +44,6 @@ class YoutubeResource(models.Model):
                                  blank=True, max_length=200)
     status = models.CharField(
         max_length=15, choices=Status.choices, default=Status.NEW)
-    progress = models.DecimalField(
-        max_digits=3, decimal_places=0, blank=True, null=True, default=0
-    )
     eta = models.DecimalField(
         max_digits=15, decimal_places=0, blank=True, null=True, default=0)
     elapsed = models.DecimalField(
@@ -104,7 +101,7 @@ def postsave(sender, instance, created, raw, using, update_fields, **kwargs):
     logger.addFilter(loggingfilter)
 
     if instance.status == YoutubeResource.Status.NEW:
-        
+
         logger.info("before task scheduled")
         celery.current_app.send_task('api.tasks.download', [instance.id])
         logger.info("task scheduled")

@@ -22,6 +22,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # @requires_csrf_token
+# @ensure_csrf_cookie
 class BaseView(TemplateView):
     # template_name = 'index.html'
     extra_context = {'version': settings.VERSION}
