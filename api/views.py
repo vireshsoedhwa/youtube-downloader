@@ -32,9 +32,7 @@ class IsCSRFTokenSet(permissions.BasePermission):
     """
     Global permission
     """
-    print("hgfjvg")
     def has_permission(self, request, view):
-        print("globl PERMISSION")
         if '_csrftoken' in request.session:
             return True
         else:
@@ -91,7 +89,6 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
 
 
     def retrieve(self, request, pk=None):
-        print("retrieve")
         resource = self.get_object()
         serializer = self.get_serializer(resource)
         return Response(serializer.data)

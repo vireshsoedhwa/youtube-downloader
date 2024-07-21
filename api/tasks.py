@@ -25,9 +25,7 @@ def cleanup(arg):
 @shared_task()
 def download(instance_id):
     youtube_resource = YoutubeResource.objects.get(id=instance_id)
-    loggercelery.info(f"help celery{youtube_resource.youtube_id}")
-
-    loggercelery.info("starting download")
+    loggercelery.info(f"Youtube_ID: {youtube_resource.youtube_id}")
     youtube_resource.status = youtube_resource.Status.BUSY
     youtube_resource.save()
 
@@ -86,10 +84,13 @@ def download(instance_id):
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        result = ydl.download(youtube_resource.url)
-        loggercelery.info(result)
-        youtube_resource.status = youtube_resource.Status.DONE
-        youtube_resource.save()
+        try:
+            result = ydl.download(youtube_resource.url)
+            loggercelery.info(result)
+            youtube_resource.status = youtube_resource.Status.DONE
+            youtube_resource.save()
+        except Exception as e:
+            loggercelery.error(e)
 
 
 class MyLogger:
