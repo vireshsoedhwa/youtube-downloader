@@ -13,13 +13,14 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
-import InboxIcon from '@mui/icons-material/Inbox';
 import TimelapseIcon from '@mui/icons-material/Timelapse';
 import TimerIcon from '@mui/icons-material/Timer';
 import PercentIcon from '@mui/icons-material/Percent';
+import FlagIcon from '@mui/icons-material/Flag';
 
-import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/system/Stack';
+import Chip from '@mui/material/Chip';
+import ReplayIcon from '@mui/icons-material/Replay';
 
 import usePreviewResource from '../hooks/usePreviewResource';
 import Avatar from '@mui/material/Avatar';
@@ -29,7 +30,7 @@ import { useInterval } from '../hooks/useInterval';
 export default function Preview() {
     const navigate = useNavigate();
     let location = useLocation();
-    const [previewid, setPreviewId] = useState(null);
+    const [previewid, setPreviewId] = useState(location.state.item.id);
 
     const { PreviewResourceData,
         PreviewResourceIsSuccesful,
@@ -40,7 +41,7 @@ export default function Preview() {
 
     useInterval(async () => {
         PreviewResource(previewid)
-        console.log(PreviewResourceData)
+        // console.log(PreviewResourceData)
     }, 5000);
 
     useEffect(() => {
@@ -108,6 +109,29 @@ export default function Preview() {
                     </Stack>
                     :
                     <List>
+                        <ListItem disablePadding>
+                            <ListItemIcon>
+                                <FlagIcon />
+                            </ListItemIcon>
+                            <ListItemText
+                                primary="Status"
+                                secondary={
+                                    PreviewResourceData.status
+                                }
+                            />
+                        </ListItem>
+                        {PreviewResourceData.status == "FAILED" &&
+                            <>
+                                <Button variant="contained"
+                                    color="error"
+                                    size="small"
+                                    startIcon={<ReplayIcon />}
+                                    href={"/api/resource/" + PreviewResourceData.id + "/retry"}
+                                >
+                                    Retry
+                                </Button>
+                            </>
+                        }
                         <ListItem disablePadding>
                             <ListItemIcon>
                                 <TimerIcon />

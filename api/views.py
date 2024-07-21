@@ -14,8 +14,9 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.views.decorators.csrf import csrf_protect
+from rest_framework import permissions
 
 from django.conf import settings
 import logging
@@ -27,40 +28,57 @@ logger.addFilter(YoutubeIdFilter())
 # decorators = [never_cache]
 # @method_decorator(decorators, name='dispatch')
 
+class IsCSRFTokenSet(permissions.BasePermission):
+    """
+    Global permission
+    """
+    print("hgfjvg")
+    def has_permission(self, request, view):
+        print("globl PERMISSION")
+        if '_csrftoken' in request.session:
+            return True
+        else:
+            return False
+    
+class IsCSRFTokenAndRecordMatching(permissions.BasePermission):
+    """
+    Object-level permission
+    """
+    def has_object_permission(self, request, view, obj):
+        sessions_by_resource = Session.objects.filter(resources = obj)
+        session_by_token_exists = sessions_by_resource.filter(token=request.session["_csrftoken"]).exists()
+        if(session_by_token_exists):
+            return True
+        else:
+            return False
+        
 class YoutubeResourceViewset(viewsets.ModelViewSet):
     queryset = YoutubeResource.objects.all()
     serializer_class = YoutubeResourceSerializer
     parser_classes = [JSONParser]
     authentication_classes = [SessionAuthentication]
-    # permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
+
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        """
+        if self.action == 'create':
+            permission_classes = [IsCSRFTokenSet]
+        else:
+            permission_classes = [IsCSRFTokenSet, IsCSRFTokenAndRecordMatching]
+        return [permission() for permission in permission_classes]
+
 
     def list(self, request):
         recent = self.queryset.filter(session__token=request.session["_csrftoken"])
         serializer = self.get_serializer(recent, many=True)
         return Response(serializer.data)
 
-    def retrieve(self, request, pk=None):
-        resource = self.get_object()
-        if '_csrftoken' in request.session:
-            sessions_by_resource = Session.objects.filter(resources = resource)
-            session_by_token_exists = sessions_by_resource.filter(token=request.session["_csrftoken"]).exists()
-
-            if(session_by_token_exists):
-                serializer = self.get_serializer(resource)
-                return Response(serializer.data) 
-            else:
-                return Response("session mismatch", status=403)
-        else:
-            return Response("session required", status=403)
-
     def create(self, request):
-        # if '_csrftoken' in request.session:
-        #     request.data.update({"sessions": request.session["_csrftoken"]})
-
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             instance = serializer.save()
-            # instance.session = request.session["_csrftoken"]
             session, session_created = Session.objects.get_or_create(token=request.session["_csrftoken"])
             session.resources.add(instance)
 
@@ -71,6 +89,13 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
 
+
+    def retrieve(self, request, pk=None):
+        print("retrieve")
+        resource = self.get_object()
+        serializer = self.get_serializer(resource)
+        return Response(serializer.data)
+        
     @action(detail=True)
     def getvideo(self, request, pk=None):
         resource = self.get_object()
@@ -92,15 +117,10 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
         return HttpResponse("File not ready yet", status=400)
 
     @action(detail=True)
-    def getresult(self, request, pk=None):
+    def retry(self, request, pk=None):
         resource = self.get_object()
-        serializer = self.get_serializer(resource)
-        return Response(serializer.data)
+        if resource.status == YoutubeResource.Status.FAILED:
+            resource.status = YoutubeResource.Status.NEW
+            resource.save()
+        return HttpResponse("retrying", status=200)
 
-    @action(detail=False)
-    def get_list_by_session(self, request):
-        if '_csrftoken' in request.session:
-            recent = self.queryset.filter(session=request.session["_csrftoken"]).order_by("-created_at")
-            serializer = self.get_serializer(recent, many=True)
-            return Response(serializer.data)
-        return Response("no session set")
