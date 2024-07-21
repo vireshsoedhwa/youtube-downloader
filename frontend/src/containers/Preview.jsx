@@ -57,10 +57,6 @@ export default function Preview() {
         }
     }, [location]);
 
-    const retry = () => {
-        console.log("retry ckickede")
-    }
-
     if (PreviewResourceIsSuccesful) {
         return (
             <Box
@@ -135,7 +131,7 @@ export default function Preview() {
                                 {PreviewResourceData.status == "FAILED" &&
                                     <ListItemButton
                                         // href={"/api/resource/" + PreviewResourceData.id + "/retry"}
-                                        onClick={retry}
+                                        onClick={() => { window.location.href = "/api/resource/" + PreviewResourceData.id + "/retry" }}
                                     >
                                         <ReplayIcon />
                                         <ListItemText primary="Retry" />
@@ -164,7 +160,7 @@ export default function Preview() {
                     }
 
                 </Stack>
-            </Box>
+            </Box >
         );
     }
 }

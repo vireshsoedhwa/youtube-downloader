@@ -17,6 +17,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.views.decorators.csrf import csrf_protect
 from rest_framework import permissions
+from django.shortcuts import redirect
 
 from django.conf import settings
 import logging
@@ -119,5 +120,5 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
         if resource.status == YoutubeResource.Status.FAILED:
             resource.status = YoutubeResource.Status.NEW
             resource.save()
-        return HttpResponse("retrying", status=200)
+        return redirect("/home")
 
