@@ -63,7 +63,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = "youtube_downloader.urls"
 
 if DEBUG:
-    TEMPLATE_CUSTOM_PATH = [BASE_DIR / 'frontend']
+    TEMPLATE_CUSTOM_PATH = [BASE_DIR / 'frontend/templates']
 else:
     TEMPLATE_CUSTOM_PATH = [BASE_DIR / 'frontend/dist']
 
