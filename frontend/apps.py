@@ -3,7 +3,6 @@ from django.conf import settings
 import sys
 
 import logging
-
 logger = logging.getLogger(__name__)
 
 class AppConfig(AppConfig):

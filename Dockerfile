@@ -39,8 +39,14 @@ RUN set -ex; \
         # apt-get update && apt-get install -y nodejs;
         
 
-COPY frontend frontend
+COPY frontend/src ./frontend/src
+COPY frontend/apps.py ./frontend/apps.py
+COPY frontend/urls.py ./frontend/urls.py
+COPY frontend/views.py ./frontend/views.py
+
+COPY frontend/templates ./frontend/templates
 COPY --from=webassets-builder /app/dist ./frontend/dist
+
 COPY --from=base /root/.cache /root/.cache
 COPY --from=base /opt/venv /opt/venv
 

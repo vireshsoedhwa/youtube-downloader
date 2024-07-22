@@ -14,7 +14,7 @@ services:
       - |
         python manage.py runserver 0.0.0.0:9000
     environment:
-      DEBUG : 'true'
+      DEBUG : 'TRUE'
       DJANGO_SECRET_KEY : WOOOOOOOOWOOOOOOOOWWW
       POSTGRES_HOST : db
       POSTGRES_PASSWORD : postgres
@@ -34,11 +34,12 @@ services:
 
   celery:
     environment:
-      - DJANGO_SECRET_KEY=WOOOOOOOOWOOOOOOOOWWW
-      - POSTGRES_HOST=db
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
+      DEBUG : 'TRUE'
+      DJANGO_SECRET_KEY : WOOOOOOOOWOOOOOOOOWWW
+      POSTGRES_HOST : db
+      POSTGRES_PASSWORD : postgres
+      POSTGRES_DB : postgres
+      POSTGRES_USER : postgres
     volumes:
       - .:/code
 
@@ -55,14 +56,15 @@ services:
       - .:/code
     working_dir: /code
     environment:
-      - DJANGO_SECRET_KEY=WOOOOOOOOWOOOOOOOOWWW
-      - POSTGRES_HOST=db
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - DJANGO_SUPERUSER_USERNAME=admin
-      - DJANGO_SUPERUSER_PASSWORD=password
-      - DJANGO_SUPERUSER_EMAIL=admin@example.com
+      DEBUG : 'TRUE'
+      DJANGO_SECRET_KEY : WOOOOOOOOWOOOOOOOOWWW
+      POSTGRES_HOST : db
+      POSTGRES_PASSWORD : postgres
+      POSTGRES_DB : postgres
+      POSTGRES_USER : postgres
+      DJANGO_SUPERUSER_USERNAME : admin
+      DJANGO_SUPERUSER_PASSWORD : password
+      DJANGO_SUPERUSER_EMAIL : admin@example.com
     depends_on:
       db:
         condition: service_healthy
