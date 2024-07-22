@@ -19,8 +19,6 @@ services:
         condition: service_completed_successfully
 
   celery:
-    build:
-      context: .
     volumes:
       - youtube_downloader:/code/data
     env_file:

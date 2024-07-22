@@ -22,8 +22,7 @@ services:
 
   # Celery Service
   celery:
-    build:
-      context: .
+    image: youtube_downloader
     command:
       - /bin/sh
       - -c

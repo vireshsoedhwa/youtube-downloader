@@ -22,7 +22,7 @@ VERSION = os.getenv("VERSION", "0.0.0")
 SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 DEBUG = os.getenv("DEBUG", False) == "true"
 
-INTERNAL_IPS = ['127.0.0.1']
+INTERNAL_IPS = ['127.0.0.1','192.168.1.204','172.17.0.1/16']
 ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = ["http://localhost", "http://localhost:8080", "http://localhost:9000"]
 
@@ -62,10 +62,15 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "youtube_downloader.urls"
 
+if DEBUG:
+    TEMPLATE_CUSTOM_PATH = [BASE_DIR / 'frontend']
+else:
+    TEMPLATE_CUSTOM_PATH = [BASE_DIR / 'frontend/dist']
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        'DIRS': [BASE_DIR / 'frontend/templates'],
+        'DIRS': TEMPLATE_CUSTOM_PATH,
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -138,6 +143,7 @@ if not DEBUG:
 
 STATICFILES_DIRS = [
     BASE_DIR / "frontend/static",
+    BASE_DIR / "frontend/dist",
 ]
 
 MEDIA_ROOT = "/code/data/"
