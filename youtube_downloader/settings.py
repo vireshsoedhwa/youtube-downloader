@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 VERSION = os.getenv("VERSION", "0.0.0")
 SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
-DEBUG = os.environ['DEBUG'] == 'TRUE'
+DEBUG = os.getenv("DEBUG", False) == "TRUE"
 
 INTERNAL_IPS = ['127.0.0.1','192.168.1.204','172.17.0.1/16']
 ALLOWED_HOSTS = ["*"]
