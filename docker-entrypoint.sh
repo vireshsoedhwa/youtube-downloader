@@ -16,9 +16,9 @@ set -e
 # >&2 echo "Creating superuser"
 # python manage.py createsuperuser --noinput || true
 
-mkdir -p /code/app/build/static
+# mkdir -p /code/app/build/static
 
-# # Collect static files
+# Collect static files
 # >&2 echo "Collect static"
 # python manage.py collectstatic --noinput
 

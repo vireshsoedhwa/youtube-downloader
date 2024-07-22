@@ -21,6 +21,6 @@ app.conf.beat_schedule = {
     'cleanup-old-files-hourly': {
         'task': 'cleanup',
         'schedule': crontab(minute=0, hour='*/1'),
-        'args': ([20])
+        'args': ([50])
     },
 }

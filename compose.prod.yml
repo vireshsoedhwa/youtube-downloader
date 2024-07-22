@@ -19,8 +19,6 @@ services:
         condition: service_completed_successfully
 
   celery:
-    build:
-      context: .
     volumes:
       - youtube_downloader:/code/data
     env_file:
@@ -72,7 +70,7 @@ services:
 volumes:
   app_assets:
   youtube_downloader_db:
-    external: true
+    # external: true
   youtube_downloader:
-    external: true
+    # external: true
   

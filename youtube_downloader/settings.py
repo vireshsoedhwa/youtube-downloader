@@ -20,8 +20,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 VERSION = os.getenv("VERSION", "0.0.0")
 SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
-DEBUG = os.getenv("DEBUG", False) == "true"
+DEBUG = os.getenv("DEBUG", False) == "TRUE"
 
+INTERNAL_IPS = ['127.0.0.1','192.168.1.204','172.17.0.1/16']
 ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = ["http://localhost", "http://localhost:8080", "http://localhost:9000"]
 
@@ -45,7 +46,8 @@ INSTALLED_APPS = [
     "django_filters",
     "django_celery_beat",
 
-    "app",
+    "frontend",
+    "api"
 ]
 
 MIDDLEWARE = [
@@ -60,10 +62,15 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "youtube_downloader.urls"
 
+if DEBUG:
+    TEMPLATE_CUSTOM_PATH = [BASE_DIR / 'frontend/templates']
+else:
+    TEMPLATE_CUSTOM_PATH = [BASE_DIR / 'frontend/dist']
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        'DIRS': [BASE_DIR / 'app/build'],
+        'DIRS': TEMPLATE_CUSTOM_PATH,
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -126,20 +133,23 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = "static/"
-STATIC_ROOT = "/var/www/html/static/"
 
-STATICFILES_DIRS = [
-    "/code/app/build/static",
-    "/code/app/build"
-]
+if DEBUG:
+    STATIC_ROOT = "/static/" # for development
+    STATIC_URL = '/static/'
+else:
+    STATIC_ROOT = "/var/www/html/" # for production
+    STATIC_URL = '/assets/'
+    STATICFILES_DIRS = [
+        BASE_DIR / "frontend/dist",
+    ]
+
 
 MEDIA_ROOT = "/code/data/"
-# MEDIA_URL =
+MEDIA_URL = "/media/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
