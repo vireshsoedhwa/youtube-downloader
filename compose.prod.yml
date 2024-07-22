@@ -70,7 +70,7 @@ services:
 volumes:
   app_assets:
   youtube_downloader_db:
-    external: true
+    # external: true
   youtube_downloader:
-    external: true
+    # external: true
   

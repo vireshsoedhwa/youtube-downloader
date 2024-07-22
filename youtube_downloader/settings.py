@@ -136,15 +136,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
 
-if not DEBUG:
-    STATIC_ROOT = "/var/www/html/static/" # for production
+if DEBUG:
+    STATIC_ROOT = "/static/" # for development
+    STATIC_URL = '/static/'
+else:
+    STATIC_ROOT = "/var/www/html/" # for production
+    STATIC_URL = '/assets/'
+    STATICFILES_DIRS = [
+        # BASE_DIR / "frontend/static",
+        BASE_DIR / "frontend/dist",
+    ]
 
-STATICFILES_DIRS = [
-    BASE_DIR / "frontend/static",
-    BASE_DIR / "frontend/dist",
-]
 
 MEDIA_ROOT = "/code/data/"
 MEDIA_URL = "/media/"
