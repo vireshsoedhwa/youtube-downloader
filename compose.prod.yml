@@ -5,7 +5,7 @@ services:
     env_file:
       - prod.env
     networks:
-      - app_network
+      - gateway_app_network
       
   app:
     volumes:
@@ -20,7 +20,7 @@ services:
       db_init:
         condition: service_completed_successfully
     networks:
-      - app_network
+      - gateway_app_network
 
   celery:
     volumes:
@@ -28,7 +28,7 @@ services:
     env_file:
       - prod.env
     networks:
-      - app_network
+      - gateway_app_network
 
     
   nginx:
@@ -44,7 +44,7 @@ services:
       app:
         condition: service_healthy
     networks:
-      - app_network
+      - gateway_app_network
 
   collect_static:
     image: youtube_downloader
@@ -59,8 +59,8 @@ services:
     env_file:
       - prod.env
     networks:
-      - app_network
-      
+      - gateway_app_network
+
   db_init:
     image: youtube_downloader
     command:
@@ -72,12 +72,12 @@ services:
     env_file:
       - prod.env
     networks:
-      - app_network
+      - gateway_app_network
 
   # Redis Service
   redis:
     networks:
-      - app_network
+      - gateway_app_network
 
 volumes:
   app_assets:
@@ -87,5 +87,5 @@ volumes:
     # external: true
 
 networks:
-  app_network:
+  gateway_app_network:
     external: true
