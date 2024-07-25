@@ -24,13 +24,6 @@ services:
       - .:/code
     ports:
       - 9000:9000
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      db_init:
-        condition: service_completed_successfully
 
   celery:
     environment:
@@ -44,7 +37,6 @@ services:
       - .:/code
 
   db_init:
-    image: youtube_downloader
     command:
       - /bin/sh
       - -c
@@ -54,7 +46,6 @@ services:
         python manage.py createsuperuser --noinput || true
     volumes:
       - .:/code
-    working_dir: /code
     environment:
       DEBUG : 'TRUE'
       DJANGO_SECRET_KEY : WOOOOOOOOWOOOOOOOOWWW
@@ -65,6 +56,4 @@ services:
       DJANGO_SUPERUSER_USERNAME : admin
       DJANGO_SUPERUSER_PASSWORD : password
       DJANGO_SUPERUSER_EMAIL : admin@example.com
-    depends_on:
-      db:
-        condition: service_healthy
+

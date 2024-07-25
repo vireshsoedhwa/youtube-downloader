@@ -4,7 +4,9 @@ services:
       - youtube_downloader_db:/var/lib/postgresql/data
     env_file:
       - prod.env
-
+    networks:
+      - app_network
+      
   app:
     volumes:
       - youtube_downloader:/code/data
@@ -15,18 +17,20 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      db_init_prod:
+      db_init:
         condition: service_completed_successfully
+    networks:
+      - app_network
 
   celery:
     volumes:
       - youtube_downloader:/code/data
     env_file:
       - prod.env
-    depends_on:
-      redis:
-        condition: service_healthy
+    networks:
+      - app_network
 
+    
   nginx:
     image: nginxinc/nginx-unprivileged
     volumes:
@@ -39,6 +43,8 @@ services:
         condition: service_completed_successfully
       app:
         condition: service_healthy
+    networks:
+      - app_network
 
   collect_static:
     image: youtube_downloader
@@ -53,7 +59,7 @@ services:
     env_file:
       - prod.env
 
-  db_init_prod:
+  db_init:
     image: youtube_downloader
     command:
       - /bin/sh
@@ -63,9 +69,13 @@ services:
     working_dir: /code
     env_file:
       - prod.env
-    depends_on:
-      db:
-        condition: service_healthy
+    networks:
+      - app_network
+
+  # Redis Service
+  redis:
+    networks:
+      - app_network
 
 volumes:
   app_assets:
@@ -73,4 +83,7 @@ volumes:
     # external: true
   youtube_downloader:
     # external: true
-  
+
+networks:
+  app_network:
+    external: true

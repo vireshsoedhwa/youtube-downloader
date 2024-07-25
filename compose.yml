@@ -18,7 +18,13 @@ services:
       interval: 5s
       timeout: 10s
       retries: 5
-
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      db_init:
+        condition: service_completed_successfully
 
   # Celery Service
   celery:
@@ -45,3 +51,10 @@ services:
     image: redis:alpine
     healthcheck:
       test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+
+
+  db_init:
+    image: youtube_downloader
+    depends_on:
+      db:
+        condition: service_healthy
