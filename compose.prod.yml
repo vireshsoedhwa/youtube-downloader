@@ -58,7 +58,9 @@ services:
     working_dir: /code
     env_file:
       - prod.env
-
+    networks:
+      - app_network
+      
   db_init:
     image: youtube_downloader
     command:
