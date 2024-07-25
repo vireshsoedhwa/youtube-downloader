@@ -29,6 +29,10 @@ services:
   # Celery Service
   celery:
     image: youtube_downloader
+    build:
+      context: .
+      args:
+        - VERSION=1.0.0
     command:
       - /bin/sh
       - -c
@@ -55,6 +59,10 @@ services:
 
   db_init:
     image: youtube_downloader
+    build:
+      context: .
+      args:
+        - VERSION=1.0.0
     depends_on:
       db:
         condition: service_healthy
