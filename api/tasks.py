@@ -24,8 +24,8 @@ def cleanup(arg):
 
 @shared_task()
 def download(instance_id):
+    loggercelery.info(f"Youtube_ID: {instance_id}")
     youtube_resource = YoutubeResource.objects.get(id=instance_id)
-    loggercelery.info(f"Youtube_ID: {youtube_resource.youtube_id}")
     youtube_resource.status = youtube_resource.Status.BUSY
     youtube_resource.save()
 
