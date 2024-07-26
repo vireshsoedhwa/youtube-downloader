@@ -24,6 +24,7 @@ def cleanup(arg):
 
 @shared_task()
 def download(instance_id):
+    loggercelery.info("Download task started ....")
     loggercelery.info(f"Youtube_ID: {instance_id}")
     youtube_resource = YoutubeResource.objects.get(id=instance_id)
     youtube_resource.status = youtube_resource.Status.BUSY
@@ -101,10 +102,12 @@ class MyLogger:
         if msg.startswith('[debug] '):
             pass
         else:
-            loggercelery.info(msg)
+            pass
+            # loggercelery.info(msg)
 
     def info(self, msg):
-        loggercelery.info(msg)
+        # loggercelery.info(msg)
+        pass
 
     def warning(self, msg):
         loggercelery.warn(msg)

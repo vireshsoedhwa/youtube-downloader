@@ -121,4 +121,5 @@ def postsave(sender, instance, created, raw, using, update_fields, **kwargs):
 
     if instance.status == YoutubeResource.Status.BUSY:
         # logger.info("Instance Busy")
-        logger.info(f"ETA: {instance.eta}")
+        # logger.debug(f"ETA: {instance.eta}")
+        pass

@@ -190,11 +190,11 @@ LOGGING = {
     },
     "handlers": {
         "console": {
-            "level": "DEBUG",
+            "level": "INFO",
             "class": "logging.StreamHandler",
             "formatter": "custom",
         },
-        "console_dev": {
+        "dev_log": {
             "level": "DEBUG",
             "class": "logging.handlers.RotatingFileHandler",
             "filename": "dev.log",
@@ -209,13 +209,13 @@ LOGGING = {
             "level": "ERROR",
             "propagate": True,
         },
-        "app": {
-            "handlers": ["console"],
+        "api": {
+            "handlers": ["console","dev_log"],
             "level": "DEBUG",
             "propagate": True,
         },
         "celery.task": {
-            "handlers": ["console"],
+            "handlers": ["console","dev_log"],
             "level": "DEBUG",
             "propagate": True,
         }
