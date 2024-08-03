@@ -16,8 +16,8 @@ import shutil
 import logging
 
 logger = logging.getLogger(__name__)
-loggingfilter = YoutubeIdFilter()
-logger.addFilter(loggingfilter)
+# loggingfilter = YoutubeIdFilter()
+# logger.addFilter(loggingfilter)
 
 
 def file_directory_path(instance, filename):

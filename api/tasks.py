@@ -21,15 +21,18 @@ def cleanup(arg):
         item.delete()
         loggercelery.info(f"{item} : deleted")
 
-
 @shared_task()
 def download(instance_id):
     loggercelery.info("Download task started ....")
     loggercelery.info(f"Youtube_ID: {instance_id}")
-    youtube_resource = YoutubeResource.objects.get(id=instance_id)
-    youtube_resource.status = youtube_resource.Status.BUSY
-    youtube_resource.save()
 
+    try:
+        youtube_resource = YoutubeResource.objects.get(id=instance_id)
+        youtube_resource.status = youtube_resource.Status.BUSY
+        youtube_resource.save()
+    except Exception as e:
+        loggercelery.error(e)
+    
     def progress_hooks(d):
         if d["status"] == "downloading":
             youtube_resource.title = Path(Path(os.path.basename(d["filename"])).stem).stem
@@ -91,8 +94,11 @@ def download(instance_id):
             youtube_resource.status = youtube_resource.Status.DONE
             youtube_resource.save()
         except Exception as e:
+            youtube_resource = YoutubeResource.objects.get(id=instance_id)
+            youtube_resource.status = youtube_resource.Status.FAILED
+            youtube_resource.save()
             loggercelery.error(e)
-
+            
 
 class MyLogger:
     def __init__(self, instance_id) -> None:

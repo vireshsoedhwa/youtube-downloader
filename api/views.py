@@ -70,7 +70,6 @@ class YoutubeResourceViewset(viewsets.ModelViewSet):
 
 
     def list(self, request):
-        logger.info("list view")
         recent = self.queryset.filter(session__token=request.session["_csrftoken"])
         serializer = self.get_serializer(recent, many=True)
         return Response(serializer.data)

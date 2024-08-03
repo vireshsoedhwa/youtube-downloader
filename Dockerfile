@@ -1,4 +1,4 @@
-FROM python:3.10-slim-buster as base
+FROM python:3.10-slim-buster AS base
 ENV PYTHONUNBUFFERED 1
 ENV PATH /code:/opt/venv/bin:$PATH
 COPY requirements.txt ./
@@ -9,7 +9,7 @@ RUN set -ex; \
 
 # ============================================ WEB ASSETS BUILDER
 
-FROM node:21.6.1 as webassets-builder
+FROM node:21.6.1 AS webassets-builder
 
 WORKDIR /app
 
