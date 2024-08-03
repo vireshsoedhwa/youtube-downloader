@@ -25,9 +25,9 @@ def cleanup(arg):
 def download(instance_id):
     loggercelery.info("Download task started ....")
     loggercelery.info(f"Youtube_ID: {instance_id}")
-
+    youtube_resource = YoutubeResource.objects.get(id=instance_id)
+    
     try:
-        youtube_resource = YoutubeResource.objects.get(id=instance_id)
         youtube_resource.status = youtube_resource.Status.BUSY
         youtube_resource.save()
     except Exception as e:
@@ -94,7 +94,6 @@ def download(instance_id):
             youtube_resource.status = youtube_resource.Status.DONE
             youtube_resource.save()
         except Exception as e:
-            youtube_resource = YoutubeResource.objects.get(id=instance_id)
             youtube_resource.status = youtube_resource.Status.FAILED
             youtube_resource.save()
             loggercelery.error(e)

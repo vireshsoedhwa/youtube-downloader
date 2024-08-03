@@ -103,7 +103,7 @@ def postsave(sender, instance, created, raw, using, update_fields, **kwargs):
     if instance.status == YoutubeResource.Status.NEW:
 
         logger.info("before task scheduled")
-        celery.current_app.send_task('api.tasks.download', [instance.id])
+        celery.current_app.send_task('api.tasks.download', [instance.id], countdown=3)
         logger.info("task scheduled")
         # logger.info(result.get())
 
