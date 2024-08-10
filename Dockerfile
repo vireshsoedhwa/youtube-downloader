@@ -60,4 +60,5 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:9000", "--forwarded-allow-ips=*", "--log-level", "info", "youtube_downloader.wsgi"]
+CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:9000", "--forwarded-allow-ips=*", \
+"--log-level", "info", "--timeout", "120", "--graceful-timeout", "120", "youtube_downloader.wsgi"]
